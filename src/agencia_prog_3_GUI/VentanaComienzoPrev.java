@@ -1,7 +1,9 @@
 package agencia_prog_3_GUI;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -13,8 +15,11 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 public class VentanaComienzoPrev extends JFrame{
@@ -32,20 +37,30 @@ public class VentanaComienzoPrev extends JFrame{
 		
 		//Ruta de la Imagen de Fondo
 		//"C:\Users\laura.saez.serrano\prog apps\agencia_prog_3\images\fondoVentana0.png"
-		
+		JLabel imagenLabel = new JLabel();
+	    imagenLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	    String rutaImagen = "images\\fondoVentana0.png";
 		ImageIcon imageIcon = null;
-	    try {
-	    	Image fondo = ImageIO.read(new File("images\\fondoVentana0.png"));
+		Image imagenAjustada = null ;
+		try {
+	    	Image fondo = ImageIO.read(new File(rutaImagen));
 	    	//Ajustamos el tamaño de la imagen al tamaño del layout - IA (Porque causaba problemas el tamaño)
-	    	Image imagenAjustada = fondo.getScaledInstance(600, 400, Image.SCALE_SMOOTH);
-	        imageIcon = new ImageIcon(imagenAjustada);
+	    	imagenAjustada = fondo.getScaledInstance(600, 400, Image.SCALE_SMOOTH);
+	    	ImageIcon image = new ImageIcon(imagenAjustada);
+	    	imagenLabel.setIcon(imageIcon); 
+	        imagenLabel.setText(null);
+	        
 	    } catch (IOException e){
 	    	System.err.println("Imagen no cargada correctamente: " + e.getMessage());
 	    	//Cuando la imagen no se carga, mostramos el siguiente mensaje:
 	    	JOptionPane.showMessageDialog(this, "No se pudo cargar la imagen de fondo.", 
 	                "Error de Carga", JOptionPane.ERROR_MESSAGE);
 	    }
-	
+	    
+	    JPanel panelImagen = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    panelImagen.add(imagenLabel);
+	    layeredPane.add(panelImagen,BorderLayout.NORTH);
+	    
 	    //JButton de comienzo
 	    JButton boton = new JButton("Start");
 	    boton.setFont(new Font ("Calibri", Font.BOLD, 18));

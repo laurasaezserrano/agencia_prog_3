@@ -110,7 +110,7 @@ public class CuadriculaOfertas extends JFrame{
 		
 		JLabel titulo = new JLabel("Detalles de la Oferta " + numero, SwingConstants.CENTER);
 		titulo.setFont(new Font("Times new Roman", Font.PLAIN, 22));
-		ventanaoferta.add(titulo, BorderLayout.NORTH);
+		ventanaoferta.add(titulo, BorderLayout.CENTER);
 		
 		JPanel contenidoPanel = new JPanel(new GridLayout(1, 2, 10, 0));
 		JLabel imagenLabel = new JLabel();
@@ -140,7 +140,7 @@ public class CuadriculaOfertas extends JFrame{
 	    
 	    JPanel panelImagen = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    panelImagen.add(imagenLabel);
-	    contenidoPanel.add(panelImagen);
+	    ventanaoferta.add(panelImagen,BorderLayout.NORTH);
 	    
 		//Descripcion
 		JTextArea descripcionArea = new JTextArea();
