@@ -6,10 +6,15 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -107,6 +112,36 @@ public class CuadriculaOfertas extends JFrame{
 		titulo.setFont(new Font("Times new Roman", Font.PLAIN, 22));
 		ventanaoferta.add(titulo, BorderLayout.NORTH);
 		
+		JPanel contenidoPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+		JLabel imagenLabel = new JLabel();
+	    imagenLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	    
+	    //Ruta imagen
+	    //Habra que añadir un try / catch por si no la encuentra o no la carga
+	    String rutaImagen = "images/Oferta" + numero + ".png";
+	    try {
+	    	Image originalImage = ImageIO.read(new File(rutaImagen));
+	        
+	        // Define las dimensiones que quieres para la imagen en la ventana (ej: 400x300)
+	        int anchoDeseado = 350; 
+	        int altoDeseado = 350; 
+	        
+	        //Ajusta la imagen
+	        Image scaledImage = originalImage.getScaledInstance(anchoDeseado, altoDeseado, Image.SCALE_SMOOTH);
+	        ImageIcon imageIcon = new ImageIcon(scaledImage);
+	        
+	        imagenLabel.setIcon(imageIcon); // Establece la imagen al JLabel
+	        imagenLabel.setText(null);
+	    } catch (IOException e) {
+	    	imagenLabel.setText("Imagen no encontrada: " + rutaImagen);
+	        imagenLabel.setForeground(Color.RED);
+	        System.err.println("Error al cargar imagen " + rutaImagen + ": " + e.getMessage());
+	    	}	
+	    
+	    JPanel panelImagen = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    panelImagen.add(imagenLabel);
+	    contenidoPanel.add(panelImagen);
+	    
 		//Descripcion
 		JTextArea descripcionArea = new JTextArea();
 		descripcionArea.setText(descripciones[numero - 1]); // Obtiene la descripción del array

@@ -35,7 +35,7 @@ public class VentanaComienzoPrev extends JFrame{
 		
 		ImageIcon imageIcon = null;
 	    try {
-	    	Image fondo = ImageIO.read(new File("agencia_prog_3\\images\\fondoVentana0.png"));
+	    	Image fondo = ImageIO.read(new File("images\\fondoVentana0.png"));
 	    	//Ajustamos el tamaño de la imagen al tamaño del layout - IA (Porque causaba problemas el tamaño)
 	    	Image imagenAjustada = fondo.getScaledInstance(600, 400, Image.SCALE_SMOOTH);
 	        imageIcon = new ImageIcon(imagenAjustada);
