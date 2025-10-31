@@ -1,6 +1,7 @@
 package agencia_prog_3_GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -12,12 +13,13 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class CuadriculaOfertas extends JFrame{
 	private JTextField oferta;
-	
+	private JTextField descripcionoferta;
 	
 	public CuadriculaOfertas() {
 		JPanel mainpanel = new JPanel();
@@ -67,10 +69,23 @@ public class CuadriculaOfertas extends JFrame{
 		JFrame ventanaoferta = new JFrame("Oferta" + numero);
 		ventanaoferta.setSize(800, 500);
 		ventanaoferta.setLocationRelativeTo(this);
+//		ventanaoferta.setLayout(new BorderLayout(10, 10));
 		
-		JLabel label = new JLabel("Detalles de la Oferta " + numero, SwingConstants.CENTER);
-		label.setFont(new Font("Times new Roman", Font.PLAIN, 18));
-		ventanaoferta.add(label);
+		JLabel titulo = new JLabel("Detalles de la Oferta " + numero, SwingConstants.CENTER);
+		titulo.setFont(new Font("Times new Roman", Font.PLAIN, 22));
+		ventanaoferta.add(titulo, BorderLayout.NORTH);
+		
+		JPanel centro = new JPanel(new BorderLayout());
+		JLabel imagen = new JLabel();
+		imagen.setOpaque(true);
+		imagen.setBackground(new Color(200, 220, 255));
+		imagen.setPreferredSize(new Dimension(200, 150));
+		imagen.setHorizontalAlignment(SwingConstants.CENTER);
+		imagen.setText("Imagen de la oferta " + numero);
+		
+		descripcionoferta = new JTextField();
+		descripcionoferta.setText("");
+		
 		ventanaoferta.setVisible(true);
 	}
 	
