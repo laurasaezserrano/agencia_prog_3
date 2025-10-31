@@ -23,18 +23,19 @@ public class CuadriculaOfertas extends JFrame{
 		JPanel mainpanel = new JPanel();
 		JPanel panel1 = new JPanel(new GridLayout(3, 3, 20, 20));
 		for (int i = 0; i < 9; i++) {
-			JButton boton = new JButton("Oferta " + (i + 1));
+			int numero = i + 1;
+			JButton boton = new JButton("Oferta " + numero);
 			boton.setPreferredSize(new Dimension(200, 120));
 //			boton.setVerticalTextPosition(SwingConstants.TOP);
 //			boton.setHorizontalTextPosition(SwingConstants.CENTER);
-//			boton.addActionListener(new ActionListener() {
-//				
-//				@Override
-//				public void actionPerformed(ActionEvent e) {
-//					abriroferta(numero);
-//					
-//				}
-//			});
+			boton.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					abriroferta(numero);
+					
+				}
+			});
 			
 			panel1.add(boton);			
 		}
@@ -59,13 +60,18 @@ public class CuadriculaOfertas extends JFrame{
 		oferta.setFont(new Font("Times new Roman", Font.BOLD, 25));
 		add(oferta, BorderLayout.NORTH);
 		
-//		private void abriroferta(int numero) {
-//			JFrame ventanaoferta = new JFrame("Oferta" + numero);
-//			ventanaoferta.setSize(800, 500);
-//			
-//			
-//		}
 		
+		
+	}
+	private void abriroferta(int numero) {
+		JFrame ventanaoferta = new JFrame("Oferta" + numero);
+		ventanaoferta.setSize(800, 500);
+		ventanaoferta.setLocationRelativeTo(this);
+		
+		JLabel label = new JLabel("Detalles de la Oferta " + numero, SwingConstants.CENTER);
+		label.setFont(new Font("Times new Roman", Font.PLAIN, 18));
+		ventanaoferta.add(label);
+		ventanaoferta.setVisible(true);
 	}
 	
 	
