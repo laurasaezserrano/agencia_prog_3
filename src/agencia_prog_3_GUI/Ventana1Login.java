@@ -14,10 +14,10 @@ public class Ventana1Login extends JFrame {
 	    public Ventana1Login () {
 	    	
 	    	// Archivo donde se guardan los usuarios registrados y nuevos usuarios
-	        private static final String FILE_NAME = "usuarios.dat";
-	        private HashMap<String, String> validUsers;
+	       // private static final String FILE_NAME = "usuarios.dat";
+	        //private HashMap<String, String> validUsers;
 	        
-	        validUsers = loadUsers();
+	        //validUsers = loadUsers();
 
 	    	// Se crea la ventana de inicio de sesión 
 	        setSize(350, 200);
