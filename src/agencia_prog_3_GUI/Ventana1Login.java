@@ -45,7 +45,29 @@ public class Ventana1Login extends JFrame {
 	            }
 
 				private void checkLogin() {
-					// Comprobamos si el usuario esta registrado y almacenado 
+					String user = userField.getText().trim();
+					String pass = new String(passField.getPassword());
+					
+					if (user.isEmpty() || pass.isEmpty()) {
+					    JOptionPane.showMessageDialog(this, "Por favor, completa ambos campos.", "Aviso", JOptionPane.WARNING_MESSAGE);
+					    return;
+						}
+					
+					if (validUsers.containsKey(user) && validUsers.get(user).equals(pass)) {
+					    statusLabel.setText("✅ Bienvenido, " + user + "!");
+					    JOptionPane.showMessageDialog(this, "Inicio de sesión correcto.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+					} else if (!validUsers.containsKey(user)) {
+					    int option = JOptionPane.showConfirmDialog(this,"El usuario no está registrado. ¿Deseas registrarte?",
+					            "Usuario no encontrado",
+					            JOptionPane.YES_NO_OPTION);
+					    if (option == JOptionPane.YES_OPTION) {
+					        registerUser();
+					    	}
+					} else {
+					    statusLabel.setText("Contraseña incorrecta.");
+					    JOptionPane.showMessageDialog(this, "Contraseña incorrecta.", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+					} 
 					
 					
 				}
@@ -54,14 +76,32 @@ public class Ventana1Login extends JFrame {
 	        registerButton.addActionListener(new ActionListener() {
 	            @Override
 	            public void actionPerformed(ActionEvent e) {
-	                optRegister();
-	            }
+	                registerUser();
+	            	}
+	        });
 
-				private void optRegister() {
-					// TODO Auto-generated method stub
+				private void registerUser() {
+					//Método para registrar un nuevo usuario
+					private void registerUser() {
+					String user = userField.getText().trim(); // Quitamos espacios extra que hayan sido añadidos con .trim
+					String pass = new String(passField.getPassword());
+					
+					if (user.isEmpty() || pass.isEmpty()) {
+					    JOptionPane.showMessageDialog(this, "Por favor, completa ambos campos.", "Aviso", JOptionPane.WARNING_MESSAGE);
+					    return;
+					}
+					
+					if (validUsers.containsKey(user)) {
+					  JOptionPane.showMessageDialog(this, "El usuario ya existe.", "Error", JOptionPane.ERROR_MESSAGE);
+					} else {
+					    validUsers.put(user, pass);
+					    saveUsers();
+					    JOptionPane.showMessageDialog(this, "Usuario registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+						}
+					}
 					
 				}
-	        });
+	        
 		        
 		        // Añadimos los elementos
 		            this.setTitle("Bienvenid@!");
@@ -81,66 +121,13 @@ public class Ventana1Login extends JFrame {
 				
 	    }
 
-		private HashMap<String, String> loadUsers() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		public static void main(String[] args) {
+			SwingUtilities.invokeLater(() -> {
+			    new Ventana1Login().setVisible(true);
+			}
+		}}
 
-}
 
-//String user = userField.getText().trim();
-//String pass = new String(passField.getPassword());
-//
-//if (user.isEmpty() || pass.isEmpty()) {
-//    JOptionPane.showMessageDialog(this, "Por favor, completa ambos campos.", "Aviso", JOptionPane.WARNING_MESSAGE);
-//    return;
-//}
-//
-//if (validUsers.containsKey(user) && validUsers.get(user).equals(pass)) {
-//    statusLabel.setText("✅ Bienvenido, " + user + "!");
-//    JOptionPane.showMessageDialog(this, "Inicio de sesión correcto.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-//} else if (!validUsers.containsKey(user)) {
-//    int option = JOptionPane.showConfirmDialog(this,
-//            "El usuario no está registrado. ¿Deseas registrarte?",
-//            "Usuario no encontrado",
-//            JOptionPane.YES_NO_OPTION);
-//    if (option == JOptionPane.YES_OPTION) {
-//        registerUser();
-//    }
-//} else {
-//    statusLabel.setText("❌ Contraseña incorrecta.");
-//    JOptionPane.showMessageDialog(this, "Contraseña incorrecta.", "Error", JOptionPane.ERROR_MESSAGE);
-//}
-//}
-//
-//// ✅ Método para registrar un nuevo usuario
-//private void registerUser() {
-//String user = userField.getText().trim();
-//String pass = new String(passField.getPassword());
-//
-//if (user.isEmpty() || pass.isEmpty()) {
-//    JOptionPane.showMessageDialog(this, "Por favor, completa ambos campos.", "Aviso", JOptionPane.WARNING_MESSAGE);
-//    return;
-//}
-//
-//if (validUsers.containsKey(user)) {
-//    JOptionPane.showMessageDialog(this, "El usuario ya existe.", "Error", JOptionPane.ERROR_MESSAGE);
-//} else {
-//    validUsers.put(user, pass);
-//    saveUsers();
-//    JOptionPane.showMessageDialog(this, "Usuario registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-//}
-//}
-//
-//// ✅ Guardar usuarios en archivo
-//private void saveUsers() {
-//try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
-//    out.writeObject(validUsers);
-//} catch (IOException e) {
-//    JOptionPane.showMessageDialog(this, "Error al guardar usuarios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-//}
-//}
-//
 //// ✅ Cargar usuarios desde archivo (si existe)
 //@SuppressWarnings("unchecked")
 //private HashMap<String, String> loadUsers() {
@@ -157,11 +144,3 @@ public class Ventana1Login extends JFrame {
 //}
 //}
 //
-//// ✅ Método main
-//public static void main(String[] args) {
-//SwingUtilities.invokeLater(() -> {
-//    new Ventana1Login().setVisible(true);
-//});
-//}
-//}
-//   
