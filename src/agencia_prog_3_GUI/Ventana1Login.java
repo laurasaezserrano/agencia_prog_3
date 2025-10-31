@@ -65,7 +65,9 @@ public class Ventana1Login extends JFrame {
         loginButton.addActionListener(e -> checkLogin());
         //registerButton.addActionListener(e -> registerUser());
     }
-    // IAG (CHAT GPT)
+    
+    
+    // IAG (CHAT GPT) - Método LoadUsers
     @SuppressWarnings("unchecked")
     private HashMap<String, String> loadUsers() {
         File file = new File(FILE_NAME);

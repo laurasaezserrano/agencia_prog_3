@@ -9,11 +9,13 @@ public class VentanaContacto extends JFrame {
         
         // Información de la Agencia formateada con saltos de línea (\n)
         String infoAgencia = 
-        	//IAG(Gemini) - Texto Generado por IA
+        		
+        	//IAG(Gemini) - Texto Generado por IA (info)
+        		
             "========================================\n" +
             "      AGENCIA PROG 3 - CONTACTO         \n" +
             "========================================\n\n" +
-            "Dirección:          Calle Ficticia No. 123, Ciudad de Programación\n" +
+            "Dirección:          Calle Ficticia No. 10, Ciudad de Programación\n" +
             "Teléfono Principal: +34 555 123 456\n" +
             "Email de Soporte:   soporte@agenciaprog3.com\n" +
             "Email Comercial:    comercial@agenciaprog3.com\n\n" +
