@@ -5,9 +5,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 
 public class Ventana1Login extends JFrame {
@@ -37,6 +39,7 @@ public class Ventana1Login extends JFrame {
         userField = new JTextField();
         passField = new JPasswordField();
         loginButton = new JButton("Iniciar sesión");
+        registerButton = new JButton ("Registrarse");
         statusLabel = new JLabel("", SwingConstants.CENTER);
 
         // Añadimos los elementos al panel
@@ -46,6 +49,7 @@ public class Ventana1Login extends JFrame {
         panel.add(passField);
         panel.add(new JLabel());
         panel.add(loginButton);
+        panel.add(registerButton);
 
         add(panel, BorderLayout.CENTER);
         add(statusLabel, BorderLayout.SOUTH);
@@ -117,11 +121,12 @@ public class Ventana1Login extends JFrame {
         }
     }
     
-    //IAG (CHAT GPT)
     // Guardar usuarios en archivo
     private void saveUsers() {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
-            out.writeObject(validUsers);
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME))) {
+            for (String user : validUsers.keySet()) {
+                writer.println(user + ":" + validUsers.get(user));
+            }
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
@@ -129,7 +134,8 @@ public class Ventana1Login extends JFrame {
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
+    
+    //MAIN
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Ventana1Login().setVisible(true));
     }
