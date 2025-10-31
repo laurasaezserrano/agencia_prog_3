@@ -26,22 +26,23 @@ public class Ventana1Login extends JFrame {
         validUsers = new HashMap<>(); // Aquí se cargan los usuarios que se han registrado correctamente
 
         setTitle("Bienvenid@!");
-        setSize(350, 200);
+        setSize(350, 160);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 2, 5, 5));
+        panel.setLayout(new GridLayout(4, 2, 3, 4));
 
         JLabel userLabel = new JLabel("Usuario:");
         JLabel passLabel = new JLabel("Contraseña:");
         userField = new JTextField();
         passField = new JPasswordField();
         loginButton = new JButton("Iniciar sesión");
-        registerButton = new JButton ("Registrarse");
+        //registerButton = new JButton ("Registrarse");
         statusLabel = new JLabel("", SwingConstants.CENTER);
-
+        
+        
         // Añadimos los elementos al panel
         panel.add(userLabel);
         panel.add(userField);
@@ -49,14 +50,20 @@ public class Ventana1Login extends JFrame {
         panel.add(passField);
         panel.add(new JLabel());
         panel.add(loginButton);
-        panel.add(registerButton);
+        //panel.add(registerButton);
+        
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panel.add(new JLabel()); // Espacio vacío en la primera columna
+        panel.add(new JLabel()); // Espacio vacío en la segunda columna
+        buttonPanel.add(loginButton); // Agregamos el botón centrado
+        panel.add(buttonPanel);
 
         add(panel, BorderLayout.CENTER);
         add(statusLabel, BorderLayout.SOUTH);
 
         // Action listeners
         loginButton.addActionListener(e -> checkLogin());
-        registerButton.addActionListener(e -> registerUser());
+        //registerButton.addActionListener(e -> registerUser());
     }
     // IAG (CHAT GPT)
     @SuppressWarnings("unchecked")
