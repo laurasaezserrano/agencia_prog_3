@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -25,10 +27,18 @@ public class CuadriculaOfertas extends JFrame{
 			boton.setPreferredSize(new Dimension(200, 120));
 //			boton.setVerticalTextPosition(SwingConstants.TOP);
 //			boton.setHorizontalTextPosition(SwingConstants.CENTER);
+//			boton.addActionListener(new ActionListener() {
+//				
+//				@Override
+//				public void actionPerformed(ActionEvent e) {
+//					abriroferta(numero);
+//					
+//				}
+//			});
+			
 			panel1.add(boton);			
 		}
 		
-	
 		
 		mainpanel.add(panel1);
 		add(mainpanel);
@@ -48,6 +58,13 @@ public class CuadriculaOfertas extends JFrame{
 		oferta.setHorizontalAlignment(JTextField.CENTER);
 		oferta.setFont(new Font("Times new Roman", Font.BOLD, 25));
 		add(oferta, BorderLayout.NORTH);
+		
+//		private void abriroferta(int numero) {
+//			JFrame ventanaoferta = new JFrame("Oferta" + numero);
+//			ventanaoferta.setSize(800, 500);
+//			
+//			
+//		}
 		
 	}
 	
