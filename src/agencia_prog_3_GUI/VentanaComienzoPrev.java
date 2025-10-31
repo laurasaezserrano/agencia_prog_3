@@ -47,7 +47,7 @@ public class VentanaComienzoPrev extends JFrame{
 	    	//Ajustamos el tamaño de la imagen al tamaño del layout - IA (Porque causaba problemas el tamaño)
 	    	imagenAjustada = fondo.getScaledInstance(600, 400, Image.SCALE_SMOOTH);
 	    	ImageIcon image = new ImageIcon(imagenAjustada);
-	    	imagenLabel.setIcon(imageIcon); 
+	    	imagenLabel.setIcon(image); 
 	        imagenLabel.setText(null);
 	        
 	    } catch (IOException e){
