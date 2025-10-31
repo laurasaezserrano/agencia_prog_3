@@ -92,7 +92,7 @@ public class Ventana1Login extends JFrame {
         }
 
         if (validUsers.containsKey(user) && validUsers.get(user).equals(pass)) {
-            statusLabel.setText("✅ Bienvenido, " + user + "!");
+            statusLabel.setText("Bienvenido, " + user + "!"); //Parte inferior del Layout
             JOptionPane.showMessageDialog(this, "Inicio de sesión correcto.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         } else if (!validUsers.containsKey(user)) {
             int option = JOptionPane.showConfirmDialog(this, "El usuario no está registrado. ¿Deseas registrarte?",
