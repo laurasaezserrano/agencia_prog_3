@@ -24,6 +24,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+//FALTA
+//Añadir boton de reserva para que acabe de confirmar la reserva con los datos necesarios y añadirla a su perfil
+
 public class CuadriculaOfertas extends JFrame{
 	private JTextField oferta;
 	private JTextField descripcionoferta;
