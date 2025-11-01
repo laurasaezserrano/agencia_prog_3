@@ -83,31 +83,45 @@ public class CuadriculaOfertas extends JFrame{
 		
 		//Descripciones para cada oferta (predefinidas)
 		 String[] descripciones = {
-		        "¡Descubre las playas paradisíacas del Caribe! Incluye hotel 5 estrellas, vuelo directo y todo incluido. " +
-		        "Disfruta de aguas cristalinas, arena blanca y un clima perfecto durante todo el año.",
+		        "¡Descubre las playas paradisíacas del Caribe! \nIncluye vuelo directo desde Madrid con estancia en el Hotel Palace Aurora (4⭐) junto con un todo incluido. " +
+		        "Disfruta de aguas cristalinas, arena blanca, café de origen, ritmo caribeño y clima perfecto durante todo el año." + "Este maravilloso paquete incluye un city tour"
+		        		+ "por La Candelaria, ruta del cafe y cata de origen, visita a la isla colombiana de San Andres, famosa por su 'mar de los 7 colores', alli podras hacer snorkel "
+		        		+ "y ver una enorme diversidad de vida marina, tambien visitaras Cartagena de Indias donde apreciaras la ciudad amurallada y las Islas del Rosario.",
 		        
-		        "Escapada romántica a París. Visita la Torre Eiffel, el Louvre y pasea por los Campos Elíseos. " +
-		        "Incluye hotel boutique en el centro, desayuno continental y tour guiado por la ciudad.",
+		        "Escapada romántica a París, 'La Ciudad de la Luz' y 'La Ciudad del Amor'. \n Visita la Torre Eiffel, el Louvre y pasea por los Campos Elíseos. " +
+		        "Incluye vuelo + estancia en Suites Andres (4★), desayuno continental y tour guiado por la ciudad, asi como crucero al atardecer por el rio Sena y dia completo en "
+		        + "Disneyland® Paris (opcion de familias).",
 		        
-		        "Aventura en los Alpes Suizos. Montañas nevadas y pueblos encantadores te esperan. " +
-		        "Incluye teleférico panorámico, fondue suizo, chocolate artesanal y alojamiento en chalet alpino.",
+		        "Aventura en los Alpes Suizos con estancia en el Hotel Montaña (5★) ubicado en Zurich, Suiza. \nMontañas nevadas, lagos turquesa y pueblos encantadores te esperan. " +
+		        "\nEste paquete inclute vuelo directo desde Madrid, entrada para el teleférico panorámico por Lucerna y Monte Pilatus, dia completo por Interlaken & Jungfraujoch, Titlis: puente colgante y glaciar, "
+		        + "tren panoramico Glacier Express, cata de comida tradicional como el fondue suizo o el chocolate artesanal entre otras muchas actividades. ",
 		        
-		        "Tour gastronómico por Italia. Roma, Florencia y Venecia te esperan. " +
-		        "Incluye catas de vino, clases de cocina italiana y visitas a los monumentos más emblemáticos.",
+		        "El Resort Victoria (5★) te espera en Roma. \nNo te pierdas la historia viva, las plazas y la gran gastronoia italiana. \nIncluye catas de vino, visita al Vaticano, dia completo en Florencia, Napoles o Pompeya,"
+		        + " clases de cocina italiana, una inigualable ruta gastronomica por Trastevere y visitas a los monumentos más emblemáticos como el Coliseo.",
 		        
+		        //cambiar imagen 5 a imagen de Toronto
 		        "Safari fotográfico en Kenia. Observa la fauna salvaje en su hábitat natural. " +
 		        "Alojamiento en lodge de lujo, guía experto y transporte 4x4 para avistamiento de animales.",
 		        
-		        "Crucero por el Mediterráneo. Barcelona, Nápoles, Atenas y más. " +
-		        "Todo incluido: comidas, entretenimiento y excursiones en cada puerto. Barco de última generación.",
+		        //hay que cmabiar imagen 6 a una de tokyo
+		        "Tokio es un contraste perfecto entre templos milenarios y barrios futuristas. Desde Asakusa a Shibuya, la ciudad vibra 24/7 con izakayas, sushi de mercado y centros comerciales "
+		        + "infinitos. Ideal para foodies, parejas y viajeros curiosos. Tokio en 4 días: ¡vive Japón a tu ritmo con vuelo desde Madrid y estancia en uno de los mejores hoteles de la ciudad, "
+		        + "el Hotel Bahia (5★). \nPodras valorar Tokyo desde el Mirador Tokyo Skytree y presenciar la cantidad de gente que transcurre por el cruce de Shibuya. Podras apreciar la cultura pop y tech asi como visitar el templo de "
+		        + "Nikko y la ciudad de Kamakura. Tambien podras pasar un dia en Hakone y ver las vistas del Monte Fuji." ,
 		        
-		        "Relax en Bali. Templos milenarios, playas y cultura única. " +
-		        "Incluye spa, yoga matinal, excursiones a arrozales y visita a templos sagrados.",
+		        "Hotel Palace Pacifico (4⭐) en Bangkok + vuelo directo desde Madrid. \n Cultura milenaria, templos "
+		        + "dorados y vida callejera vibrante. Ideal para combinar ciudad + naturaleza, con opción de extensión "
+		        + "a Bali uno de los destinos mas aclamados de Tailandia. " + "Este paquete incluye aparte del vuelo y hotel, "
+		        		+ "excuriones como: Tours guiados por el Gran Palacio, Wat Pho y Wat Arun, un dia completo por las ruinas de "
+		        		+ "Ayutthaya, visita a los mercados flotantes, spa, yoga matinal, excursiones a arrozales y visita a la faosa ciudad de Ubud.",
 		        
-		        "Nueva York, la ciudad que nunca duerme. Broadway, Central Park y Times Square. " +
-		        "Paquete con entradas a musicales, tour por Manhattan y subida al Empire State.",
+		        "Hotel Resort Imperial (4⭐) en Nueva York + vuelo directo desde Madrid. \n" + "'La ciudad que nunca duerme' ofrece rascacielos, "
+		        		+ "cultura pop, museos, musicales de Broadway, barrios iconicos como Times Square, Central Park y diversidad de planes para "
+		        		+ "todo tipo de viajeros. \n"+ "El paquete incluye diferentes excursiones como: Paseo en ferry hasta la Estatua de la Libertad, "
+		        				+ "entradas a musicales, tour por Manhattan, ruta gastronomica y subida al Empire State.",
 		        
-		        "Ruta por las Auroras Boreales en Islandia. Experiencia única e irrepetible. " +
+		        //cambiar imagen 9 por imagen de Mexico
+		        "Aventura nordica y ruta por las Auroras Boreales en Islandia. Experiencia única e irrepetible. " +
 		        "Incluye tour fotográfico nocturno, baño en aguas termales y alojamiento con vistas privilegiadas."
 		    };
 		
