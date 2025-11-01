@@ -29,27 +29,16 @@ public class VentanaComienzoPrev extends JFrame{
 		setSize(600,400);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
-	
-		//Creamos un tipo de panel que permite superponer capas - Idea IA + Implementacion Propia
-		//JLayerdedPane
-		JLayeredPane layeredPane = new JLayeredPane();
-		layeredPane.setPreferredSize(new Dimension(600,400));
+		setLayout(null);
 		
 		//Ruta de la Imagen de Fondo
-		//"C:\Users\laura.saez.serrano\prog apps\agencia_prog_3\images\fondoVentana0.png"
-		JLabel imagenLabel = new JLabel();
-	    imagenLabel.setHorizontalAlignment(SwingConstants.CENTER);
 	    String rutaImagen = "images\\fondoVentana0.png";
-		ImageIcon imageIcon = null;
 		Image imagenAjustada = null ;
+		
 		try {
-	    	Image fondo = ImageIO.read(new File(rutaImagen));
-	    	//Ajustamos el tamaño de la imagen al tamaño del layout - IA (Porque causaba problemas el tamaño)
-	    	imagenAjustada = fondo.getScaledInstance(600, 400, Image.SCALE_SMOOTH);
-	    	ImageIcon image = new ImageIcon(imagenAjustada);
-	    	imagenLabel.setIcon(image); 
-	        imagenLabel.setText(null);
-	        
+	    	imagenAjustada = ImageIO.read(new File(rutaImagen));
+	    	imagenAjustada = imagenAjustada.getScaledInstance(600, 400, Image.SCALE_SMOOTH);
+	    	
 	    } catch (IOException e){
 	    	System.err.println("Imagen no cargada correctamente: " + e.getMessage());
 	    	//Cuando la imagen no se carga, mostramos el siguiente mensaje:
@@ -57,9 +46,10 @@ public class VentanaComienzoPrev extends JFrame{
 	                "Error de Carga", JOptionPane.ERROR_MESSAGE);
 	    }
 	    
-	    JPanel panelImagen = new JPanel(new FlowLayout(FlowLayout.CENTER));
-	    panelImagen.add(imagenLabel);
-	    layeredPane.add(panelImagen,BorderLayout.NORTH);
+//	    JPanel panelImagen = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JLabel fondoLabel = new JLabel(new ImageIcon(imagenAjustada));
+		fondoLabel.setBounds(0, 0, 600, 400);
+	
 	    
 	    //JButton de comienzo
 	    JButton boton = new JButton("Start");
@@ -68,19 +58,14 @@ public class VentanaComienzoPrev extends JFrame{
 	    boton.setBackground(new Color(0, 120, 215, 180));
 	    boton.setOpaque(true);
 	    boton.setBorderPainted(false);
-		
-		    //Posicion en la imagen
-		    int botonAncho = 85;
-		    int botonAltura = 50;
 		    
 		    //Posicion X - Centrado Horizontalmente
-		    int botonX = (layeredPane.getPreferredSize().width - botonAncho) / 2;
+	    	int margen = 20;
+		    int botonX = 400;
 		    //Posicion Y - Centrado Verticalmente
-		    int botonY = (layeredPane.getPreferredSize().height - botonAltura) / 2;
+		    int botonY = 60;
 		    
-		    boton.setBounds(botonX, botonY, botonAncho, botonAltura);
-		    layeredPane.add(boton, JLayeredPane.PALETTE_LAYER);//.PALETTE_LAYER para insertar en una capa superior
-		    this.add(layeredPane);
+		    boton.setBounds(botonX, botonY, 85, 50);
     
 	//Action Listener
 	boton.addActionListener(new ActionListener(){
@@ -101,7 +86,12 @@ public class VentanaComienzoPrev extends JFrame{
             new Ventana1Login();
         }
     });
-}
+
+	add(fondoLabel);
+	add(boton);
+	setVisible(true);
+	
+	}
 	//MAIN
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
