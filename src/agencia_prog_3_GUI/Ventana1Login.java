@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -149,8 +150,9 @@ public class Ventana1Login extends JFrame {
     // Guardar usuarios en archivo
     private void saveUsers(String user, String password) {
         try {
-        		PrintWriter pw =   new PrintWriter("UserCSV.csv") ;
-                pw.println(user + "," + password);
+        	BufferedWriter  pw =   new BufferedWriter (new FileWriter("UserCSV.csv", true)) ;
+                pw.write(user + "," + password);
+                pw.newLine();
             
         } catch (IOException e) {
             e.printStackTrace();
