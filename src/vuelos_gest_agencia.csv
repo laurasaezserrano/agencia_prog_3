@@ -1,0 +1,54 @@
+import pandas as pd
+import random
+from datetime import datetime, timedelta
+
+# Cargar archivo original
+df = pd.read_csv("vuelosagencia.csv", sep="\t")  # Usa \t si es TSV (tabulado)
+
+# Limpiar nombres de columnas
+df.columns = df.columns.str.strip().str.lower()
+
+# Eliminar vuelos donde origen = destino
+df = df[df['origen'].str.strip().str.lower() != df['destino'].str.strip().str.lower()]
+
+# Lista de nuevos destinos desde Madrid
+destinos = [
+    "Bogotá", "Bangkok", "Venecia", "Islandia", "Edimburgo", "Budapest", "Varsovia", "Moscú",
+    "Singapur", "Estambul", "El Cairo", "Dubái", "Melbourne", "Sídney", "Pekín", "Seúl", "Tokio",
+    "São Paulo", "Río de Janeiro", "Lima", "Santiago", "Buenos Aires", "México", "Toronto",
+    "Los Ángeles", "Oslo", "Atenas", "Praga", "Viena", "Zúrich", "Ámsterdam", "Lisboa", "Londres",
+    "Berlín", "Roma", "París"
+]
+
+# Aerolíneas posibles
+aerolineas = ["Iberia", "Air Europa", "Lufthansa", "Emirates", "Qatar Airways", "KLM",
+              "Air France", "British Airways", "Turkish Airlines"]
+
+# Generar vuelos desde Madrid
+nuevos_vuelos = []
+for destino in destinos:
+    fecha_salida = datetime.now() + timedelta(days=random.randint(7, 180))
+    fecha_regreso = fecha_salida + timedelta(days=random.randint(3, 15))
+    aerolinea = random.choice(aerolineas)
+    precio_economy = random.randint(150, 1500)
+    precio_business = precio_economy + random.randint(200, 1200)
+    plazas = random.randint(20, 300)
+    
+    nuevos_vuelos.append({
+        "Origen": "Madrid",
+        "Destino": destino,
+        "Fecha Salida": fecha_salida.strftime("%d/%m/%Y"),
+        "Fecha Regreso": fecha_regreso.strftime("%d/%m/%Y"),
+        "Aerolinea": aerolinea,
+        "Precio Economy": f"{precio_economy} €",
+        "Precio Business": f"{precio_business} €",
+        "Plazas Disponibles": plazas
+    })
+
+# Combinar con los existentes
+df_nuevos = pd.DataFrame(nuevos_vuelos)
+df_final = pd.concat([df, df_nuevos], ignore_index=True)
+
+# Guardar resultado
+df_final.to_csv("vuelosagencia_modificado.csv", index=False)
+print("✅ Archivo 'vuelosagencia_modificado.csv' generado correctamente.")
