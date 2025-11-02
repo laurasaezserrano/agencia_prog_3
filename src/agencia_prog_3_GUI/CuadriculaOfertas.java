@@ -9,8 +9,12 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -24,9 +28,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import java.util.List;
 
 //FALTA
 //Añadir boton de reserva para que acabe de confirmar la reserva con los datos necesarios y añadirla a su perfil
+//Crear metodo especificado despues de Lectura CSV
 
 public class CuadriculaOfertas extends JFrame{
 	private JTextField oferta;
@@ -63,10 +69,21 @@ public class CuadriculaOfertas extends JFrame{
 //			panel1.add(boton);	
 //		}
 		
+		String[] ciudadesOferta = {
+			    "Caribe",      
+			    "Paris",       
+			    "Suiza",       
+			    "Roma",        
+			    "Toronto",     
+			    "Tokyo",       
+			    "Bangkok",     
+			    "Nueva York",  
+			    "Oslo"         
+			};
 		
 		for (int i = 0; i < 9; i++) {
 			int numero = i + 1;
-			JButton boton = new JButton("Oferta " + numero);
+			JButton boton = new JButton(ciudadesOferta [numero-1]);
 		
 			boton.setPreferredSize(new Dimension(200, 120));
 //			boton.setVerticalTextPosition(SwingConstants.TOP);
@@ -75,14 +92,14 @@ public class CuadriculaOfertas extends JFrame{
 			boton.setBorder(new LineBorder(Color.BLACK, 2));
 			boton.addActionListener(new ActionListener() {
 				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					abriroferta(numero);	
-				}
-			});
-			
-			panel1.add(boton);			
-		}
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						abriroferta(numero);	
+						}
+					});
+				
+				panel1.add(boton);			
+			}
 		
 		
 		mainpanel.add(panel1);
@@ -115,6 +132,7 @@ public class CuadriculaOfertas extends JFrame{
 		ventanaoferta.setLocationRelativeTo(this);
 //		ventanaoferta.setLayout(new BorderLayout(10, 10));
 		
+		//CAMBIAR EL HOTEL PARA QUE SEA UNO DE LA LISTA DE HOTELES RANDOM
 		//Descripciones para cada oferta (predefinidas)
 		 String[] descripciones = {
 		        "¡Descubre las playas paradisíacas del Caribe! \nIncluye vuelo directo desde Madrid con estancia en el Hotel Palace Aurora (4⭐) junto con un todo incluido. " 
@@ -160,7 +178,7 @@ public class CuadriculaOfertas extends JFrame{
 		        + "todo tipo de viajeros. \n"+ "El paquete incluye diferentes excursiones como: Paseo en ferry hasta la Estatua de la Libertad, "
 		        + "entradas a musicales, tour por Manhattan, ruta gastronomica y subida al Empire State.",
 		        
-		        //cambiar imagen 9 por imagen de Noruega
+		        //cambiar imagen 9 por imagen de Noruega - Oslo es la CAPITAL DE NORUEGA
 		        "Oslo te espera con aire puro, arquitectura vanguardista y el encanto de los fiordos noruegos. Disfruta de una escapada nórdica desde Madrid con vuelos directos "
 		        + "y alojamiento 3★ en el Hotel Plaza Laguna. ¡Descubre el norte en su estado más puro. \nOslo combina modernidad y naturaleza salvaje en una ciudad compacta y "
 		        + "acogedora. Entre sus montañas, fiordos y museos, descubriras una capital limpia, segura y culturalmente vibrante. Perfecta para quienes buscan una escapada "
@@ -230,13 +248,78 @@ public class CuadriculaOfertas extends JFrame{
 	}
 	
 	
-	
+	static class Hotel {
+        private String nombre;
+        private String ciudad;
+        private String pais;
+        private int estrellas;
+        private int habitaciones;
+        private double precio;
+        
+        public Hotel(String nombre, String ciudad, String pais, int estrellas, int habitaciones, double precio) {
+            this.nombre = nombre;
+            this.ciudad = ciudad;
+            this.pais = pais;
+            this.estrellas = estrellas;
+            this.habitaciones = habitaciones;
+            this.precio = precio;
+        }
+        
+        public String getNombre() { return nombre; }
+        public String getCiudad() { return ciudad; }
+        public String getPais() {return pais;}
+        public int getHabitaciones() {return habitaciones;}
+        public int getEstrellas() { return estrellas; }
+        public double getPrecio() { return precio; }
+        
+	//Lectura del CSV
+	public HashMap<String, List<Hotel>> cargarHotelesDesdeCSV(String rutaArchivo) {
+	    HashMap<String, List<Hotel>> hotelesPorCiudad = new HashMap<>();
+	    
+	    try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
+	        String linea;
+	        int numeroLinea = 0;
+	        
+	     // Saltar la cabecera
+	        while ((linea = br.readLine()) != null) {
+	        	numeroLinea++;
+	        	if (numeroLinea <= 4)
+	                continue;
+	            }
+	          
+	            String[] datos = linea.split(",");
+	            
+	            if (datos.length >= 6) {
+	                String nombre = datos[0].trim();
+	                String ciudad = datos[1].trim();
+	                String pais = datos[2].trim();
+	                int estrellas = Integer.parseInt(datos[3].trim());
+	                int habitaciones = Integer.parseInt(datos[4].trim());
+	                double precio = Double.parseDouble(datos[5].trim());
+	                
+	                Hotel hotel = new Hotel(nombre, ciudad, pais, estrellas,habitaciones, precio);
+	                
+	                // Añadir al HashMap
+	                hotelesPorCiudad.putIfAbsent(ciudad, new ArrayList<>());
+	                hotelesPorCiudad.get(ciudad).add(hotel);
+	            }
+	        } catch (IOException e) {
+	        System.err.println("Error al leer el archivo: " + e.getMessage());
+	        } catch (NumberFormatException e) {
+	        System.err.println("Error al convertir datos: " + e.getMessage());
+	        }
+	    
+		    return hotelesPorCiudad;
+		}
+		
+	// FALTA METODO A CREAR PARA QUE CON EL HASHMAP CREADO ACCEDA A LA CIUDAD Y UN HOTEL RANDOM (DISPONIBLE)
+	//TENER EN CUENTA LOS DESTINOS CON MÁS DE UNA PARADA, 1 HOTEL POR PARADA
 	
 	
 	public static void main(String[] args) {
 		CuadriculaOfertas ofertas = new CuadriculaOfertas();
 		ofertas.setVisible(true);
+		}
 	}
-	
-	
 }
+
