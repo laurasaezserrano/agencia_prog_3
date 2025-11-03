@@ -117,6 +117,7 @@ public class Ventana1Login extends JFrame {
                     "Usuario no encontrado", JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 registerUser();
+//                JOptionPane.showMessageDialog(this, "Registro realizado con éxito", "Continuar", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
            // Usuario no existe
@@ -153,7 +154,8 @@ public class Ventana1Login extends JFrame {
         	BufferedWriter  pw =   new BufferedWriter (new FileWriter("UserCSV.csv", true)) ;
                 pw.write(user + "," + password);
                 pw.newLine();
-                pw.close();            
+                pw.close();
+                
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
