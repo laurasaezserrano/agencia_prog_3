@@ -200,7 +200,7 @@ public class CuadriculaOfertas extends JFrame{
 	    String rutaImagen = "images/Oferta" + numero + ".png";
 	    try {
 	    	Image originalImage = ImageIO.read(new File(rutaImagen));
-	        
+	        // Falta colocal la imagen a la derecha (BorderLayout.EAST) 
 	        // Define las dimensiones que quieres para la imagen en la ventana (ej: 400x300)
 	        int anchoDeseado = 300; 
 	        int altoDeseado = 300; 
