@@ -153,7 +153,7 @@ public class Ventana1Login extends JFrame {
         	BufferedWriter  pw =   new BufferedWriter (new FileWriter("UserCSV.csv", true)) ;
                 pw.write(user + "," + password);
                 pw.newLine();
-            
+                pw.close();            
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
