@@ -35,6 +35,7 @@ import java.util.Random;
 //Crear metodo especificado despues de Lectura CSV
 
 public class CuadriculaOfertas extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private JTextField oferta;
 	private JTextField descripcionoferta;
 	
