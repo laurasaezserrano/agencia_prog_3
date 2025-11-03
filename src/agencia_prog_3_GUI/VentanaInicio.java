@@ -35,14 +35,20 @@ public class VentanaInicio extends JFrame{
 			boton.setPreferredSize(new Dimension(220, 180));
 			boton.setBackground(new Color(255, 255, 255));
 			boton.setBorder(new LineBorder(Color.BLACK, 2));
-//			boton.addActionListener(new ActionListener() {
-//				
-//				@Override
-//				public void actionPerformed(ActionEvent e) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//			});
+			boton.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (nombresboton[numero-1].equals("Contacto")) {
+						VentanaContacto vContacto = new VentanaContacto();
+						vContacto.setVisible(true);
+					} else if (nombresboton[numero-1].equals("Ofertas")) {
+						CuadriculaOfertas vOfertas = new CuadriculaOfertas();
+						vOfertas.setVisible(true);
+					}
+					
+				}
+			});
 		panel1.add(boton);
 		}
 		mainpanel.add(panel1);
