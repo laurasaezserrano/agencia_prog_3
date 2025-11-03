@@ -23,7 +23,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 public class VentanaComienzoPrev extends JFrame{
-// Se inicia la app con una imagen de fondo y un botón donde poder acceder
+	private static final long serialVersionUID = 1L;
+	// Se inicia la app con una imagen de fondo y un botón donde poder acceder
 	public  VentanaComienzoPrev() {
 		super.setTitle("Bienvenid@! / Welcome! / Ongi Etorri!");
 		setSize(600,400);

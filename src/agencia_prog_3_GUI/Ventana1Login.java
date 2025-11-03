@@ -17,7 +17,8 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 
 public class Ventana1Login extends JFrame {
-    private JTextField userField;
+	private static final long serialVersionUID = 1L;
+	private JTextField userField;
     private JPasswordField passField;
     private JButton loginButton;
     private JButton registerButton;

@@ -5,7 +5,9 @@ import javax.swing.JOptionPane;
 
 public class VentanaContacto extends JFrame {
 
-    public static void main(String[] args) {
+	private static final long serialVersionUID = 1L;
+
+	public static void main(String[] args) {
         
         // Información de la Agencia formateada con saltos de línea (\n)
         String infoAgencia = 

@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
 public class VentanaInicio extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private JTextField titulo;
 	
 	public VentanaInicio(){
