@@ -3,10 +3,14 @@ package agencia_prog_3_GUI;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
@@ -23,7 +27,7 @@ public class Ventana1Login extends JFrame {
     private HashMap<String, String> validUsers;
 
     public Ventana1Login() {
-        validUsers = new HashMap<>(); // Aquí se cargan los usuarios que se han registrado correctamente
+        validUsers = loadUsers(); // Aquí se cargan los usuarios que se han registrado correctamente
 
         setTitle("Bienvenid@!");
         setSize(350, 160);
@@ -66,21 +70,33 @@ public class Ventana1Login extends JFrame {
         //registerButton.addActionListener(e -> registerUser());
     }
     
-    
-    // IAG (CHAT GPT) - Método LoadUsers
-    @SuppressWarnings("unchecked")
-    private HashMap<String, String> loadUsers() {
-        File file = new File(FILE_NAME);
+   
+    private HashMap<String, String> loadUsers () {
+        File file = new File("UserCSV.csv");
         if (!file.exists()) return new HashMap<>();
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
-            return (HashMap<String, String>) in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
+        HashMap<String, String> usuarios = new HashMap<>();
+        try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+        	
+        	String linea = null;
+        	int numlinea = 0;
+        	
+        	while ((linea = in.readLine()) != null) {
+        		numlinea++;
+	        	if (numlinea == 1 && linea.contains("Usuario")|| linea.contains("contraseña")) {
+	        		continue;
+	        	}
+	        	String[] data = linea.split(",");
+	        	String usuario = data[0].trim();
+	        	String password = data[1].trim();
+	        	usuarios.put(usuario, password);
+        	}
+        } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(null,
                     "Error al cargar usuarios: " + e.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
-            return new HashMap<>();
         }
+        return usuarios;
     }
     
     //Comprobamos si esta en la base de datos
@@ -121,28 +137,30 @@ public class Ventana1Login extends JFrame {
 
         if (validUsers.containsKey(user)) {
             JOptionPane.showMessageDialog(this, "El usuario ya existe.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         } else {
             validUsers.put(user, pass);
             validUsers.put(user, pass);
-            saveUsers(); // Guardamos en archivo
+            saveUsers(user, pass); // Guardamos en archivo
             JOptionPane.showMessageDialog(this, "Usuario registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             statusLabel.setText("Usuario: " + user + " registrado");
         }
     }
     
     // Guardar usuarios en archivo
-    private void saveUsers() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME))) {
-            for (String user : validUsers.keySet()) {
-                writer.println(user + ":" + validUsers.get(user));
-            }
+    private void saveUsers(String user, String password) {
+        try {
+        	BufferedWriter  pw =   new BufferedWriter (new FileWriter("UserCSV.csv", true)) ;
+                pw.write(user + "," + password);
+                pw.newLine();
+            
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
                     "Error al guardar usuarios: " + e.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
+        	}
         }
-    }
     
     //MAIN
     public static void main(String[] args) {
