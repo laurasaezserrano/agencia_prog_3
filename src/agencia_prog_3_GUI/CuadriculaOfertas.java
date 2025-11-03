@@ -417,11 +417,11 @@ public class CuadriculaOfertas extends JFrame{
         public int getEstrellas() { return estrellas; }
         public double getPrecio() { return precio; }
 
-
+	}
 	public static void main(String[] args) {
 		CuadriculaOfertas ofertas = new CuadriculaOfertas();
 		ofertas.setVisible(true);
 		}
-	}
+	
 }
 
