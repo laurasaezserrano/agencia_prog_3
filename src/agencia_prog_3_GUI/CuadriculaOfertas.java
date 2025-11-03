@@ -38,8 +38,10 @@ public class CuadriculaOfertas extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private JTextField oferta;
 	private JTextField descripcionoferta;
+	private HashMap<String, List<Hotel>> hotelesPorCiudad;
 	
 	public CuadriculaOfertas() {
+		this.hotelesPorCiudad = cargarHotelesDesdeCSV();
 		JPanel mainpanel = new JPanel();
 		JPanel panel1 = new JPanel(new GridLayout(3, 3, 20, 20));
 		
@@ -256,7 +258,141 @@ public class CuadriculaOfertas extends JFrame{
 		ventanaoferta.setVisible(true);
 	}
 	
+	//Lectura del CSV
+		public HashMap<String, List<Hotel>> cargarHotelesDesdeCSV() {
+		    HashMap<String, List<Hotel>> hotelesPorCiudad = new HashMap<>();
+		    
+		    try (BufferedReader br = new BufferedReader(new FileReader("hoteles_mundiales_variedad_EUR.csv"))) {
+		        String linea;
+		        int numeroLinea = 0;
+		        
+		     // Saltar la cabecera
+		        while ((linea = br.readLine()) != null) {
+		        	numeroLinea++;
+		        	if (numeroLinea <= 4)
+		                continue;
+		            
+		          
+		            String[] datos = linea.split(",");
+		            
+		            if (datos.length >= 6) {
+		                String nombre = datos[0].trim();
+		                String ciudad = datos[1].trim();
+		                String pais = datos[2].trim();
+		                int estrellas = Integer.parseInt(datos[3].trim());
+		                int habitaciones = Integer.parseInt(datos[4].trim());
+		                double precio = Double.parseDouble(datos[5].trim());
+		                
+		                Hotel hotel = new Hotel(nombre, ciudad, pais, estrellas,habitaciones, precio);
+		                
+		                // Añadir al HashMap
+		                hotelesPorCiudad.putIfAbsent(ciudad, new ArrayList<>());
+		                hotelesPorCiudad.get(ciudad).add(hotel);
+		            }
+		        }
+		        } catch (IOException e) {
+		        System.err.println("Error al leer el archivo: " + e.getMessage());
+		        } catch (NumberFormatException e) {
+		        System.err.println("Error al convertir datos: " + e.getMessage());
+		        }
+		    
+			    return hotelesPorCiudad;
+			}
 	
+	//HOTEL MÁS BARATO
+	public Hotel obtenerHotelMasBaratoDeCiudad(HashMap<String, List<Hotel>> hotelesPorCiudad, String ciudad) {
+		List<Hotel> hotelesDisponibles = hotelesPorCiudad.get(ciudad);
+	    
+	    if (hotelesDisponibles == null || hotelesDisponibles.isEmpty()) {
+	        System.err.println("No hay hoteles disponibles en " + ciudad);
+	        return null;
+	    }
+	    
+	    Hotel hotelMasBarato = hotelesDisponibles.get(0);
+	    
+	    for (Hotel hotel : hotelesDisponibles) {
+	        if (hotel.getPrecio() < hotelMasBarato.getPrecio()) {
+	            hotelMasBarato = hotel;
+	        }
+	    }
+	    
+	    return hotelMasBarato;
+	}
+		
+	//MÁS BARATO por ciudad con multiples
+		public List<Hotel> obtenerHotelesMasBaratosMultiplesCiudades(HashMap<String, List<Hotel>> hotelesPorCiudad, String[] ciudades) {
+		    List<Hotel> hotelesSeleccionados = new ArrayList<>();
+		    
+		    for (String ciudad : ciudades) {
+		        Hotel hotelMasBarato = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, ciudad);
+		        
+		        if (hotelMasBarato != null) {
+		            hotelesSeleccionados.add(hotelMasBarato);
+		        } else {
+		            System.err.println("No se pudo obtener hotel para: " + ciudad);
+		        }
+		    }
+		    
+		    return hotelesSeleccionados;
+		}
+	
+		// Método  para obtener los hoteles MÁS BARATOS según el número de oferta
+//		public List<Hotel> obtenerHotelesParaOferta(HashMap<String, List<Hotel>> hotelesPorCiudad, int numeroOferta) {
+//		    List<Hotel> hotelesOferta = new ArrayList<>();
+//		    
+//		    switch (numeroOferta) {
+//		        case 1: // Caribe (Colombia: Bogotá, San Andrés, Cartagena)
+//		            String[] ciudadesCaribe = {"Bogota", "San Andres", "Cartagena"};
+//		            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesCaribe);
+//		            break;
+//		            
+//		        case 2: // París
+//		            Hotel hotelParis = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, "Paris");
+//		            if (hotelParis != null) hotelesOferta.add(hotelParis);
+//		            break;
+//		            
+//		        case 3: // Suiza (Zurich, Lucerna, Interlaken)
+//		            String[] ciudadesSuiza = {"Zurich", "Lucerna", "Interlaken"};
+//		            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesSuiza);
+//		            break;
+//		            
+//		        case 4: // Roma (Roma, Florencia, Nápoles)
+//		            String[] ciudadesItalia = {"Roma", "Florencia", "Napoles"};
+//		            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesItalia);
+//		            break;
+//		            
+//		        case 5: // Toronto
+//		            Hotel hotelToronto = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, "Toronto");
+//		            if (hotelToronto != null) hotelesOferta.add(hotelToronto);
+//		            break;
+//		            
+//		        case 6: // Tokio (Tokio, Nikko, Kamakura, Hakone)
+//		            String[] ciudadesJapon = {"Tokyo", "Nikko", "Kamakura", "Hakone"};
+//		            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesJapon);
+//		            break;
+//		            
+//		        case 7: // Bangkok (Bangkok, Ayutthaya, Ubud)
+//		            String[] ciudadesTailandia = {"Bangkok", "Ayutthaya", "Ubud"};
+//		            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesTailandia);
+//		            break;
+//		            
+//		        case 8: // Nueva York
+//		            Hotel hotelNY = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, "Nueva York");
+//		            if (hotelNY != null) hotelesOferta.add(hotelNY);
+//		            break;
+//		            
+//		        case 9: // Oslo
+//		            Hotel hotelOslo = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, "Oslo");
+//		            if (hotelOslo != null) hotelesOferta.add(hotelOslo);
+//		            break;
+//		            
+//		        default:
+//		            System.err.println("Número de oferta no válido: " + numeroOferta);
+//		    }
+//		    
+//		    return hotelesOferta;
+//		}
+		
 	static class Hotel {
         private String nombre;
         private String ciudad;
@@ -280,140 +416,7 @@ public class CuadriculaOfertas extends JFrame{
         public int getHabitaciones() {return habitaciones;}
         public int getEstrellas() { return estrellas; }
         public double getPrecio() { return precio; }
-        
-	//Lectura del CSV
-	public HashMap<String, List<Hotel>> cargarHotelesDesdeCSV() {
-	    HashMap<String, List<Hotel>> hotelesPorCiudad = new HashMap<>();
-	    
-	    try (BufferedReader br = new BufferedReader(new FileReader("hoteles_mundiales_variedad_EUR.csv"))) {
-	        String linea;
-	        int numeroLinea = 0;
-	        
-	     // Saltar la cabecera
-	        while ((linea = br.readLine()) != null) {
-	        	numeroLinea++;
-	        	if (numeroLinea <= 4)
-	                continue;
-	            }
-	          
-	            String[] datos = linea.split(",");
-	            
-	            if (datos.length >= 6) {
-	                String nombre = datos[0].trim();
-	                String ciudad = datos[1].trim();
-	                String pais = datos[2].trim();
-	                int estrellas = Integer.parseInt(datos[3].trim());
-	                int habitaciones = Integer.parseInt(datos[4].trim());
-	                double precio = Double.parseDouble(datos[5].trim());
-	                
-	                Hotel hotel = new Hotel(nombre, ciudad, pais, estrellas,habitaciones, precio);
-	                
-	                // Añadir al HashMap
-	                hotelesPorCiudad.putIfAbsent(ciudad, new ArrayList<>());
-	                hotelesPorCiudad.get(ciudad).add(hotel);
-	            }
-	        } catch (IOException e) {
-	        System.err.println("Error al leer el archivo: " + e.getMessage());
-	        } catch (NumberFormatException e) {
-	        System.err.println("Error al convertir datos: " + e.getMessage());
-	        }
-	    
-		    return hotelesPorCiudad;
-		}
-	
-	//HOTEL MÁS BARATO
-	public Hotel obtenerHotelMasBaratoDeCiudad(HashMap<String, List<Hotel>> hotelesPorCiudad, String ciudad) {
-		List<Hotel> hotelesDisponibles = hotelesPorCiudad.get(ciudad);
-	    
-	    if (hotelesDisponibles == null || hotelesDisponibles.isEmpty()) {
-	        System.err.println("No hay hoteles disponibles en " + ciudad);
-	        return null;
-	    }
-	    
-	    Hotel hotelMasBarato = hotelesDisponibles.get(0);
-	    
-	    for (Hotel hotel : hotelesDisponibles) {
-	        if (hotel.getPrecio() < hotelMasBarato.getPrecio()) {
-	            hotelMasBarato = hotel;
-	        }
-	    }
-	    
-	    return hotelMasBarato;
-	}
 
-	//MÁS BARATO por ciudad con multiples
-	public List<Hotel> obtenerHotelesMasBaratosMultiplesCiudades(HashMap<String, List<Hotel>> hotelesPorCiudad, String[] ciudades) {
-	    List<Hotel> hotelesSeleccionados = new ArrayList<>();
-	    
-	    for (String ciudad : ciudades) {
-	        Hotel hotelMasBarato = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, ciudad);
-	        
-	        if (hotelMasBarato != null) {
-	            hotelesSeleccionados.add(hotelMasBarato);
-	        } else {
-	            System.err.println("No se pudo obtener hotel para: " + ciudad);
-	        }
-	    }
-	    
-	    return hotelesSeleccionados;
-	}
-
-	// Método  para obtener los hoteles MÁS BARATOS según el número de oferta
-//	public List<Hotel> obtenerHotelesParaOferta(HashMap<String, List<Hotel>> hotelesPorCiudad, int numeroOferta) {
-//	    List<Hotel> hotelesOferta = new ArrayList<>();
-//	    
-//	    switch (numeroOferta) {
-//	        case 1: // Caribe (Colombia: Bogotá, San Andrés, Cartagena)
-//	            String[] ciudadesCaribe = {"Bogota", "San Andres", "Cartagena"};
-//	            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesCaribe);
-//	            break;
-//	            
-//	        case 2: // París
-//	            Hotel hotelParis = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, "Paris");
-//	            if (hotelParis != null) hotelesOferta.add(hotelParis);
-//	            break;
-//	            
-//	        case 3: // Suiza (Zurich, Lucerna, Interlaken)
-//	            String[] ciudadesSuiza = {"Zurich", "Lucerna", "Interlaken"};
-//	            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesSuiza);
-//	            break;
-//	            
-//	        case 4: // Roma (Roma, Florencia, Nápoles)
-//	            String[] ciudadesItalia = {"Roma", "Florencia", "Napoles"};
-//	            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesItalia);
-//	            break;
-//	            
-//	        case 5: // Toronto
-//	            Hotel hotelToronto = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, "Toronto");
-//	            if (hotelToronto != null) hotelesOferta.add(hotelToronto);
-//	            break;
-//	            
-//	        case 6: // Tokio (Tokio, Nikko, Kamakura, Hakone)
-//	            String[] ciudadesJapon = {"Tokyo", "Nikko", "Kamakura", "Hakone"};
-//	            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesJapon);
-//	            break;
-//	            
-//	        case 7: // Bangkok (Bangkok, Ayutthaya, Ubud)
-//	            String[] ciudadesTailandia = {"Bangkok", "Ayutthaya", "Ubud"};
-//	            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesTailandia);
-//	            break;
-//	            
-//	        case 8: // Nueva York
-//	            Hotel hotelNY = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, "Nueva York");
-//	            if (hotelNY != null) hotelesOferta.add(hotelNY);
-//	            break;
-//	            
-//	        case 9: // Oslo
-//	            Hotel hotelOslo = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, "Oslo");
-//	            if (hotelOslo != null) hotelesOferta.add(hotelOslo);
-//	            break;
-//	            
-//	        default:
-//	            System.err.println("Número de oferta no válido: " + numeroOferta);
-//	    }
-//	    
-//	    return hotelesOferta;
-//	}
 
 	public static void main(String[] args) {
 		CuadriculaOfertas ofertas = new CuadriculaOfertas();
