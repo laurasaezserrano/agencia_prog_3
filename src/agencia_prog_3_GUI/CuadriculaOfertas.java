@@ -316,10 +316,11 @@ public class CuadriculaOfertas extends JFrame{
 	//TENER EN CUENTA LOS DESTINOS CON MÁS DE UNA PARADA, 1 HOTEL POR PARADA
 	
 	
+	
+	}
 	public static void main(String[] args) {
 		CuadriculaOfertas ofertas = new CuadriculaOfertas();
 		ofertas.setVisible(true);
 		}
-	}
 }
 
