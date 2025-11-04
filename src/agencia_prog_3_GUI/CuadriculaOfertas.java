@@ -133,7 +133,7 @@ public class CuadriculaOfertas extends JFrame{
 		JFrame ventanaoferta = new JFrame("Oferta" + numero);
 		ventanaoferta.setSize(800, 500);
 		ventanaoferta.setLocationRelativeTo(this);
-//		ventanaoferta.setLayout(new BorderLayout(10, 10));
+		ventanaoferta.setLayout(new BorderLayout(10, 10));
 		
 		//CAMBIAR EL HOTEL PARA QUE SEA UNO DE LA LISTA DE HOTELES RANDOM
 		//Descripciones para cada oferta (predefinidas)
@@ -198,7 +198,7 @@ public class CuadriculaOfertas extends JFrame{
 		
 		JLabel titulo = new JLabel("Detalles de la Oferta " + numero, SwingConstants.CENTER);
 		titulo.setFont(new Font("Times new Roman", Font.PLAIN, 22));
-		ventanaoferta.add(titulo, BorderLayout.CENTER);
+		ventanaoferta.add(titulo, BorderLayout.NORTH);
 		
 		JPanel contenidoPanel = new JPanel(new GridLayout(1, 2, 10, 0));
 		JLabel imagenLabel = new JLabel();
@@ -230,7 +230,7 @@ public class CuadriculaOfertas extends JFrame{
 	    
 	    JPanel panelImagen = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    panelImagen.add(imagenLabel);
-	    ventanaoferta.add(panelImagen,BorderLayout.NORTH);
+//	    ventanaoferta.add(panelImagen,BorderLayout.NORTH);
 	    
 		//Descripcion
 		JTextArea descripcionArea = new JTextArea();
@@ -242,7 +242,11 @@ public class CuadriculaOfertas extends JFrame{
         descripcionArea.setBackground(new Color(250, 250, 250));
         descripcionArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         JScrollPane scrollDescripcion = new JScrollPane(descripcionArea);
-        ventanaoferta.add(scrollDescripcion, BorderLayout.CENTER);
+//      ventanaoferta.add(scrollDescripcion, BorderLayout.CENTER);
+        
+        contenidoPanel.add(scrollDescripcion);
+        contenidoPanel.add(panelImagen);
+        ventanaoferta.add(contenidoPanel, BorderLayout.CENTER);
         
 		JPanel centro = new JPanel(new BorderLayout());
 		JLabel imagen = new JLabel();
