@@ -259,6 +259,26 @@ public class CuadriculaOfertas extends JFrame{
 		descripcionoferta = new JTextField();
 		descripcionoferta.setText("");
 		
+		JButton btnReservar = new JButton("Reservar esta oferta");
+		btnReservar.setFont(new Font("Arial", Font.BOLD, 16));
+		btnReservar.setBackground(new Color(0, 128, 0));
+		btnReservar.setForeground(Color.WHITE);
+		btnReservar.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO CREAR VENTANA PARA PROCESAR LA RESERVA
+				
+			}
+			
+		});
+		
+		JPanel panelBotonReserva = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		panelBotonReserva.add(btnReservar);
+		panelBotonReserva.setBackground(new Color(50, 150, 200)); 
+		ventanaoferta.add(panelBotonReserva, BorderLayout.SOUTH);
+		
+		
 		ventanaoferta.setVisible(true);
 	}
 	
