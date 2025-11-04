@@ -46,6 +46,9 @@ public class VentanaInicio extends JFrame{
 					} else if (nombresboton[numero-1].equals("Ofertas")) {
 						CuadriculaOfertas vOfertas = new CuadriculaOfertas();
 						vOfertas.setVisible(true);
+					} else if (nombresboton[numero-1].equals("Vuelo + Hotel")) {
+						VentanaVueloYHotel vVueloHotel = new VentanaVueloYHotel();
+						vVueloHotel.setVisible(true);
 					}
 					
 				}
