@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 public class VentanaVueloYHotel extends JFrame {
 //Procesar CSV para tener toda la información manejo de la información y actualizarla
@@ -45,6 +46,30 @@ public class VentanaVueloYHotel extends JFrame {
         
         add(panelBusqueda, BorderLayout.NORTH);
 	}
+	
+	
+//	  FALTA LAYOUT CON TODAS LAS OFERTAS DE VUELOS
+// 	  listModel = new DefaultListModel<>();
+//    listaResultados = new JList<>(listModel);
+//    listaResultados.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//    listaResultados.setFont(new Font("Arial", Font.PLAIN, 14));
+//    JScrollPane scrollResultados = new JScrollPane(listaResultados);
+//    scrollResultados.setBorder(BorderFactory.createTitledBorder("Vuelos Disponibles"));
+//
+//    // Panel Derecho: Detalles del vuelo seleccionado
+//    JPanel panelDetalles = new JPanel(new BorderLayout(10, 10));
+//    panelDetalles.setBorder(BorderFactory.createTitledBorder("Detalles del Vuelo"));
+	
+	
+	public static void main(String[] args) {
+        // Buena práctica para iniciar GUIs de Swing
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new VentanaVueloYHotel().setVisible(true);
+            }
+        });
+    }
 	
 	
 }
