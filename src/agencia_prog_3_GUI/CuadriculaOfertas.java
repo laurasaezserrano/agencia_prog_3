@@ -40,6 +40,18 @@ public class CuadriculaOfertas extends JFrame{
 	private JTextField descripcionoferta;
 	private HashMap<String, List<Hotel>> hotelesPorCiudad;
 	
+	String[] ciudadesOferta = {
+		    "Caribe",      
+		    "Paris",       
+		    "Suiza",       
+		    "Roma",        
+		    "Toronto",     
+		    "Tokyo",       
+		    "Bangkok",     
+		    "Nueva York",  
+		    "Oslo"         
+		};
+	
 	public CuadriculaOfertas() {
 		this.hotelesPorCiudad = cargarHotelesDesdeCSV();
 		JPanel mainpanel = new JPanel();
@@ -72,17 +84,6 @@ public class CuadriculaOfertas extends JFrame{
 //			panel1.add(boton);	
 //		}
 		
-		String[] ciudadesOferta = {
-			    "Caribe",      
-			    "Paris",       
-			    "Suiza",       
-			    "Roma",        
-			    "Toronto",     
-			    "Tokyo",       
-			    "Bangkok",     
-			    "Nueva York",  
-			    "Oslo"         
-			};
 		
 		for (int i = 0; i < 9; i++) {
 			int numero = i + 1;
@@ -130,7 +131,7 @@ public class CuadriculaOfertas extends JFrame{
 		
 	}
 	private void abriroferta(int numero) {
-		JFrame ventanaoferta = new JFrame("Oferta" + numero);
+		JFrame ventanaoferta = new JFrame(ciudadesOferta [numero-1]);
 		ventanaoferta.setSize(800, 500);
 		ventanaoferta.setLocationRelativeTo(this);
 		ventanaoferta.setLayout(new BorderLayout(10, 10));
@@ -196,7 +197,7 @@ public class CuadriculaOfertas extends JFrame{
 		        
 		    };
 		
-		JLabel titulo = new JLabel("Detalles de la Oferta " + numero, SwingConstants.CENTER);
+		JLabel titulo = new JLabel("Detalles del viaje a " + ciudadesOferta [numero-1], SwingConstants.CENTER);
 		titulo.setFont(new Font("Times new Roman", Font.PLAIN, 22));
 		ventanaoferta.add(titulo, BorderLayout.NORTH);
 		

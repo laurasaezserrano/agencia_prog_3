@@ -40,15 +40,17 @@ public class VentanaInicio extends JFrame{
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if (nombresboton[numero-1].equals("Contacto")) {
-						VentanaContacto vContacto = new VentanaContacto();
-						vContacto.setVisible(true);
-					} else if (nombresboton[numero-1].equals("Ofertas")) {
+					if (nombresboton[numero-1].equals("Ofertas")) {
 						CuadriculaOfertas vOfertas = new CuadriculaOfertas();
 						vOfertas.setVisible(true);
+						//ventanaoferta.dispose(); para que no se vea de fondo la de ofertas 
+						
 					} else if (nombresboton[numero-1].equals("Vuelo + Hotel")) {
 						VentanaVueloYHotel vVueloHotel = new VentanaVueloYHotel();
 						vVueloHotel.setVisible(true);
+					}else if (nombresboton[numero-1].equals("Contacto")) {
+						VentanaContacto ventanaContacto = new VentanaContacto(VentanaInicio.this);
+						ventanaContacto.setVisible(true);
 					}
 					
 				}
