@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -58,7 +57,7 @@ public class VentanaVueloYHotel extends JFrame{
 //        mainpanel.add(titulo);
 		
 		JPanel vuelospanel = new JPanel();
-		vuelospanel.setLayout(new GridLayout(1,1,1,1));
+		vuelospanel.setLayout(new BoxLayout(vuelospanel, BoxLayout.Y_AXIS));
         vuelospanel.setBackground(new Color(245, 245, 245)); 
         /**
          * IAG - IDEA BORDE VACIO PARA MEJOR ESTRUCTURA (setBorder - linea 58)
