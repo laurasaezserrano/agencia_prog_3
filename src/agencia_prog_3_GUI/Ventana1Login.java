@@ -18,8 +18,8 @@ import java.util.HashMap;
 
 public class Ventana1Login extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private JTextField userField;
-    private JPasswordField passField;
+	protected static JTextField userField;
+    protected static JPasswordField passField;
     private JButton loginButton;
     private JButton registerButton;
     private JLabel statusLabel;
