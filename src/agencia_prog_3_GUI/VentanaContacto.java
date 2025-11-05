@@ -1,6 +1,7 @@
 package agencia_prog_3_GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -30,12 +31,14 @@ public class VentanaContacto extends JFrame {
    
         JTextArea areaTexto = new JTextArea();
         areaTexto.setEditable(false);
+        Color amarilloPastelRGB = new Color(255, 255, 179);
+        areaTexto.setBackground(amarilloPastelRGB);
         areaTexto.setFont(new Font("Monospaced", Font.PLAIN, 12));
         
         String infoAgencia =
-                "========================================\n" +
-                "      AGENCIA PROG 3 - CONTACTO         \n" +
-                "========================================\n\n" +
+                "            ========================================\n" +
+                "                   AGENCIA PROG 3 - CONTACTO         \n" +
+                "            ========================================\n\n" +
                 "Dirección:          Calle Ficticia No. 10, Ciudad de Programación\n" +
                 "Teléfono Principal: +34 555 123 456\n" +
                 "Email de Soporte:   soporte@agenciaprog3.com\n" +
