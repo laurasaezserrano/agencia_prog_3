@@ -58,15 +58,15 @@ public class VentanaVueloYHotel extends JFrame{
 		
 		JPanel vuelospanel = new JPanel();
 		vuelospanel.setLayout(new BoxLayout(vuelospanel, BoxLayout.Y_AXIS));
-        vuelospanel.setBackground(new Color(245, 245, 245)); 
+        vuelospanel.setBackground(new Color(50, 150, 200)); 
         /**
          * IAG - IDEA BORDE VACIO PARA MEJOR ESTRUCTURA (setBorder - linea 58)
          */
         vuelospanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		for (int i = 1; i<15; i++) {
+		for (int i = 1; i<10; i++) {
 			JButton boton = new JButton("Vuelo" + i);
 			boton.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-			Dimension botonDim = new Dimension(100, 60); //WINDOW TOOL 
+			Dimension botonDim = new Dimension(850, 60);
 			boton.setMaximumSize(botonDim);
 			boton.setPreferredSize(botonDim);
 			boton.setMaximumSize(botonDim);
