@@ -1,6 +1,7 @@
 package agencia_prog_3_GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 
@@ -44,9 +45,11 @@ public class VentanaUser extends JFrame{
 		titulo.setHorizontalAlignment(JTextField.CENTER);
 		add(titulo, BorderLayout.NORTH);
 		
+		
 		//Panel donde el usuario incluirá sus datos
 		JPanel panelUsuario = new JPanel(new GridLayout(10, 2, 10, 10));
 		panelUsuario.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+		panelUsuario.setBackground(new Color(255, 255, 179));
 				
 		//nombre de usuario
 		panelUsuario.add(new JLabel("Nombre de usuario:"));
