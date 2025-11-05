@@ -5,9 +5,15 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -36,15 +42,23 @@ public class VentanaReservas extends JFrame {
 	
 	
 	private void cargarReservas() {
+		
         File archivo = new File("reservas.csv");
         
-        // Usamos un StringBuilder para construir el texto
-        StringBuilder sb = new StringBuilder();
+        try {
+            new FileWriter("reservas.csv").close(); // Abre en modo sobrescribir y cierra
+            JOptionPane.showMessageDialog(this, "El archivo reservas.csv ha sido vaciado.");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al vaciar el archivo.");
+        }
+        
         int contador = 0;
 
         if (!archivo.exists()) {
-            areaReservas.setForeground(Color.RED);
-            areaReservas.setText("ERROR: No se encontró el archivo 'reservas.csv'");
+//            areaReservas.setForeground(Color.RED);
+//            areaReservas.setText("ERROR: No se encontró el archivo 'reservas.csv'");
             return;
         }
 
@@ -68,17 +82,17 @@ public class VentanaReservas extends JFrame {
                     String codigoReserva = datos[1];
                     
                     // Esta es la comprobación clave
-                    if (usuarioCSV.equals(this.nombreUsuario)) {
-                        sb.append("  • " + codigoReserva + "\n");
-                        contador++;
-                    }
+//                    if (usuarioCSV.equals(this.nombreUsuario)) {
+//                        sb.append("  • " + codigoReserva + "\n");
+//                        contador++;
+//                    }
                 }
             }
             
         } catch (IOException ex) {
             ex.printStackTrace();
-            areaReservas.setForeground(Color.RED);
-            areaReservas.setText("Error al leer el archivo CSV: " + ex.getMessage());
+//            areaReservas.setForeground(Color.RED);
+//            areaReservas.setText("Error al leer el archivo CSV: " + ex.getMessage());
             return; 
         }
         }
