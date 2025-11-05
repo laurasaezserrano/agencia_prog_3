@@ -50,7 +50,8 @@ public class ProcesoReserva extends JFrame {
     private void guardarReservaEnCSV() {
         contadorReservas++;
         
-        String nombreUsuario = Ventana1Login.userField.toString();
+        String nombreUsuario = Ventana1Login.userField.getText();
+        System.out.println(nombreUsuario);
         String codigoReserva = "RESERVA" + contadorReservas;
         
         File archivo = new File(NOMBRE_ARCHIVO_CSV);

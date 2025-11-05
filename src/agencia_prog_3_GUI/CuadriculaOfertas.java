@@ -263,7 +263,8 @@ public class CuadriculaOfertas extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO CREAR VENTANA PARA PROCESAR LA RESERVA
+				ProcesoReserva vProceso = new ProcesoReserva();
+				vProceso.setVisible(true);
 				
 			}
 			
