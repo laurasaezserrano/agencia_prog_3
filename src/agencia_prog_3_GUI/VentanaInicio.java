@@ -54,6 +54,9 @@ public class VentanaInicio extends JFrame{
 					} else if (nombresboton[numero-1].equals("Reservas")) {
 						VentanaReservas vReservas = new VentanaReservas();
 						vReservas.setVisible(true);
+					} else if (nombresboton[numero-1].equals("Excursiones")) {
+						VentanaExcursiones vExcursiones = new VentanaExcursiones();
+						vExcursiones.setVisible(true);
 					}
 					
 				}
