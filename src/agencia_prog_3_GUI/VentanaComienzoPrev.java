@@ -73,21 +73,17 @@ public class VentanaComienzoPrev extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JOptionPane.showMessageDialog(VentanaComienzoPrev.this, "Has accecido a la app web de Sunny Agencia de Viajes!");
-		}
-	});
-		setVisible(true);
 	
-	//Action Listener para enlazar con metodo de otra clase - PRUEBA 
-	boton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
             // Cerrar la ventana actual
             dispose();
             
             // Abrir la nueva ventana
-            new Ventana1Login();
+            Ventana1Login vLogin = new Ventana1Login();
+            vLogin.setVisible(true);
         }
     });
 
+	
 	add(fondoLabel);
 	add(boton);
 	setVisible(true);
