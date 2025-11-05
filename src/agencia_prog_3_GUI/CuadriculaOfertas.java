@@ -58,26 +58,26 @@ public class CuadriculaOfertas extends JFrame{
 		JPanel panel1 = new JPanel(new GridLayout(3, 3, 20, 20));
 		
 		//Creación botón de inicio
-				//para volver a la ventana de inicio
-				JButton botonInicio = new JButton("Inicio"); //luego cambiarlo a un icono
-				
-				//Posicionar el boton arriba a la izquierda
-				botonInicio.setBounds(0, 0, 10, 30);
-				
-				botonInicio.addActionListener(new ActionListener() {
-				    
-					@Override
-				    public void actionPerformed(ActionEvent e) {
-				        // Cierra la ventana actual
-				        dispose(); 
+		//para volver a la ventana de inicio
+		JButton botonInicio = new JButton("Inicio"); //luego cambiarlo a un icono
+		
+		//Posicionar el boton arriba a la izquierda
+		botonInicio.setLocation(0, 0);
+		
+		botonInicio.addActionListener(new ActionListener() {
+		    
+			@Override
+		    public void actionPerformed(ActionEvent e) {
+		        // Cierra la ventana actual
+		        dispose(); 
 				        
-				        // Abre una nueva instancia de la ventana de inicio
-				        VentanaInicio vInicio = new VentanaInicio();
-				        vInicio.setVisible(true);
-				    }
-				});
+		        // Abre una nueva instancia de la ventana de inicio
+		        VentanaInicio vInicio = new VentanaInicio();
+		        vInicio.setVisible(true);
+		    }
+		});
 				
-				mainpanel.add(botonInicio);
+		mainpanel.add(botonInicio);
 		
 		for (int i = 0; i < 9; i++) {
 			int numero = i + 1;
