@@ -26,6 +26,7 @@ public class VentanaVueloYHotel extends JFrame{
 	private JTextField titulo;
 	private static final long serialVersionUID = 1L;
 	private static final String CSV_PATH = "vuelosagencia_completo.csv";
+	//Por si suceden futuras extensiones
 	private String [] origenVuelos = {"Madrid"
 										};
 	private JTextField txtPersonas;
@@ -33,12 +34,18 @@ public class VentanaVueloYHotel extends JFrame{
     private JComboBox<String> cmbOrigen;
 
 	public VentanaVueloYHotel() {
+		setTitle("Búsqueda de vuelos");
+		setSize(900, 600);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout(10, 10));
+        
 		JPanel mainpanel = new JPanel();
 		JPanel vuelospanel = new JPanel();
 		vuelospanel.setLayout(new BoxLayout(vuelospanel, BoxLayout.Y_AXIS));
 		
 		JPanel panelBusqueda = configurarPanelBusqueda();
-		mainpanel.add(panelBusqueda, BorderLayout.CENTER);
+		mainpanel.add(panelBusqueda, BorderLayout.NORTH);
 		
         vuelospanel.setBackground(new Color(245, 245, 245));
 		
@@ -63,20 +70,7 @@ public class VentanaVueloYHotel extends JFrame{
 		
 		JScrollPane scroll = new JScrollPane(vuelospanel);
         add(scroll, BorderLayout.CENTER);
-		
-		setTitle("Búsqueda de vuelos");
-		setSize(900, 600);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout(10, 10));
-        
-        titulo = new JTextField("Búsqueda de Vuelos y Ofertas");
-        titulo.setEditable(false);
-        titulo.setHorizontalAlignment(JTextField.CENTER);
-        titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 24f));
-        add(titulo, BorderLayout.NORTH);
-        
-        
+       
         mainpanel.add(vuelospanel);
         add(mainpanel);
         
@@ -138,7 +132,7 @@ public class VentanaVueloYHotel extends JFrame{
 		
 		//ORIGEN - Solo Madrid pero lo creamos para nuevas opciones posibles
 		panelBusqueda.add(new JLabel("Origen: "));
-		JComboBox<String> cmbOrigen = new JComboBox<>(destinARRAY);
+		cmbOrigen = new JComboBox<>(this.origenVuelos);
 		cmbOrigen.setPreferredSize(txtpersonas.getPreferredSize()); // Para que tenga un tamaño similar al Origen
 		panelBusqueda.add(cmbOrigen);
 		
