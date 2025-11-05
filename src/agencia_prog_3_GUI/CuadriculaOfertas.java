@@ -58,26 +58,26 @@ public class CuadriculaOfertas extends JFrame{
 		JPanel panel1 = new JPanel(new GridLayout(3, 3, 20, 20));
 		
 		//Creación botón de inicio
-		//para volver a la ventana de inicio
-		JButton botonInicio = new JButton("Inicio"); //luego cambiarlo a un icono
-		
-		//Posicionar el boton arriba a la izquierda
-		botonInicio.setLocation(0, 0);
-		
-		botonInicio.addActionListener(new ActionListener() {
-		    
-			@Override
-		    public void actionPerformed(ActionEvent e) {
-		        // Cierra la ventana actual
-		        dispose(); 
-				        
-		        // Abre una nueva instancia de la ventana de inicio
-		        VentanaInicio vInicio = new VentanaInicio();
-		        vInicio.setVisible(true);
-		    }
-		});
+				//para volver a la ventana de inicio
+				JButton botonInicio = new JButton("Inicio"); //luego cambiarlo a un icono
 				
-		mainpanel.add(botonInicio);
+				//Posicionar el boton arriba a la izquierda
+				botonInicio.setBounds(0, 0, 10, 30);
+				
+				botonInicio.addActionListener(new ActionListener() {
+				    
+					@Override
+				    public void actionPerformed(ActionEvent e) {
+				        // Cierra la ventana actual
+				        dispose(); 
+				        
+				        // Abre una nueva instancia de la ventana de inicio
+				        VentanaInicio vInicio = new VentanaInicio();
+				        vInicio.setVisible(true);
+				    }
+			});
+				
+				mainpanel.add(botonInicio);
 		
 		for (int i = 0; i < 9; i++) {
 			int numero = i + 1;
@@ -170,6 +170,7 @@ public class CuadriculaOfertas extends JFrame{
 		        + "la cantidad de gente que transcurre por el cruce de Shibuya. Podras apreciar la cultura pop y tech asi como visitar el templo de Nikko y la ciudad de "
 		        + "Kamakura. Tambien podras pasar un dia en Hakone y ver las vistas del Monte Fuji." ,
 		        
+		        //Bangkok
 		        "Hotel Palace Pacifico (4⭐) en Bangkok + vuelo directo desde Madrid. \nCultura milenaria, templos "
 		        + "dorados y vida callejera vibrante. Ideal para combinar ciudad + naturaleza, con opción de extensión "
 		        + "a Bali uno de los destinos mas aclamados de Tailandia. " + "Este paquete incluye aparte del vuelo y hotel, "
@@ -444,4 +445,3 @@ public class CuadriculaOfertas extends JFrame{
 		}
 	
 }
-
