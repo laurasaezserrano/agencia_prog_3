@@ -45,15 +45,6 @@ public class VentanaReservas extends JFrame {
 		
         File archivo = new File("reservas.csv");
         
-        try {
-            new FileWriter("reservas.csv").close(); // Abre en modo sobrescribir y cierra
-            JOptionPane.showMessageDialog(this, "El archivo reservas.csv ha sido vaciado.");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al vaciar el archivo.");
-        }
-        
         int contador = 0;
 
         if (!archivo.exists()) {
