@@ -75,7 +75,7 @@ public class CuadriculaOfertas extends JFrame{
 				        VentanaInicio vInicio = new VentanaInicio();
 				        vInicio.setVisible(true);
 				    }
-				});
+			});
 				
 				mainpanel.add(botonInicio);
 		
