@@ -4,7 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-
+import java.awt.Font;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import javax.swing.JComboBox;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -18,11 +24,23 @@ import javax.swing.border.LineBorder;
 
 public class VentanaVueloYHotel extends JFrame{
 	private JTextField titulo;
-	
+	private static final long serialVersionUID = 1L;
+	private static final String CSV_PATH = "vuelosagencia_completo.csv";
+	private String [] origenVuelos = {"Madrid"
+										};
+	private JTextField txtPersonas;
+    private JComboBox<String> cmbDestino;
+    private JComboBox<String> cmbOrigen;
+
 	public VentanaVueloYHotel() {
 		JPanel mainpanel = new JPanel();
 		JPanel vuelospanel = new JPanel();
 		vuelospanel.setLayout(new BoxLayout(vuelospanel, BoxLayout.Y_AXIS));
+		
+		JPanel panelBusqueda = configurarPanelBusqueda();
+		mainpanel.add(panelBusqueda, BorderLayout.CENTER);
+		
+        vuelospanel.setBackground(new Color(245, 245, 245));
 		
 		for (int i = 0; i<5; i++) {
 			JButton boton = new JButton("Vuelo" + i);
@@ -52,13 +70,91 @@ public class VentanaVueloYHotel extends JFrame{
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
         
-        titulo = new JTextField();
+        titulo = new JTextField("Búsqueda de Vuelos y Ofertas");
+        titulo.setEditable(false);
+        titulo.setHorizontalAlignment(JTextField.CENTER);
+        titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 24f));
+        add(titulo, BorderLayout.NORTH);
         
         
         mainpanel.add(vuelospanel);
         add(mainpanel);
+        
 	}
 	
+	/**
+	 * IAG - Para asegurarnos de que aunque el CSV no se lea:
+     * Extrae los destinos únicos del archivo CSV para poblar el JComboBox.
+     * @return Un Set de Strings con los nombres de los destinos.
+     */
+    private Set<String> obtenerDestinosUnicos() {
+        Set<String> destinos = new HashSet<>();
+        
+        destinos.add("Bogota");
+        destinos.add("Paris");
+        destinos.add("Zurich");
+        destinos.add("Roma");
+        destinos.add("Toronto");
+        destinos.add("Tokyo");
+        destinos.add("Bangkok");
+        destinos.add("Nueva York");
+        destinos.add("Oslo");
+
+        try (BufferedReader br = new BufferedReader(new FileReader(CSV_PATH))) {
+            String linea;
+            int numLinea = 0;
+            
+            while ((linea = br.readLine()) != null) {
+                numLinea++;
+                if (numLinea <= 1) continue; // Saltar la cabecera si la hay
+                
+                String[] datos = linea.split(",");
+                // Suponemos que la ciudad de destino está en la columna 1 (índice 1) del CSV de vuelos
+                if (datos.length > 1) {
+                    destinos.add(datos[1].trim());
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo CSV de vuelos: " + e.getMessage() + 
+                               "\nUsando destinos simulados.");
+        } catch (Exception e) {
+            System.err.println("Error general al procesar el CSV: " + e.getMessage());
+        }
+        
+        return destinos;
+    }
+
+	public JPanel configurarPanelBusqueda() {
+		Set<String> destinos = obtenerDestinosUnicos();
+		String[] destinARRAY = destinos.toArray(new String[0]);
+		
+		JPanel panelBusqueda = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
+		panelBusqueda.setBackground(new Color(230, 240, 255));
+		
+		//NUMERO PERSONAS
+		panelBusqueda.add(new JLabel("Personas: "));
+		JTextField txtpersonas = new JTextField("1", 4); // Valor por defecto 1 (Idea IAG)
+		panelBusqueda.add(txtpersonas);
+		
+		//ORIGEN - Solo Madrid pero lo creamos para nuevas opciones posibles
+		panelBusqueda.add(new JLabel("Origen: "));
+		JComboBox<String> cmbOrigen = new JComboBox<>(destinARRAY);
+		cmbOrigen.setPreferredSize(txtpersonas.getPreferredSize()); // Para que tenga un tamaño similar al Origen
+		panelBusqueda.add(cmbOrigen);
+		
+		//DESTINO
+		panelBusqueda.add(new JLabel("Destino:"));
+		JComboBox<String> cmbDestino = new JComboBox<>(destinARRAY);
+		cmbDestino.setPreferredSize(txtpersonas.getPreferredSize()); // Para que tenga un tamaño similar al Origen
+		panelBusqueda.add(cmbDestino);
+		
+		 //BOTON BUSCAR
+        JButton botonBusqueda = new JButton("Buscar");
+        panelBusqueda.add(botonBusqueda);
+        
+        return panelBusqueda;
+
+	}
 	
 	public static void main(String[] args) {
 		VentanaVueloYHotel vuelosyhotel = new VentanaVueloYHotel();
