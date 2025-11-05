@@ -88,23 +88,22 @@ import javax.swing.SwingUtilities;
 				
 				JPanel panelBusqueda = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
 				panelBusqueda.setBackground(new Color(230, 240, 255));
+				//NUMERO PERSONAS
+				panelBusqueda.add(new JLabel("Personas: "));
+				JTextField txtpersonas = new JTextField("1", 4); // Valor por defecto 1 (Idea IAG)
+				panelBusqueda.add(txtpersonas);
 				
 				//ORIGEN - Solo Madrid pero lo creamos para nuevas opciones posibles
 				panelBusqueda.add(new JLabel("Origen: "));
 				JComboBox<String> cmbOrigen = new JComboBox<>(destinARRAY);
-				cmbOrigen.setPreferredSize(txtPersonas.getPreferredSize()); // Para que tenga un tamaño similar al Origen
+				cmbOrigen.setPreferredSize(txtpersonas.getPreferredSize()); // Para que tenga un tamaño similar al Origen
 				panelBusqueda.add(cmbOrigen);
 				
 				//DESTINO
 				panelBusqueda.add(new JLabel("Destino:"));
 				JComboBox<String> cmbDestino = new JComboBox<>(destinARRAY);
-				cmbDestino.setPreferredSize(txtPersonas.getPreferredSize()); // Para que tenga un tamaño similar al Origen
+				cmbDestino.setPreferredSize(txtpersonas.getPreferredSize()); // Para que tenga un tamaño similar al Origen
 				panelBusqueda.add(cmbDestino);
-				
-				//NUMERO PERSONAS
-				panelBusqueda.add(new JLabel("Personas:"));
-		        JTextField txtPersonas = new JTextField("1", 4); // Valor por defecto 1
-		        panelBusqueda.add(txtPersonas);
 		        
 		        //BOTON BUSCAR
 		        JButton botonBusqueda = new JButton("Buscar");
