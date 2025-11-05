@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class VentanaUser extends JFrame{
+	private JTextField nusuario;
+	private JTextField contraseña;
 	private JTextField titulo;
 	private JTextField nombre;
 	private JTextField dni;
@@ -43,8 +45,18 @@ public class VentanaUser extends JFrame{
 		add(titulo, BorderLayout.NORTH);
 		
 		//Panel donde el usuario incluirá sus datos
-		JPanel panelUsuario = new JPanel(new GridLayout(8, 2, 10, 10));
+		JPanel panelUsuario = new JPanel(new GridLayout(10, 2, 10, 10));
 		panelUsuario.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+				
+		//nombre de usuario
+		panelUsuario.add(new JLabel("Nombre de usuario:"));
+		JTextField nusuario = new JTextField();
+		panelUsuario.add(nusuario);
+		
+		//contrasña
+		panelUsuario.add(new JLabel("Contraseña:"));
+		JTextField contraseña = new JTextField();
+		panelUsuario.add(contraseña);
 				
 		//nombre
 		panelUsuario.add(new JLabel("Nombre completo:"));
