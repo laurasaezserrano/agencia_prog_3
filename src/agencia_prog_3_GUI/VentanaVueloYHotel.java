@@ -56,7 +56,7 @@ public class VentanaVueloYHotel extends JFrame{
         titulo.setHorizontalAlignment(JTextField.CENTER);
         titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 24f));
         titulo.setAlignmentX(JComponent.CENTER_ALIGNMENT); 
-//        mainpanel.add(titulo);
+//      mainpanel.add(titulo);
 		
 		JPanel vuelospanel = new JPanel();
 		vuelospanel.setLayout(new BoxLayout(vuelospanel, BoxLayout.Y_AXIS));
@@ -163,7 +163,7 @@ public class VentanaVueloYHotel extends JFrame{
 		
 		//NUMERO PERSONAS
 		panelBusqueda.add(new JLabel("Personas: "));
-		JTextField txtpersonas = new JTextField("1", 4); // Valor por defecto 1 (Idea IAG)
+		JTextField txtpersonas = new JTextField("1", 6); // Valor por defecto 1 (Idea IAG)
 		panelBusqueda.add(txtpersonas);
 		
 		//ORIGEN - Solo Madrid pero lo creamos para nuevas opciones posibles
