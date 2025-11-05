@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -59,6 +61,23 @@ public class VentanaVueloYHotel extends JFrame{
 		JPanel vuelospanel = new JPanel();
 		vuelospanel.setLayout(new BoxLayout(vuelospanel, BoxLayout.Y_AXIS));
         vuelospanel.setBackground(new Color(50, 150, 200)); 
+        
+        JButton botonInicio = new JButton("Atras"); //luego cambiarlo a un icono
+        botonInicio.setBounds(0, 0, 10, 30);
+		
+		botonInicio.addActionListener(new ActionListener() {
+		    
+			@Override
+		    public void actionPerformed(ActionEvent e) {
+		        // Cierra la ventana actual
+		        dispose(); 
+		        
+		        // Abre una nueva instancia de la ventana de inicio
+		        VentanaInicio vInicio = new VentanaInicio();
+		        vInicio.setVisible(true);
+		    }
+	});
+		
         /**
          * IAG - IDEA BORDE VACIO PARA MEJOR ESTRUCTURA (setBorder - linea 58)
          */
@@ -89,6 +108,7 @@ public class VentanaVueloYHotel extends JFrame{
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scroll, BorderLayout.CENTER);
         add(panelBusqueda, BorderLayout.NORTH);
+        add(botonInicio,BorderLayout.SOUTH);
         
 	}
 	

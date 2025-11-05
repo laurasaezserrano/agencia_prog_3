@@ -59,7 +59,7 @@ public class CuadriculaOfertas extends JFrame{
 		
 		//Creación botón de inicio
 				//para volver a la ventana de inicio
-				JButton botonInicio = new JButton("Inicio"); //luego cambiarlo a un icono
+				JButton botonInicio = new JButton("Atras"); //luego cambiarlo a un icono
 				
 				//Posicionar el boton arriba a la izquierda
 				botonInicio.setBounds(0, 0, 10, 30);
