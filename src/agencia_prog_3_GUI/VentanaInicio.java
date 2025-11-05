@@ -57,12 +57,15 @@ public class VentanaInicio extends JFrame{
 			});
 		panel1.add(boton);
 		}
+		
 		mainpanel.add(panel1);
 		add(mainpanel);
 		setTitle("Bienvenid@ a SunnyAgencia");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(800, 500);
+		setMaximumSize(getToolkit().getScreenSize());
 		setResizable(false);
+		setLocationRelativeTo(null);
 		panel1.setBackground(new Color(50, 150, 200));
 		mainpanel.setBackground(new Color(50, 150, 200));
 		

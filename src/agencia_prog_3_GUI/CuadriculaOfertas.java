@@ -55,35 +55,7 @@ public class CuadriculaOfertas extends JFrame{
 	public CuadriculaOfertas() {
 		this.hotelesPorCiudad = cargarHotelesDesdeCSV();
 		JPanel mainpanel = new JPanel();
-		JPanel panel1 = new JPanel(new GridLayout(3, 3, 20, 20));
-		
-//		String[] ciudades = {
-//	            "Caribe",
-//	            "Paris",
-//	            "Suiza",
-//	            "Roma",
-//	            "Toronto",
-//	            "Tokyo",
-//	            "Bangkok",
-//	            "Nueva York",
-//	            "Oslo"
-//	        };
-//		for (String ciudad : ciudades) {
-//			JButton boton = new JButton(ciudad);
-//			boton.setPreferredSize(new Dimension(200, 120));
-//			boton.setBackground(new Color(255, 255, 255));
-//			boton.setBorder(new LineBorder(Color.BLACK, 2));
-//			boton.addActionListener(new ActionListener() {
-//				
-//				@Override
-//				public void actionPerformed(ActionEvent e) {
-//					abriroferta(numero);	
-//				}
-//			});
-//			
-//			panel1.add(boton);	
-//		}
-		
+		JPanel panel1 = new JPanel(new GridLayout(3, 3, 20, 20));	
 		
 		for (int i = 0; i < 9; i++) {
 			int numero = i + 1;
@@ -138,6 +110,7 @@ public class CuadriculaOfertas extends JFrame{
 		
 		//CAMBIAR EL HOTEL PARA QUE SEA UNO DE LA LISTA DE HOTELES RANDOM
 		//Descripciones para cada oferta (predefinidas)
+		//IAG - Descripciones generadas por Gemini
 		 String[] descripciones = {
 				 
 		        //CARIBE
