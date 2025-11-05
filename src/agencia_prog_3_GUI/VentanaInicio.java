@@ -48,9 +48,12 @@ public class VentanaInicio extends JFrame{
 					} else if (nombresboton[numero-1].equals("Vuelo + Hotel")) {
 						VentanaVueloYHotel vVueloHotel = new VentanaVueloYHotel();
 						vVueloHotel.setVisible(true);
-					}else if (nombresboton[numero-1].equals("Contacto")) {
+					} else if (nombresboton[numero-1].equals("Contacto")) {
 						VentanaContacto ventanaContacto = new VentanaContacto(VentanaInicio.this);
 						ventanaContacto.setVisible(true);
+					} else if (nombresboton[numero-1].equals("Reservas")) {
+						VentanaReservas vReservas = new VentanaReservas();
+						vReservas.setVisible(true);
 					}
 					
 				}

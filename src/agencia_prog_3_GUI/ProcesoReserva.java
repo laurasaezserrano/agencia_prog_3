@@ -17,7 +17,7 @@ public class ProcesoReserva extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	// Contador para el número de reserva
-    private int contadorReservas = 0;
+    private static int contadorReservas = 0;
     
     // Nombre del archivo CSV donde se guardarán los datos
     private final String NOMBRE_ARCHIVO_CSV = "reservas.csv";
@@ -26,7 +26,7 @@ public class ProcesoReserva extends JFrame {
 		
         setTitle("Confirmar Reserva");
         setSize(350, 150);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //Cierra la ventana de confirmación de reserva
         setLocationRelativeTo(null);
         
         JPanel panel = new JPanel();
