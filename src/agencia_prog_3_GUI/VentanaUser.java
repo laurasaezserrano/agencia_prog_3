@@ -23,14 +23,20 @@ public class VentanaUser extends JFrame{
 	private JTextField email;
 	private JTextField telefono;
 	private JTextField direccion;
+	private JFrame ventanaAnterior;
+	
 	/**
 	 * Idioma y Moneda generados con IAG
 	 */
 	private final JComboBox<String> cbIdioma = new JComboBox<>(new String[]{"ES", "EN", "FR"});
     private final JComboBox<String> cbMoneda = new JComboBox<>(new String[]{"EUR", "USD", "GBP"});
+    public VentanaUser(String user, String pass) {
+		this(user, pass, null); // Llama al constructor completo, pero sin ventana anterior
+	}
 
-	
-	public VentanaUser(String user, String pass) {
+    public VentanaUser(String user, String pass, JFrame ventanaAnterior) {
+		this.ventanaAnterior = ventanaAnterior;
+		
 		setTitle("Perfil del Usuario");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(400, 350);
@@ -58,6 +64,7 @@ public class VentanaUser extends JFrame{
 		if (user != null) {
             nusuario.setText(user); 
         }
+		nusuario.setEditable(false);
 		panelUsuario.add(nusuario);
 		
 		//contraseña
@@ -66,6 +73,7 @@ public class VentanaUser extends JFrame{
 		if (pass != null) {
             contraseña.setText(pass);
 	    }
+		contraseña.setEditable(false);
 		panelUsuario.add(contraseña);
 				
 		//nombre
@@ -103,7 +111,18 @@ public class VentanaUser extends JFrame{
 		JComboBox<String> moneda = new JComboBox<>(new String[] {"EUR","USD","GBP"});
 		panelUsuario.add(moneda);
 		
-		//Boton para guardar datos del usuario
+		JButton boton = new JButton("Atras");
+		panelUsuario.add(boton);
+		boton.addActionListener(e -> {
+	            dispose(); 
+	            if (this.ventanaAnterior != null) {
+	                this.ventanaAnterior.setVisible(true);
+	            } else {
+	            	JOptionPane.showMessageDialog(this, "No hay ventana de inicio registrada para volver.", "Error", 
+	            			JOptionPane.ERROR_MESSAGE);
+	            }
+	        });
+		
 		JButton botonGuardar = new JButton("Guardar");
 		panelUsuario.add(botonGuardar);
 		add(panelUsuario);
@@ -146,7 +165,7 @@ public class VentanaUser extends JFrame{
 		String usuarioLogeado = AlmacenajeSesion.getNombreUsuario();
 		String pass = AlmacenajeSesion.getPassword();
 		//LLAMADA DE PRUEBA
-		//VentanaUser usuario = new VentanaUser("lorena","123421");
+		VentanaUser usuario = new VentanaUser("lorena","123421");
 		usuario.setVisible(true);
 	}
 
