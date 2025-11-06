@@ -103,7 +103,6 @@ public class CuadriculaOfertas extends JFrame{
 	            iconoOriginal = null; 
 	        }
 			
-			
 			try {
 		        // images/OFerta(num)_sup.jpg
 		        Image originalImageHover = ImageIO.read(new File("images/Oferta" + numero + "_sup.jpg"));
