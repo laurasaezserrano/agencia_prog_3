@@ -9,6 +9,8 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -82,22 +84,45 @@ public class CuadriculaOfertas extends JFrame{
 		for (int i = 0; i < 9; i++) {
 			int numero = i + 1;
 			ImageIcon iconoOriginal = null;
+			ImageIcon iconoSuperior = null;
+			Image originalImage = null;
+			
 			try {
 	            // Carga la imagen original
-	            Image originalImage = ImageIO.read(new File("images/Oferta"+(numero)+".png"));
+	            originalImage = ImageIO.read(new File("images/Oferta"+numero+".png"));
 	            
-	            // Define el tamaño deseado para el icono del botón
-	            int anchoDeseado = 110; // Puedes ajustar estos valores
-	            int altoDeseado = 80;  // Puedes ajustar estos valores
+	            int anchoDeseado = 110; 
+	            int altoDeseado = 80;  
 	            
-	            // Escala la imagen para que quepa en el botón
 	            Image scaledImage = originalImage.getScaledInstance(anchoDeseado, altoDeseado, Image.SCALE_SMOOTH);
 	            iconoOriginal = new ImageIcon(scaledImage);
+	            
+				
 	        } catch (IOException e) {
-	            System.err.println("Error al cargar imagen " + "images/Oferta"+(numero)+".png" + ": " + e.getMessage());
-	            // Si la imagen no se encuentra, usa un icono por defecto o deja el botón solo con texto
-	            iconoOriginal = null; // O new ImageIcon("ruta/a/icono_por_defecto.png");
+	            System.err.println("Error al cargar imagen " + "images/Oferta"+numero+".png" + ": " + e.getMessage());
+	            iconoOriginal = null; 
 	        }
+			
+			try {
+		        // images/OFerta(num)_sup.jpg
+		        Image originalImageHover = ImageIO.read(new File("images/Oferta" + numero + "_sup.jpg"));
+		        
+		        if (originalImageHover != null) {
+			        int anchoIconSup = 200;
+		            int altoIconSup = 120;
+		        
+			        Image scaledImageHover = originalImageHover.getScaledInstance(anchoIconSup, altoIconSup, Image.SCALE_SMOOTH);
+			        iconoSuperior = new ImageIcon(scaledImageHover);
+		        } else {
+		        	iconoSuperior = iconoOriginal;
+		        }
+		        
+		    } catch (IOException e) {
+		        System.err.println("Error al cargar imagen HOVER Oferta" + numero + "_Hover.png: " + e.getMessage());
+		        // Si no se encuentra la imagen de hover, usa la imagen normal
+		        iconoSuperior = iconoOriginal; 
+		    }
+			
 			JButton boton = new JButton(ciudadesOferta[i], iconoOriginal);
 			
 			boton.setPreferredSize(new Dimension(200, 120));
@@ -111,6 +136,31 @@ public class CuadriculaOfertas extends JFrame{
 						abriroferta(numero);	
 						}
 					});
+			final ImageIcon iconoInicial = iconoOriginal;
+			final ImageIcon iconoAlternativo = iconoSuperior;
+			final JButton botonActual = boton;
+
+			boton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseEntered(MouseEvent evt) {
+					// 1. CAMBIAR IMAGEN (a la versión ligeramente más grande)
+					botonActual.setIcon(iconoAlternativo); 
+					
+					// 2. CAMBIAR ASPECTO (Borde y Fondo)
+					botonActual.setBackground(new Color(200, 220, 255)); // Fondo azul claro
+					botonActual.setBorder(new LineBorder(new Color(0, 100, 255), 3)); // Borde azul resaltado
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent evt) {
+					// 1. RESTAURAR IMAGEN (a la versión pequeña)
+					botonActual.setIcon(iconoInicial); 
+					
+					// 2. RESTAURAR ASPECTO
+					botonActual.setBackground(new Color(255, 255, 255)); // Fondo blanco
+					botonActual.setBorder(new LineBorder(Color.BLACK, 2)); // Borde negro
+				}
+			});
 				
 				panel1.add(boton);			
 			}
@@ -218,7 +268,7 @@ public class CuadriculaOfertas extends JFrame{
 	    
 	    //Ruta imagen
 	    //Habra que añadir un try / catch por si no la encuentra o no la carga
-	    String rutaImagen = "images/Oferta" + numero + ".png";
+	    String rutaImagen = "images/Oferta" + numero + ".png" ;
 	    try {
 	    	Image originalImage = ImageIO.read(new File(rutaImagen));
 	    	
@@ -311,6 +361,11 @@ public class CuadriculaOfertas extends JFrame{
 	//Lectura del CSV
 		public HashMap<String, List<Hotel>> cargarHotelesDesdeCSV() {
 		    HashMap<String, List<Hotel>> hotelesPorCiudad = new HashMap<>();
+		    
+//		    if (is == null) {
+//	            // Si no se encuentra con getResourceAsStream, intenta con FileReader (ruta relativa normal)
+//	            is = new java.io.FileInputStream("hoteles_mundiales_variedad_EUR.csv");
+//	        }
 		    
 		    try (BufferedReader br = new BufferedReader(new FileReader("hoteles_mundiales_variedad_EUR.csv"))) {
 		        String linea;
