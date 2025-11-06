@@ -55,38 +55,32 @@ public class VentanaUser extends JFrame{
 		//nombre de usuario
 		panelUsuario.add(new JLabel("Nombre de usuario:"));
 		nusuario = new JTextField();
-		String usuarioLogeado = AlmacenajeSesion.getNombreUsuario(); 
-	    if (usuarioLogeado != null) {
-	        nusuario.setText(usuarioLogeado);
-	        nusuario.setEditable(false); 
-	        nusuario.setBackground(Color.LIGHT_GRAY);
-	    }
-	    panelUsuario.add(nusuario);
+		if (user != null) {
+            nusuario.setText(user); 
+        }
+		panelUsuario.add(nusuario);
 		
 		//contraseña
 		panelUsuario.add(new JLabel("Contraseña:"));
-		JTextField contraseña = new JTextField();
-		String contraseñaUser = AlmacenajeSesion.getPassword(); 
-	    if (contraseñaUser != null) {
-	        nusuario.setText(contraseñaUser);
-	        nusuario.setEditable(false); 
-	        nusuario.setBackground(Color.LIGHT_GRAY);
+		contraseña = new JTextField();
+		if (pass != null) {
+            contraseña.setText(pass);
 	    }
 		panelUsuario.add(contraseña);
 				
 		//nombre
 		panelUsuario.add(new JLabel("Nombre completo:"));
-		JTextField nombre = new JTextField();
+		nombre = new JTextField();
 		panelUsuario.add(nombre);
 		
 		//dni
 		panelUsuario.add(new JLabel("DNI / Pasaporte:"));
-		JTextField dni = new JTextField();
+		dni = new JTextField();
 		panelUsuario.add(dni);
 		
 		//email
 		panelUsuario.add(new JLabel("Email de contacto:"));
-		JTextField email = new JTextField();
+		email = new JTextField();
 		panelUsuario.add(email);
 		
 		//telefono
@@ -96,7 +90,7 @@ public class VentanaUser extends JFrame{
 		
 		//direccion
 		panelUsuario.add(new JLabel("Direccion:"));
-		JTextField direccion = new JTextField();
+		direccion = new JTextField();
 		panelUsuario.add(direccion);
 		
 		//idioma
@@ -149,9 +143,10 @@ public class VentanaUser extends JFrame{
 	// añadir una foto generica user
 	// y que introduzca datos personales que despues se relacionaran con su incio para las reservas
 	public static void main(String[] args) {
-		String user = new String ();
-		String pass = new String ();
-		VentanaUser usuario = new VentanaUser(user,pass);
+		String usuarioLogeado = AlmacenajeSesion.getNombreUsuario();
+		String pass = AlmacenajeSesion.getPassword();
+		//LLAMADA DE PRUEBA
+		//VentanaUser usuario = new VentanaUser("lorena","123421");
 		usuario.setVisible(true);
 	}
 

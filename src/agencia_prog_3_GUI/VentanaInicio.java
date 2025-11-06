@@ -40,6 +40,9 @@ public class VentanaInicio extends JFrame{
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					String user = AlmacenajeSesion.getNombreUsuario();
+					String pass = AlmacenajeSesion.getPassword();
+					
 					if (nombresboton[numero-1].equals("Ofertas")) {
 						CuadriculaOfertas vOfertas = new CuadriculaOfertas();
 						vOfertas.setVisible(true);
@@ -57,6 +60,9 @@ public class VentanaInicio extends JFrame{
 					} else if (nombresboton[numero-1].equals("Excursiones")) {
 						VentanaExcursiones vExcursiones = new VentanaExcursiones();
 						vExcursiones.setVisible(true);
+					}else if (nombresboton[numero-1].equals("Perfil")) {
+						VentanaUser userInfo = new VentanaUser(user, pass );
+						userInfo.setVisible(true);
 					}
 					
 				}

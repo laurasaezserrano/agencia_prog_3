@@ -120,6 +120,7 @@ public class Ventana1Login extends JFrame {
                     "Usuario no encontrado", JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 registerUser();
+                AlmacenajeSesion.iniciarSesion(user,pass);
 //                JOptionPane.showMessageDialog(this, "Registro realizado con éxito", "Continuar", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
