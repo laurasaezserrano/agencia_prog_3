@@ -59,20 +59,27 @@ public class CuadriculaOfertas extends JFrame{
 		    "Nueva York",  
 		    "Oslo"         
 		};
-	public class VentanaReserva extends JFrame {
+
 	    
-	    private static final long serialVersionUID = 1L;
-	    
-	    private JTextField nomUser;
-	    private JTextField txtNombre;
-	    private JTextField txtEmail;
-	    private JSpinner spinAdultos; // Para ajustar los numeros de 1 hasta ...
-	    private JSpinner spinNinos;
-	    private JComboBox<String> cmbHabitacion;
-	    private JSpinner spinFechaIda;
-	    private JSpinner spinFechaVuelta;
-	    
-	    public VentanaReserva(String ciudadSeleccionada) {
+	    public class VentanaReserva extends JFrame {
+	    	private static final long serialVersionUID = 1L;
+	    	
+	    	private double precioBaseNoche; 
+	    	private JLabel lblPrecioTotal;
+	    	private JTextField nomUser;
+	    	private JTextField txtNombre;
+	    	private JTextField txtEmail;
+	    	private JSpinner spinAdultos; // Para ajustar los numeros de 1 hasta ...
+	    	private JSpinner spinNinos;
+	    	private JComboBox<String> cmbHabitacion;
+	    	private JSpinner spinFechaIda;
+	    	private JSpinner spinFechaVuelta;
+	    	private String ciudadSeleccionada;
+	    	    
+	   public VentanaReserva(String ciudadSeleccionada, double precioBaseNoche) { 
+	                this.ciudadSeleccionada = ciudadSeleccionada;
+	                this.precioBaseNoche = precioBaseNoche;
+	                
 	        // --- 1. CONFIGURACIÓN BÁSICA ---
 	        setTitle("Confirmar Reserva: " + ciudadSeleccionada);
 	        setSize(550, 450);
@@ -87,7 +94,7 @@ public class CuadriculaOfertas extends JFrame{
 	        add(lblTitulo, BorderLayout.NORTH);
 
 	        //PANEL CENTRAL (CAMPOS DE DATOS)
-	        JPanel panelDatos = new JPanel(new GridLayout(7, 2, 10, 10));
+	        JPanel panelDatos = new JPanel(new GridLayout(8, 2, 10, 10));
 	        panelDatos.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 	        
 	        //Nombre
@@ -100,7 +107,7 @@ public class CuadriculaOfertas extends JFrame{
 	        txtEmail = new JTextField(20);
 	        panelDatos.add(txtEmail);
 
-	        // --- FILA 3: Tipo de Habitación ---
+	        //Tipo de Habitación
 	        panelDatos.add(new JLabel("Tipo de Habitación:"));
 	        String[] tiposHabitacion = {"Doble Estándar", "Doble Superior", "Familiar", "Suite"};
 	        cmbHabitacion = new JComboBox<>(tiposHabitacion);
@@ -133,9 +140,17 @@ public class CuadriculaOfertas extends JFrame{
 	        JSpinner.DateEditor editorVuelta = new JSpinner.DateEditor(spinFechaVuelta, "dd/MM/yyyy");
 	        spinFechaVuelta.setEditor(editorVuelta);
 	        panelDatos.add(spinFechaVuelta);
-
+	        
+	        //Precio TOTAL
+	        lblPrecioTotal = new JLabel("Precio Total Estimado: Calculando...");
+	        lblPrecioTotal.setFont(new Font("Arial", Font.BOLD, 16));
+	        lblPrecioTotal.setForeground(new Color(255, 69, 0)); // Naranja fuerte
+	        panelDatos.add(new JLabel("PRECIO TOTAL:"));
+	        panelDatos.add(lblPrecioTotal);
+	        
 	        add(panelDatos, BorderLayout.CENTER);
-
+	        actualizarPrecioTotal();
+	        
 	        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
 	        
 	        JButton btnConfirmar = new JButton("CONFIRMAR RESERVA");
@@ -168,8 +183,60 @@ public class CuadriculaOfertas extends JFrame{
 	        panelBotones.add(btnConfirmar);
 	        panelBotones.add(btnCancelar);
 	        add(panelBotones, BorderLayout.SOUTH);
+	        
+	        cmbHabitacion.addActionListener(e -> actualizarPrecioTotal());
+	        spinAdultos.addChangeListener(e -> actualizarPrecioTotal());
+	        spinNinos.addChangeListener(e -> actualizarPrecioTotal());
+	        spinFechaIda.addChangeListener(e -> actualizarPrecioTotal());
+	        spinFechaVuelta.addChangeListener(e -> actualizarPrecioTotal());
 	    }
-	}
+
+	
+		private void actualizarPrecioTotal() {
+	        //DURACION
+	        Date fechaIda = (Date) spinFechaIda.getValue();
+	        Date fechaVuelta = (Date) spinFechaVuelta.getValue();
+	        
+	        long diferencia = fechaVuelta.getTime() - fechaIda.getTime();
+	        long difDias = diferencia;
+	        
+	        if (difDias <= 0) {
+	            lblPrecioTotal.setText("Error: Fechas incorrectas.");
+	            return;
+	        }
+	
+	        // Número de personas
+	        int adultos = (int) spinAdultos.getValue();
+	        double ninos = (int) spinNinos.getValue()/0.5;
+	        double totalPersonas = adultos + ninos;
+	
+	        // Tipo de habitación
+	        double factorHabitacion = 1.0;
+	        String tipoHabitacion = (String) cmbHabitacion.getSelectedItem();
+	        
+	        switch (tipoHabitacion) {
+	            case "Doble Estándar": factorHabitacion = 1.0; break;
+	            case "Doble Superior": factorHabitacion = 1.2; break;
+	            case "Familiar": factorHabitacion = 1.4; break;
+	            case "Suite": factorHabitacion = 1.7; break;
+	        }
+	
+	        //PRECIO TOTAL
+		        // Fórmula: (PrecioBaseNoche * FactorHabitación * TotalPersonas * Días)
+		        // Usamos el precio base por habitación del hotel, y luego multiplicamos por personas.
+		        // Asumimos que el precioBaseNoche del CSV es por persona y noche, o por habitación doble.
+		        // Lo trataremos como Precio por Habitación Estándar por Noche:
+		        
+	        double precioNocheAjustado = precioBaseNoche * factorHabitacion;
+	        
+	        // Si hay más de 2 adultos/niños, cobramos un extra por persona adicional
+	        double extraPersonas = Math.max(0, totalPersonas - 2) * 0.3; // 30% extra por persona adicional (simplificado)
+	        
+	        double precioFinal = (precioNocheAjustado * (1 + extraPersonas)) * difDias;
+	
+	        lblPrecioTotal.setText(String.format("€ %.2f (%d días)", precioFinal, difDias));
+	    }
+}
 	public CuadriculaOfertas() {
 		this.hotelesPorCiudad = cargarHotelesDesdeCSV();
 		JPanel mainpanel = new JPanel();
@@ -445,11 +512,16 @@ public class CuadriculaOfertas extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 		        // Obtenemos la ciudad seleccionada
 		        String ciudadElegida = ciudadesOferta [numero-1];
-		        
-		        // Abre la nueva ventana de reserva, pasándole la ciudad
-		        VentanaReserva vReserva = new VentanaReserva(ciudadElegida);
+		        Hotel hotelBarato = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, ciudadElegida);
+		        double precioBase = 0.0;
+		        if (hotelBarato != null) {
+		            precioBase = hotelBarato.getPrecio();
+		        } else {JOptionPane.showMessageDialog(ventanaoferta, "No hay datos de hoteles disponibles para " + ciudadElegida, "Error de Datos", JOptionPane.ERROR_MESSAGE);
+	            return;
+		        }
+		        VentanaReserva vReserva = new VentanaReserva(ciudadElegida, precioBase); // ✨ PASAMOS EL PRECIO BASE
 		        vReserva.setVisible(true);
-			}
+		    }
 			
 		});
 		
