@@ -16,17 +16,23 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import java.util.List;
@@ -53,27 +59,132 @@ public class CuadriculaOfertas extends JFrame{
 		    "Nueva York",  
 		    "Oslo"         
 		};
-	
+	public class VentanaReserva extends JFrame {
+	    
+	    private static final long serialVersionUID = 1L;
+	    
+	    private JTextField txtNombre;
+	    private JTextField txtEmail;
+	    private JSpinner spinAdultos; // Para ajustar los numeros de 1 hasta ...
+	    private JSpinner spinNinos;
+	    private JComboBox<String> cmbHabitacion;
+	    private JSpinner spinFechaIda;
+	    private JSpinner spinFechaVuelta;
+	    
+	    public VentanaReserva(String ciudadSeleccionada) {
+	        // --- 1. CONFIGURACIÓN BÁSICA ---
+	        setTitle("Confirmar Reserva: " + ciudadSeleccionada);
+	        setSize(550, 450);
+	        setLocationRelativeTo(null); 
+	        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
+	        setLayout(new BorderLayout(10, 10)); 
+	        
+	        //TÍTULO
+	        JLabel lblTitulo = new JLabel("Reserva para el viaje a " + ciudadSeleccionada, JLabel.CENTER);
+	        lblTitulo.setFont(new Font("Arial", Font.BOLD, 20));
+	        lblTitulo.setForeground(new Color(50, 150, 200)); 
+	        add(lblTitulo, BorderLayout.NORTH);
+
+	        //PANEL CENTRAL (CAMPOS DE DATOS)
+	        JPanel panelDatos = new JPanel(new GridLayout(7, 2, 10, 10));
+	        panelDatos.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+	        
+	        //Nombre
+	        panelDatos.add(new JLabel("Nombre Completo:"));
+	        txtNombre = new JTextField(20);
+	        panelDatos.add(txtNombre);
+
+	        //Email
+	        panelDatos.add(new JLabel("Email de Contacto:"));
+	        txtEmail = new JTextField(20);
+	        panelDatos.add(txtEmail);
+
+	        // --- FILA 3: Tipo de Habitación ---
+	        panelDatos.add(new JLabel("Tipo de Habitación:"));
+	        String[] tiposHabitacion = {"Doble Estándar", "Doble Superior", "Familiar", "Suite"};
+	        cmbHabitacion = new JComboBox<>(tiposHabitacion);
+	        panelDatos.add(cmbHabitacion);
+
+	        //Adultos
+	        panelDatos.add(new JLabel("Adultos (18+):"));
+	        SpinnerNumberModel modelAdultos = new SpinnerNumberModel(1, 1, 10, 1);
+	        spinAdultos = new JSpinner(modelAdultos);
+	        panelDatos.add(spinAdultos);
+
+	        // Niños
+	        panelDatos.add(new JLabel("Niños (menores de 12):"));
+	        SpinnerNumberModel modelNinos = new SpinnerNumberModel(0, 0, 10, 1);
+	        spinNinos = new JSpinner(modelNinos);
+	        panelDatos.add(spinNinos);
+	        
+	        //Fecha de Ida (A partir de hoy)
+	        panelDatos.add(new JLabel("Fecha de Salida:"));
+	        SpinnerDateModel modelIda = new SpinnerDateModel(new Date(), null, null, java.util.Calendar.DAY_OF_MONTH);
+	        spinFechaIda = new JSpinner(modelIda);
+	        JSpinner.DateEditor editorIda = new JSpinner.DateEditor(spinFechaIda, "dd/MM/yyyy");
+	        spinFechaIda.setEditor(editorIda);
+	        panelDatos.add(spinFechaIda);
+	        
+	        //Fecha de Vuelta
+	        panelDatos.add(new JLabel("Fecha de Regreso:"));
+	        SpinnerDateModel modelVuelta = new SpinnerDateModel(new Date(), null, null, java.util.Calendar.DAY_OF_MONTH);
+	        spinFechaVuelta = new JSpinner(modelVuelta);
+	        JSpinner.DateEditor editorVuelta = new JSpinner.DateEditor(spinFechaVuelta, "dd/MM/yyyy");
+	        spinFechaVuelta.setEditor(editorVuelta);
+	        panelDatos.add(spinFechaVuelta);
+
+	        add(panelDatos, BorderLayout.CENTER);
+
+	        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+	        
+	        JButton btnConfirmar = new JButton("CONFIRMAR RESERVA");
+	        btnConfirmar.setFont(new Font("Arial", Font.BOLD, 14));
+	        btnConfirmar.setBackground(new Color(0, 128, 0)); 
+	        btnConfirmar.setForeground(Color.WHITE);
+	        
+	        JButton btnCancelar = new JButton("Cancelar");
+	        btnCancelar.setFont(new Font("Arial", Font.PLAIN, 14));
+	        btnCancelar.setBackground(new Color(200, 50, 50)); 
+	        btnCancelar.setForeground(Color.WHITE);
+
+	        btnConfirmar.addActionListener(e -> {
+
+	            if (txtNombre.getText().trim().isEmpty() || txtEmail.getText().trim().isEmpty()) {
+	                JOptionPane.showMessageDialog(this, "Por favor, rellena tu nombre y email.", "Datos Incompletos", JOptionPane.WARNING_MESSAGE);
+	                return;
+	            }
+	            
+	            JOptionPane.showMessageDialog(this, 
+	                "Reserva de " + txtNombre.getText() + " para " + ciudadSeleccionada + " confirmada.", 
+	                "Reserva Exitosa", 
+	                JOptionPane.INFORMATION_MESSAGE);
+	            dispose(); 
+	        });
+	        btnCancelar.addActionListener(e -> {
+	            dispose(); 
+	        });
+	        
+	        panelBotones.add(btnConfirmar);
+	        panelBotones.add(btnCancelar);
+	        add(panelBotones, BorderLayout.SOUTH);
+	    }
+	}
 	public CuadriculaOfertas() {
 		this.hotelesPorCiudad = cargarHotelesDesdeCSV();
 		JPanel mainpanel = new JPanel();
 		JPanel panel1 = new JPanel(new GridLayout(3, 3, 20, 20));
 		
-		//Creación botón de inicio
-				//para volver a la ventana de inicio
+		
 				JButton botonInicio = new JButton("Atras"); //luego cambiarlo a un icono
 				
-				//Posicionar el boton arriba a la izquierda
 				botonInicio.setBounds(0, 0, 10, 30);
 				
 				botonInicio.addActionListener(new ActionListener() {
 				    
 					@Override
 				    public void actionPerformed(ActionEvent e) {
-				        // Cierra la ventana actual
+
 				        dispose(); 
-				        
-				        // Abre una nueva instancia de la ventana de inicio
 				        VentanaInicio vInicio = new VentanaInicio();
 				        vInicio.setVisible(true);
 				    }
@@ -331,9 +442,12 @@ public class CuadriculaOfertas extends JFrame{
 		btnReservar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ProcesoReserva vProceso = new ProcesoReserva();
-				vProceso.setVisible(true);
-				
+		        // Obtenemos la ciudad seleccionada
+		        String ciudadElegida = ciudadesOferta [numero-1];
+		        
+		        // Abre la nueva ventana de reserva, pasándole la ciudad
+		        VentanaReserva vReserva = new VentanaReserva(ciudadElegida);
+		        vReserva.setVisible(true);
 			}
 			
 		});
