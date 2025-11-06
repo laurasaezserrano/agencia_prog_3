@@ -10,7 +10,9 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.swing.JComboBox;
 import javax.swing.Box;
@@ -21,8 +23,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.BorderFactory;
 
 public class VentanaVueloYHotel extends JFrame{
@@ -32,9 +37,17 @@ public class VentanaVueloYHotel extends JFrame{
 	//Por si suceden futuras extensiones
 	private String [] origenVuelos = {"Madrid"};
 	private JTextField txtPersonas;
+    private static final int VUELO_BOTON_HEIGHT = 50;
+    
+    
+    
+    private List<DatosVuelos> vuelos = new ArrayList<>();
+    private JTable tablavuelos = new JTable();
     private JComboBox<String> cmbDestino;
     private JComboBox<String> cmbOrigen;
-    private static final int VUELO_BOTON_HEIGHT = 50;
+    private JButton botonBusqueda;
+	private JLabel informacion = new JLabel("Selecciona un aeropuerto origen");
+
     
 	public VentanaVueloYHotel() {
 		setTitle("Búsqueda de vuelos");
@@ -43,6 +56,54 @@ public class VentanaVueloYHotel extends JFrame{
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
         
+        cmbOrigen.setPrototypeDisplayValue("Seleccione aeropuerto de origen");
+        cmbOrigen.addActionListener((e) -> {
+        	Object item = ((JComboBox<?>) e.getSource()).getSelectedItem();
+        	vuelos = new ArrayList<>();
+        	
+        	
+        	if (item != null && !item.toString().isEmpty()) {
+				final String orig = item.toString().substring(0, item.toString().indexOf(" - "));
+				
+				if (!orig.isEmpty()) {
+					Set<Aeropuertos> destinos = new HashSet<>();					
+					cambiardestino(new ArrayList<Aeropuertos>(destinos));
+				} else {
+					cmbDestino.removeAllItems();
+				}	
+				
+			}
+        	cambiarvuelos();
+        	informacion.setText("Selecciona aeropuerto de origen");
+        });
+        
+        cmbDestino.setPrototypeDisplayValue("Seleccione aeropuerto de destino");
+        cmbDestino.addActionListener((e) -> {
+        	Object item2 = ((JComboBox<?>) e.getSource()).getSelectedItem();
+        	vuelos = new ArrayList<>();
+        	
+        	
+        	if (item2 != null && !item2.toString().isEmpty()) {
+				final String dest = item2.toString().substring(0, item2.toString().indexOf(" - "));
+				
+				if (!dest.isEmpty() && cmbOrigen.getSelectedIndex()>0) {
+					Object item = cmbOrigen.getSelectedItem();
+					final String orig = item.toString().substring(0, item.toString().indexOf(" - "));
+				} 
+				}	
+				cambiarvuelos();
+        });
+        	
+        	
+      tablavuelos.setRowHeight(30);
+      tablavuelos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      //((DefaultTableCellRenderer) tablavuelos.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+      
+        	
+        	
+        	
+        	
+        	
 		JPanel mainpanel = new JPanel();
 		mainpanel.setLayout(new BorderLayout());
 		mainpanel.setBackground(Color.WHITE);
