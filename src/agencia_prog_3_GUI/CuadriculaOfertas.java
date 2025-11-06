@@ -582,55 +582,43 @@ public class CuadriculaOfertas extends JFrame{
 //	            is = new java.io.FileInputStream("hoteles_mundiales_variedad_EUR.csv");
 //	        }
 		    
-		    try (BufferedReader br = new BufferedReader(new FileReader("src/hoteles_mundiales_variedad_EUR.csv"))) {
+		    try {
+		    	BufferedReader br = new BufferedReader(new FileReader("src/hoteles.txt"));
 		        String linea;
-		        int numeroLinea = 0;
 		        
 		     // Saltar la cabecera
 		        while ((linea = br.readLine()) != null) {
-		        	numeroLinea++;
-		        	if (numeroLinea <= 4)
-		                continue;
-		            
-		        	if (linea.trim().isEmpty()) {
-		                continue;
-		            }
-		        	
 		            String[] datos = linea.split(",");
-		            
-		            if (datos.length >= 6) {
-		                String nombre = datos[0].trim();
-		                String ciudad = datos[1].trim();
-		                String pais = datos[2].trim();
+		            String nombre = datos[0].trim();
+		            String ciudad = datos[1].trim();
+		            String pais = datos[2].trim();
 		                
 		                //ANALISIS PARA VER DONDE FALLA
-		                int estrellas;
-		                int habitaciones;
-		                double precio;
-		                try {
-			                estrellas = Integer.parseInt(datos[3].trim());
+		             int estrellas;
+		             int habitaciones;
+		             double precio;
+		             try {
+		            	 	estrellas = Integer.parseInt(datos[3].trim());
 			                habitaciones = Integer.parseInt(datos[4].trim());
 			                String precioStr = datos[5].trim().replace(" EUR","").trim();
 			                precio = Double.parseDouble(precioStr);
 			                
-		                } catch (NumberFormatException e) {
-		                    System.err.println("Error de formato numérico en línea " + numeroLinea + " - Saltar: " + e.getMessage() + " en línea: " + linea);
-		                    continue; // Saltar línea con datos mal formados
+		              } catch (NumberFormatException e) {
+		                  System.err.println("Error de formato numérico ");
+		                  continue; // Saltar línea con datos mal formados
 		                }
 		                
 		                Hotel hotel = new Hotel(nombre, ciudad, pais, estrellas,habitaciones, precio);
 		                hotelesPorCiudad.putIfAbsent(ciudad, new ArrayList<>());
 		                hotelesPorCiudad.get(ciudad).add(hotel);
-		            } else {
-		                System.err.println("Advertencia: Línea con campos insuficientes (" + datos.length + ") en línea " + numeroLinea + ": " + linea);
-		            }
-		        }
-		    } catch (IOException e) {
-		        // IOException ahora solo captura errores *durante* la lectura del stream
-		        System.err.println("Error de lectura de datos del CSV: " + e.getMessage());
-		    }
+		            
+		        		}
+		    		} catch (IOException e) {
+				        // IOException ahora solo captura errores *durante* la lectura del stream
+				        System.err.println("Error de lectura de datos del CSV: " + e.getMessage());
+		    		}
 		    
-		                return hotelesPorCiudad;
+    		return hotelesPorCiudad;
 		        }
 	
 	//HOTEL MÁS BARATO
