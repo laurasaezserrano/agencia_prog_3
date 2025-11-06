@@ -37,11 +37,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.w3c.dom.html.HTMLCollection;
-
-import es.deusto.ingenieria.prog3.easybooking.gui.BookRendererEditor;
-import es.deusto.ingenieria.prog3.easybooking.gui.FlightRenderer;
-import es.deusto.ingenieria.prog3.easybooking.gui.FlightsTableModel;
-
 import javax.swing.BorderFactory;
 
 public class VentanaVueloYHotel extends JFrame{
@@ -51,16 +46,18 @@ public class VentanaVueloYHotel extends JFrame{
 	//Por si suceden futuras extensiones
 	private String [] origenVuelos = {"Madrid"};
 	private JTextField txtPersonas;
+	private JComboBox<String> cmbDestino;
+    private JComboBox<String> cmbOrigen;
     private static final int VUELO_BOTON_HEIGHT = 50;
     
     
     
-    private List<DatosVuelos> vuelos = new ArrayList<>();
-    private JTable tablavuelos = new JTable();
-    private JComboBox<String> cmbDestino;
-    private JComboBox<String> cmbOrigen;
-    private JButton botonBusqueda;
-	private JLabel informacion = new JLabel("Selecciona un aeropuerto origen");
+//    private List<DatosVuelos> vuelos = new ArrayList<>();
+//    private JTable tablavuelos = new JTable();
+//    private JComboBox<String> cmbDestino;
+//    private JComboBox<String> cmbOrigen;
+//    private JButton botonBusqueda;
+//	private JLabel informacion = new JLabel("Selecciona un aeropuerto origen");
 
     
 	public VentanaVueloYHotel() {
@@ -69,78 +66,89 @@ public class VentanaVueloYHotel extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
+    JPanel mainpanel = new JPanel();
+    mainpanel.setLayout(new BorderLayout());
+    mainpanel.setBackground(Color.WHITE);
         
-        cmbOrigen.setPrototypeDisplayValue("Seleccione aeropuerto de origen");
-        cmbOrigen.addActionListener((e) -> {
-        	Object item = ((JComboBox<?>) e.getSource()).getSelectedItem();
-        	vuelos = new ArrayList<>();
-        	
-        	
-        	if (item != null && !item.toString().isEmpty()) {
-				final String orig = item.toString().substring(0, item.toString().indexOf(" - "));
-				
-				if (!orig.isEmpty()) {
-					Set<Aeropuertos> destinos = new HashSet<>();					
-					cambiardestino(new ArrayList<Aeropuertos>(destinos));
-				} else {
-					cmbDestino.removeAllItems();
-				}	
-				
-			}
-        	cambiarvuelos();
-        	informacion.setText("Selecciona aeropuerto de origen");
-        });
-        
-        cmbDestino.setPrototypeDisplayValue("Seleccione aeropuerto de destino");
-        cmbDestino.addActionListener((e) -> {
-        	Object item2 = ((JComboBox<?>) e.getSource()).getSelectedItem();
-        	vuelos = new ArrayList<>();
-        	
-        	
-        	if (item2 != null && !item2.toString().isEmpty()) {
-				final String dest = item2.toString().substring(0, item2.toString().indexOf(" - "));
-				
-				if (!dest.isEmpty() && cmbOrigen.getSelectedIndex()>0) {
-					Object item = cmbOrigen.getSelectedItem();
-					final String orig = item.toString().substring(0, item.toString().indexOf(" - "));
-				} 
-				}	
-				cambiarvuelos();
-        });
-        	
-        	
-      tablavuelos.setRowHeight(30);
-      tablavuelos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      //((DefaultTableCellRenderer) tablavuelos.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
-      //tablavuelos.setHorizontalAlignment(JLabel.RIGHT);
-        	
-      //Distribución de los elementos en el JFrame
-      JPanel panelorigen = new JPanel();		
-      panelorigen.add(new JLabel("Origen: "));		
-      panelorigen.add(this.cmbOrigen);
-
-      JPanel paneldestino = new JPanel();
-      paneldestino.add(new JLabel("Destino: "));
-      paneldestino.add(cmbDestino);
-    
-      JPanel panelbusqueda = new JPanel();
-      //JPanel panelBusqueda = configurarPanelBusqueda();
-      //panelBusqueda.setAlignmentX(JComponent.CENTER_ALIGNMENT); 
-      panelbusqueda.setBorder(new TitledBorder("Búsqueda de vuelos"));
-      panelbusqueda.setLayout(new GridLayout(3, 1));
-      panelbusqueda.add(panelorigen);
-      panelbusqueda.add(paneldestino);		
+//        cmbOrigen.setPrototypeDisplayValue("Seleccione aeropuerto de origen");
+//        cmbOrigen.addActionListener((e) -> {
+//        	Object item = ((JComboBox<?>) e.getSource()).getSelectedItem();
+//        	vuelos = new ArrayList<>();
+//        	
+//        	
+//        	if (item != null && !item.toString().isEmpty()) {
+//				final String orig = item.toString().substring(0, item.toString().indexOf(" - "));
+//				
+//				if (!orig.isEmpty()) {
+//					Set<Aeropuertos> destinos = new HashSet<>();					
+//					cambiardestino(new ArrayList<Aeropuertos>(destinos));
+//				} else {
+//					cmbDestino.removeAllItems();
+//				}	
+//				
+//			}
+//        	cambiarvuelos();
+//        	informacion.setText("Selecciona aeropuerto de origen");
+//        });
+//        
+//        cmbDestino.setPrototypeDisplayValue("Seleccione aeropuerto de destino");
+//        cmbDestino.addActionListener((e) -> {
+//        	Object item2 = ((JComboBox<?>) e.getSource()).getSelectedItem();
+//        	vuelos = new ArrayList<>();
+//        	
+//        	
+//        	if (item2 != null && !item2.toString().isEmpty()) {
+//				final String dest = item2.toString().substring(0, item2.toString().indexOf(" - "));
+//				
+//				if (!dest.isEmpty() && cmbOrigen.getSelectedIndex()>0) {
+//					Object item = cmbOrigen.getSelectedItem();
+//					final String orig = item.toString().substring(0, item.toString().indexOf(" - "));
+//				} 
+//				}	
+//				cambiarvuelos();
+//        });
+//        	
+//        	
+//      tablavuelos.setRowHeight(30);
+//      tablavuelos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//      //((DefaultTableCellRenderer) tablavuelos.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+//      //tablavuelos.setHorizontalAlignment(JLabel.RIGHT);
+//        	
+//      //Distribución de los elementos en el JFrame
+//      JPanel panelorigen = new JPanel();		
+//      panelorigen.add(new JLabel("Origen: "));		
+//      panelorigen.add(this.cmbOrigen);
+//
+//      JPanel paneldestino = new JPanel();
+//      paneldestino.add(new JLabel("Destino: "));
+//      paneldestino.add(cmbDestino);
+//    
+      
+      JPanel panelBusqueda = configurarPanelBusqueda();
+      panelBusqueda.setAlignmentX(JComponent.CENTER_ALIGNMENT); 
+//      JPanel panelbusqueda = new JPanel();
+//      panelbusqueda.setBorder(new TitledBorder("Búsqueda de vuelos"));
+//      panelbusqueda.setLayout(new GridLayout(3, 1));
+//      panelbusqueda.add(panelorigen);
+//      panelbusqueda.add(paneldestino);		
     						
-      add(panelbusqueda, BorderLayout.NORTH);
-      add(new JScrollPane(tablavuelos), BorderLayout.CENTER);
-      add(informacion, BorderLayout.SOUTH);
-    		
-      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      setTitle("Búsqueda de Vuelos");
-      setSize(1200, 600);
-      setLocationRelativeTo(null);
-      setVisible(true);
-        	
+//      add(panelbusqueda, BorderLayout.NORTH);
+//      add(new JScrollPane(tablavuelos), BorderLayout.CENTER);
+//      add(informacion, BorderLayout.SOUTH);
+       
+//      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//      setTitle("Búsqueda de Vuelos");
+//      setSize(1200, 600);
+//      setLocationRelativeTo(null);
+//      setVisible(true);
+      
+      titulo = new JTextField("Búsqueda de Vuelos y Ofertas");
+      titulo.setEditable(false);
+      titulo.setHorizontalAlignment(JTextField.CENTER);
+      titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 24f));
+      titulo.setAlignmentX(JComponent.CENTER_ALIGNMENT); 
+      //mainpanel.add(titulo);
+      	
       JButton botonInicio = new JButton("Atras"); //luego cambiarlo a un icono
       botonInicio.setBounds(0, 0, 10, 30);
       botonInicio.addActionListener(new ActionListener() {
@@ -154,66 +162,13 @@ public class VentanaVueloYHotel extends JFrame{
 		        VentanaInicio vInicio = new VentanaInicio();
 		        vInicio.setVisible(true);
 		    }
-	});
-//        	
-		JPanel mainpanel = new JPanel();
-		mainpanel.setLayout(new BorderLayout());
-		mainpanel.setBackground(Color.WHITE);
-//		
-		
+	});		
 		
 		JPanel vuelospanel = new JPanel();
 		vuelospanel.setLayout(new BoxLayout(vuelospanel, BoxLayout.Y_AXIS));
         vuelospanel.setBackground(new Color(50, 150, 200)); 
         
-       
-		
-//      private void cambiardestino(List<Aeropuertos> aeropuertos) {
-//    	  this.cmbDestino.removeAllItems();
-//    	  this.cmbDestino.addItem("");
-//    	  Collections.sort(aeropuertos);
-//    	  aeropuertos.forEach(a -> cmbDestino.addItem(String.format("%s - %s (%s)", 
-//  				a.getCodigo(), a.getNombre(), a.getPais().getNombre())));
-//    	  }
-      
-      
-//      
-//      private void cambiarvuelos() {
-//    	  Comparator<DatosVuelos> preciocomparador = (f1, f2) -> {
-//  			return Float.compare(f1.getPrecio(), f2.getPrecio());
-//  			};
-//  			Collections.sort(vuelos, preciocomparador);
-//  			//tablavuelos.setModel(new FlightsTableModel(flights));	 FLIGHTS TABLA MODEL NO CREADO
-//  			
-//  			//Se define el render para todas las columnas de la tabla excepto la última
-//  			FlightRenderer defaultRenderer = new FlightRenderer();
-//  			
-//  			for (int i=0; i<jTableFlights.getColumnModel().getColumnCount()-1; i++) {
-//  				jTableFlights.getColumnModel().getColumn(i).setCellRenderer(defaultRenderer);
-//  			}
-//
-//  			//Se define el render y editor para la última columna de la tabla
-//  			int lastColumn = tablavuelos.getColumnModel().getColumnCount()-1;
-//  			
-//  			tablavuelos.getColumnModel().getColumn(lastColumn).setCellRenderer(new BookRendererEditor(this));
-//  			tablavuelos.getColumnModel().getColumn(lastColumn).setCellEditor(new BookRendererEditor(this));		
-//  			
-//  			informacion.setText(String.format("%d vuelos", vuelos.size()));
-//  			
-//  		
-//      }
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-		
+
         /**
          * IAG - IDEA BORDE VACIO PARA MEJOR ESTRUCTURA (setBorder - linea 58)
          */
@@ -240,6 +195,7 @@ public class VentanaVueloYHotel extends JFrame{
 			vuelospanel.add(Box.createVerticalStrut(10));
 		}
 		
+        
 		JScrollPane scroll = new JScrollPane(vuelospanel);
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scroll, BorderLayout.CENTER);
@@ -247,14 +203,8 @@ public class VentanaVueloYHotel extends JFrame{
         add(botonInicio,BorderLayout.SOUTH);
         
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+        
+
 	/**
 	 * IAG - Para asegurarnos de que aunque el CSV no se lea (METODO obtenerDestinosUnicos):
      * Extrae los destinos únicos del archivo CSV para poblar el JComboBox.
@@ -296,8 +246,9 @@ public class VentanaVueloYHotel extends JFrame{
         
         return destinos;
     }
-
-	public JPanel configurarPanelBusqueda() {
+        
+        
+    public JPanel configurarPanelBusqueda() {
 		Set<String> destinos = obtenerDestinosUnicos();
 		String[] destinARRAY = destinos.toArray(new String[0]);
 		
@@ -328,7 +279,45 @@ public class VentanaVueloYHotel extends JFrame{
         return panelBusqueda;
 
 	}
-	
+        
+        
+//      private void cambiardestino(List<Aeropuertos> aeropuertos) {
+//    	  this.cmbDestino.removeAllItems();
+//    	  this.cmbDestino.addItem("");
+//    	  Collections.sort(aeropuertos);
+//    	  aeropuertos.forEach(a -> cmbDestino.addItem(String.format("%s - %s (%s)", 
+//  				a.getCodigo(), a.getNombre(), a.getPais().getNombre())));
+//    	  }
+      
+      
+//      
+//      private void cambiarvuelos() {
+//    	  Comparator<DatosVuelos> preciocomparador = (f1, f2) -> {
+//  			return Float.compare(f1.getPrecio(), f2.getPrecio());
+//  			};
+//  			Collections.sort(vuelos, preciocomparador);
+//  			//tablavuelos.setModel(new FlightsTableModel(flights));	 FLIGHTS TABLA MODEL NO CREADO
+//  			
+//  			//Se define el render para todas las columnas de la tabla excepto la última
+//  			FlightRenderer defaultRenderer = new FlightRenderer();
+//  			
+//  			for (int i=0; i<jTableFlights.getColumnModel().getColumnCount()-1; i++) {
+//  				jTableFlights.getColumnModel().getColumn(i).setCellRenderer(defaultRenderer);
+//  			}
+//
+//  			//Se define el render y editor para la última columna de la tabla
+//  			int lastColumn = tablavuelos.getColumnModel().getColumnCount()-1;
+//  			
+//  			tablavuelos.getColumnModel().getColumn(lastColumn).setCellRenderer(new BookRendererEditor(this));
+//  			tablavuelos.getColumnModel().getColumn(lastColumn).setCellEditor(new BookRendererEditor(this));		
+//  			
+//  			informacion.setText(String.format("%d vuelos", vuelos.size()));
+//  			
+//  		
+//      }
+      
+      
+
 	public static void main(String[] args) {
 		VentanaVueloYHotel vuelosyhotel = new VentanaVueloYHotel();
 		vuelosyhotel.setVisible(true);
