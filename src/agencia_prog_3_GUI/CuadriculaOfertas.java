@@ -66,6 +66,8 @@ public class CuadriculaOfertas extends JFrame{
 	    	
 	    	private double precioBaseNoche; 
 	    	private JLabel lblPrecioTotal;
+	    	private JLabel lblHotelSeleccionado;
+	    	private Hotel hotelSeleccionado;
 	    	private JTextField nomUser;
 	    	private JTextField txtNombre;
 	    	private JTextField txtEmail;
@@ -79,8 +81,15 @@ public class CuadriculaOfertas extends JFrame{
 	   public VentanaReserva(String ciudadSeleccionada, double precioBaseNoche) { 
 	                this.ciudadSeleccionada = ciudadSeleccionada;
 	                this.precioBaseNoche = precioBaseNoche;
+	                this.hotelSeleccionado = hotelSeleccionado;
 	                
-	        // --- 1. CONFIGURACIÓN BÁSICA ---
+	                if (hotelSeleccionado != null) {
+	                    this.precioBaseNoche = hotelSeleccionado.getPrecio();
+	                } else {
+	                    this.precioBaseNoche = 0.0;
+	                }
+	                
+	        
 	        setTitle("Confirmar Reserva: " + ciudadSeleccionada);
 	        setSize(550, 450);
 	        setLocationRelativeTo(null); 
@@ -94,7 +103,7 @@ public class CuadriculaOfertas extends JFrame{
 	        add(lblTitulo, BorderLayout.NORTH);
 
 	        //PANEL CENTRAL (CAMPOS DE DATOS)
-	        JPanel panelDatos = new JPanel(new GridLayout(8, 2, 10, 10));
+	        JPanel panelDatos = new JPanel(new GridLayout(9, 2, 10, 10));
 	        panelDatos.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 	        
 	        //Nombre
@@ -141,6 +150,14 @@ public class CuadriculaOfertas extends JFrame{
 	        spinFechaVuelta.setEditor(editorVuelta);
 	        panelDatos.add(spinFechaVuelta);
 	        
+	        //HOTEL
+	        lblHotelSeleccionado = new JLabel("");
+	        lblHotelSeleccionado.setFont(new Font("Arial", Font.ITALIC, 14));
+	        lblHotelSeleccionado.setForeground(new Color(50, 150, 200)); // Color azul
+	        
+	        panelDatos.add(new JLabel("HOTEL ELEGIDO:")); // Etiqueta
+	        panelDatos.add(lblHotelSeleccionado); // Valor
+	        
 	        //Precio TOTAL
 	        lblPrecioTotal = new JLabel("Precio Total Estimado: Calculando...");
 	        lblPrecioTotal.setFont(new Font("Arial", Font.BOLD, 16));
@@ -148,8 +165,12 @@ public class CuadriculaOfertas extends JFrame{
 	        panelDatos.add(new JLabel("PRECIO TOTAL:"));
 	        panelDatos.add(lblPrecioTotal);
 	        
-	        add(panelDatos, BorderLayout.CENTER);
+	        //Hotel SELECCIONADO
+	        mostrarHotelSeleccionado(); // <--- NUEVA LLAMADA
 	        actualizarPrecioTotal();
+	        
+	        add(panelDatos, BorderLayout.CENTER);
+	        
 	        
 	        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
 	        
@@ -190,8 +211,18 @@ public class CuadriculaOfertas extends JFrame{
 	        spinFechaIda.addChangeListener(e -> actualizarPrecioTotal());
 	        spinFechaVuelta.addChangeListener(e -> actualizarPrecioTotal());
 	    }
-
-	
+	   private void mostrarHotelSeleccionado() {
+	        if (hotelSeleccionado != null) {
+	            String estrellas = "*".repeat(hotelSeleccionado.getEstrellas());
+	            String infoHotel = String.format("%s (%s)", 
+	                hotelSeleccionado.getNombre(), 
+	                estrellas);
+	            lblHotelSeleccionado.setText(infoHotel);
+	        } else {
+	            lblHotelSeleccionado.setText("Hotel no disponible.");
+	        	}
+	    	}
+	   
 		private void actualizarPrecioTotal() {
 	        //DURACION
 	        Date fechaIda = (Date) spinFechaIda.getValue();
@@ -551,7 +582,7 @@ public class CuadriculaOfertas extends JFrame{
 //	            is = new java.io.FileInputStream("hoteles_mundiales_variedad_EUR.csv");
 //	        }
 		    
-		    try (BufferedReader br = new BufferedReader(new FileReader("hoteles_mundiales_variedad_EUR.csv"))) {
+		    try (BufferedReader br = new BufferedReader(new FileReader("src/hoteles_mundiales_variedad_EUR.csv"))) {
 		        String linea;
 		        int numeroLinea = 0;
 		        
@@ -561,32 +592,46 @@ public class CuadriculaOfertas extends JFrame{
 		        	if (numeroLinea <= 4)
 		                continue;
 		            
-		          
+		        	if (linea.trim().isEmpty()) {
+		                continue;
+		            }
+		        	
 		            String[] datos = linea.split(",");
 		            
 		            if (datos.length >= 6) {
 		                String nombre = datos[0].trim();
 		                String ciudad = datos[1].trim();
 		                String pais = datos[2].trim();
-		                int estrellas = Integer.parseInt(datos[3].trim());
-		                int habitaciones = Integer.parseInt(datos[4].trim());
-		                double precio = Double.parseDouble(datos[5].trim());
+		                
+		                //ANALISIS PARA VER DONDE FALLA
+		                int estrellas;
+		                int habitaciones;
+		                double precio;
+		                try {
+			                estrellas = Integer.parseInt(datos[3].trim());
+			                habitaciones = Integer.parseInt(datos[4].trim());
+			                String precioStr = datos[5].trim().replace(" EUR","").trim();
+			                precio = Double.parseDouble(precioStr);
+			                
+		                } catch (NumberFormatException e) {
+		                    System.err.println("Error de formato numérico en línea " + numeroLinea + " - Saltar: " + e.getMessage() + " en línea: " + linea);
+		                    continue; // Saltar línea con datos mal formados
+		                }
 		                
 		                Hotel hotel = new Hotel(nombre, ciudad, pais, estrellas,habitaciones, precio);
-		                
-		                // Añadir al HashMap
 		                hotelesPorCiudad.putIfAbsent(ciudad, new ArrayList<>());
 		                hotelesPorCiudad.get(ciudad).add(hotel);
+		            } else {
+		                System.err.println("Advertencia: Línea con campos insuficientes (" + datos.length + ") en línea " + numeroLinea + ": " + linea);
 		            }
 		        }
-		        } catch (IOException e) {
-		        System.err.println("Error al leer el archivo: " + e.getMessage());
-		        } catch (NumberFormatException e) {
-		        System.err.println("Error al convertir datos: " + e.getMessage());
-		        }
+		    } catch (IOException e) {
+		        // IOException ahora solo captura errores *durante* la lectura del stream
+		        System.err.println("Error de lectura de datos del CSV: " + e.getMessage());
+		    }
 		    
-			    return hotelesPorCiudad;
-			}
+		                return hotelesPorCiudad;
+		        }
 	
 	//HOTEL MÁS BARATO
 	public Hotel obtenerHotelMasBaratoDeCiudad(HashMap<String, List<Hotel>> hotelesPorCiudad, String ciudad) {
