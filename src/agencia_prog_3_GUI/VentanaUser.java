@@ -30,7 +30,7 @@ public class VentanaUser extends JFrame{
     private final JComboBox<String> cbMoneda = new JComboBox<>(new String[]{"EUR", "USD", "GBP"});
 
 	
-	public VentanaUser() {
+	public VentanaUser(String user, String pass) {
 		setTitle("Perfil del Usuario");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(400, 350);
@@ -50,15 +50,28 @@ public class VentanaUser extends JFrame{
 		JPanel panelUsuario = new JPanel(new GridLayout(10, 2, 10, 10));
 		panelUsuario.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 		panelUsuario.setBackground(new Color(255, 255, 179));
+		
 				
 		//nombre de usuario
 		panelUsuario.add(new JLabel("Nombre de usuario:"));
-		JTextField nusuario = new JTextField();
-		panelUsuario.add(nusuario);
+		nusuario = new JTextField();
+		String usuarioLogeado = AlmacenajeSesion.getNombreUsuario(); 
+	    if (usuarioLogeado != null) {
+	        nusuario.setText(usuarioLogeado);
+	        nusuario.setEditable(false); 
+	        nusuario.setBackground(Color.LIGHT_GRAY);
+	    }
+	    panelUsuario.add(nusuario);
 		
-		//contrasña
+		//contraseña
 		panelUsuario.add(new JLabel("Contraseña:"));
 		JTextField contraseña = new JTextField();
+		String contraseñaUser = AlmacenajeSesion.getPassword(); 
+	    if (contraseñaUser != null) {
+	        nusuario.setText(contraseñaUser);
+	        nusuario.setEditable(false); 
+	        nusuario.setBackground(Color.LIGHT_GRAY);
+	    }
 		panelUsuario.add(contraseña);
 				
 		//nombre
@@ -136,7 +149,9 @@ public class VentanaUser extends JFrame{
 	// añadir una foto generica user
 	// y que introduzca datos personales que despues se relacionaran con su incio para las reservas
 	public static void main(String[] args) {
-		VentanaUser usuario = new VentanaUser();
+		String user = new String ();
+		String pass = new String ();
+		VentanaUser usuario = new VentanaUser(user,pass);
 		usuario.setVisible(true);
 	}
 

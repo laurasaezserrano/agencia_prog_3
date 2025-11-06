@@ -63,6 +63,7 @@ public class CuadriculaOfertas extends JFrame{
 	    
 	    private static final long serialVersionUID = 1L;
 	    
+	    private JTextField nomUser;
 	    private JTextField txtNombre;
 	    private JTextField txtEmail;
 	    private JSpinner spinAdultos; // Para ajustar los numeros de 1 hasta ...
