@@ -1,22 +1,28 @@
 package agencia_prog_3_GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.JComboBox;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -27,7 +33,15 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
+
+import org.w3c.dom.html.HTMLCollection;
+
+import es.deusto.ingenieria.prog3.easybooking.gui.BookRendererEditor;
+import es.deusto.ingenieria.prog3.easybooking.gui.FlightRenderer;
+import es.deusto.ingenieria.prog3.easybooking.gui.FlightsTableModel;
+
 import javax.swing.BorderFactory;
 
 public class VentanaVueloYHotel extends JFrame{
@@ -98,35 +112,38 @@ public class VentanaVueloYHotel extends JFrame{
       tablavuelos.setRowHeight(30);
       tablavuelos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       //((DefaultTableCellRenderer) tablavuelos.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
-      
+      //tablavuelos.setHorizontalAlignment(JLabel.RIGHT);
         	
+      //Distribución de los elementos en el JFrame
+      JPanel panelorigen = new JPanel();		
+      panelorigen.add(new JLabel("Origen: "));		
+      panelorigen.add(this.cmbOrigen);
+
+      JPanel paneldestino = new JPanel();
+      paneldestino.add(new JLabel("Destino: "));
+      paneldestino.add(cmbDestino);
+    
+      JPanel panelbusqueda = new JPanel();
+      //JPanel panelBusqueda = configurarPanelBusqueda();
+      //panelBusqueda.setAlignmentX(JComponent.CENTER_ALIGNMENT); 
+      panelbusqueda.setBorder(new TitledBorder("Búsqueda de vuelos"));
+      panelbusqueda.setLayout(new GridLayout(3, 1));
+      panelbusqueda.add(panelorigen);
+      panelbusqueda.add(paneldestino);		
+    						
+      add(panelbusqueda, BorderLayout.NORTH);
+      add(new JScrollPane(tablavuelos), BorderLayout.CENTER);
+      add(informacion, BorderLayout.SOUTH);
+    		
+      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      setTitle("Búsqueda de Vuelos");
+      setSize(1200, 600);
+      setLocationRelativeTo(null);
+      setVisible(true);
         	
-        	
-        	
-        	
-		JPanel mainpanel = new JPanel();
-		mainpanel.setLayout(new BorderLayout());
-		mainpanel.setBackground(Color.WHITE);
-		
-		JPanel panelBusqueda = configurarPanelBusqueda();
-		panelBusqueda.setAlignmentX(JComponent.CENTER_ALIGNMENT); 
-		mainpanel.add(panelBusqueda, BorderLayout.NORTH);
-		
-		titulo = new JTextField("Búsqueda de Vuelos y Ofertas");
-        titulo.setEditable(false);
-        titulo.setHorizontalAlignment(JTextField.CENTER);
-        titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 24f));
-        titulo.setAlignmentX(JComponent.CENTER_ALIGNMENT); 
-//      mainpanel.add(titulo);
-		
-		JPanel vuelospanel = new JPanel();
-		vuelospanel.setLayout(new BoxLayout(vuelospanel, BoxLayout.Y_AXIS));
-        vuelospanel.setBackground(new Color(50, 150, 200)); 
-        
-        JButton botonInicio = new JButton("Atras"); //luego cambiarlo a un icono
-        botonInicio.setBounds(0, 0, 10, 30);
-		
-		botonInicio.addActionListener(new ActionListener() {
+      JButton botonInicio = new JButton("Atras"); //luego cambiarlo a un icono
+      botonInicio.setBounds(0, 0, 10, 30);
+      botonInicio.addActionListener(new ActionListener() {
 		    
 			@Override
 		    public void actionPerformed(ActionEvent e) {
@@ -138,6 +155,64 @@ public class VentanaVueloYHotel extends JFrame{
 		        vInicio.setVisible(true);
 		    }
 	});
+//        	
+		JPanel mainpanel = new JPanel();
+		mainpanel.setLayout(new BorderLayout());
+		mainpanel.setBackground(Color.WHITE);
+//		
+		
+		
+		JPanel vuelospanel = new JPanel();
+		vuelospanel.setLayout(new BoxLayout(vuelospanel, BoxLayout.Y_AXIS));
+        vuelospanel.setBackground(new Color(50, 150, 200)); 
+        
+       
+		
+//      private void cambiardestino(List<Aeropuertos> aeropuertos) {
+//    	  this.cmbDestino.removeAllItems();
+//    	  this.cmbDestino.addItem("");
+//    	  Collections.sort(aeropuertos);
+//    	  aeropuertos.forEach(a -> cmbDestino.addItem(String.format("%s - %s (%s)", 
+//  				a.getCodigo(), a.getNombre(), a.getPais().getNombre())));
+//    	  }
+      
+      
+//      
+//      private void cambiarvuelos() {
+//    	  Comparator<DatosVuelos> preciocomparador = (f1, f2) -> {
+//  			return Float.compare(f1.getPrecio(), f2.getPrecio());
+//  			};
+//  			Collections.sort(vuelos, preciocomparador);
+//  			//tablavuelos.setModel(new FlightsTableModel(flights));	 FLIGHTS TABLA MODEL NO CREADO
+//  			
+//  			//Se define el render para todas las columnas de la tabla excepto la última
+//  			FlightRenderer defaultRenderer = new FlightRenderer();
+//  			
+//  			for (int i=0; i<jTableFlights.getColumnModel().getColumnCount()-1; i++) {
+//  				jTableFlights.getColumnModel().getColumn(i).setCellRenderer(defaultRenderer);
+//  			}
+//
+//  			//Se define el render y editor para la última columna de la tabla
+//  			int lastColumn = tablavuelos.getColumnModel().getColumnCount()-1;
+//  			
+//  			tablavuelos.getColumnModel().getColumn(lastColumn).setCellRenderer(new BookRendererEditor(this));
+//  			tablavuelos.getColumnModel().getColumn(lastColumn).setCellEditor(new BookRendererEditor(this));		
+//  			
+//  			informacion.setText(String.format("%d vuelos", vuelos.size()));
+//  			
+//  		
+//      }
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
 		
         /**
          * IAG - IDEA BORDE VACIO PARA MEJOR ESTRUCTURA (setBorder - linea 58)
@@ -172,6 +247,13 @@ public class VentanaVueloYHotel extends JFrame{
         add(botonInicio,BorderLayout.SOUTH);
         
 	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * IAG - Para asegurarnos de que aunque el CSV no se lea (METODO obtenerDestinosUnicos):
