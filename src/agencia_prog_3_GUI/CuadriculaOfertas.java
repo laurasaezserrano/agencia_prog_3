@@ -81,15 +81,31 @@ public class CuadriculaOfertas extends JFrame{
 		
 		for (int i = 0; i < 9; i++) {
 			int numero = i + 1;
-			JButton boton = new JButton(ciudadesOferta [numero-1]);
-		
+			ImageIcon iconoOriginal = null;
+			try {
+	            // Carga la imagen original
+	            Image originalImage = ImageIO.read(new File("images/Oferta"+(numero)+".png"));
+	            
+	            // Define el tamaño deseado para el icono del botón
+	            int anchoDeseado = 110; // Puedes ajustar estos valores
+	            int altoDeseado = 80;  // Puedes ajustar estos valores
+	            
+	            // Escala la imagen para que quepa en el botón
+	            Image scaledImage = originalImage.getScaledInstance(anchoDeseado, altoDeseado, Image.SCALE_SMOOTH);
+	            iconoOriginal = new ImageIcon(scaledImage);
+	        } catch (IOException e) {
+	            System.err.println("Error al cargar imagen " + "images/Oferta"+(numero)+".png" + ": " + e.getMessage());
+	            // Si la imagen no se encuentra, usa un icono por defecto o deja el botón solo con texto
+	            iconoOriginal = null; // O new ImageIcon("ruta/a/icono_por_defecto.png");
+	        }
+			JButton boton = new JButton(ciudadesOferta[i], iconoOriginal);
+			
 			boton.setPreferredSize(new Dimension(200, 120));
-//			boton.setVerticalTextPosition(SwingConstants.TOP);
-//			boton.setHorizontalTextPosition(SwingConstants.CENTER);
-			boton.setBackground(new Color(255, 255, 255));
-			boton.setBorder(new LineBorder(Color.BLACK, 2));
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        setLayout(new FlowLayout());
+			boton.setHorizontalTextPosition(SwingConstants.CENTER); // Centra horizontalmente el texto
+			boton.setVerticalTextPosition(SwingConstants.BOTTOM);
 			boton.addActionListener(new ActionListener() {
-				
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						abriroferta(numero);	
@@ -128,10 +144,10 @@ public class CuadriculaOfertas extends JFrame{
 		ventanaoferta.setSize(800, 500);
 		ventanaoferta.setLocationRelativeTo(this);
 		ventanaoferta.setLayout(new BorderLayout(10, 10));
-		
-		//CAMBIAR EL HOTEL PARA QUE SEA UNO DE LA LISTA DE HOTELES RANDOM
-		//Descripciones para cada oferta (predefinidas)
-		//IAG - Descripciones generadas por Gemini
+
+		/**IAG - Descripciones generadas por Gemini
+		 * 
+		 */
 		 String[] descripciones = {
 				 
 		        //CARIBE
@@ -256,11 +272,16 @@ public class CuadriculaOfertas extends JFrame{
 		descripcionoferta.setText("");
 		
 		JButton btnReservar = new JButton("Reservar esta oferta");
+		JButton btnRetorno = new JButton("Atras");
 		btnReservar.setFont(new Font("Arial", Font.BOLD, 16));
 		btnReservar.setBackground(new Color(0, 128, 0));
 		btnReservar.setForeground(Color.WHITE);
+		
+		btnRetorno.setFont(new Font("Arial", Font.BOLD, 16));
+		btnRetorno.setBackground(new Color(0, 128, 0));
+		btnRetorno.setForeground(Color.WHITE);
+		
 		btnReservar.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ProcesoReserva vProceso = new ProcesoReserva();
@@ -270,10 +291,18 @@ public class CuadriculaOfertas extends JFrame{
 			
 		});
 		
-		JPanel panelBotonReserva = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		panelBotonReserva.add(btnReservar);
-		panelBotonReserva.setBackground(new Color(50, 150, 200)); 
-		ventanaoferta.add(panelBotonReserva, BorderLayout.SOUTH);
+		btnRetorno.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose(); 
+		        CuadriculaOfertas cuadOfert = new CuadriculaOfertas();
+		        cuadOfert.setVisible(true);
+		    }
+	});
+		JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		panelInferior.add(btnReservar);
+		panelInferior.add(btnRetorno);
+		ventanaoferta.add(panelInferior, BorderLayout.SOUTH);
 		
 		
 		ventanaoferta.setVisible(true);
@@ -356,63 +385,6 @@ public class CuadriculaOfertas extends JFrame{
 		    
 		    return hotelesSeleccionados;
 		}
-	
-		// Método  para obtener los hoteles MÁS BARATOS según el número de oferta
-//		public List<Hotel> obtenerHotelesParaOferta(HashMap<String, List<Hotel>> hotelesPorCiudad, int numeroOferta) {
-//		    List<Hotel> hotelesOferta = new ArrayList<>();
-//		    
-//		    switch (numeroOferta) {
-//		        case 1: // Caribe (Colombia: Bogotá, San Andrés, Cartagena)
-//		            String[] ciudadesCaribe = {"Bogota", "San Andres", "Cartagena"};
-//		            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesCaribe);
-//		            break;
-//		            
-//		        case 2: // París
-//		            Hotel hotelParis = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, "Paris");
-//		            if (hotelParis != null) hotelesOferta.add(hotelParis);
-//		            break;
-//		            
-//		        case 3: // Suiza (Zurich, Lucerna, Interlaken)
-//		            String[] ciudadesSuiza = {"Zurich", "Lucerna", "Interlaken"};
-//		            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesSuiza);
-//		            break;
-//		            
-//		        case 4: // Roma (Roma, Florencia, Nápoles)
-//		            String[] ciudadesItalia = {"Roma", "Florencia", "Napoles"};
-//		            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesItalia);
-//		            break;
-//		            
-//		        case 5: // Toronto
-//		            Hotel hotelToronto = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, "Toronto");
-//		            if (hotelToronto != null) hotelesOferta.add(hotelToronto);
-//		            break;
-//		            
-//		        case 6: // Tokio (Tokio, Nikko, Kamakura, Hakone)
-//		            String[] ciudadesJapon = {"Tokyo", "Nikko", "Kamakura", "Hakone"};
-//		            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesJapon);
-//		            break;
-//		            
-//		        case 7: // Bangkok (Bangkok, Ayutthaya, Ubud)
-//		            String[] ciudadesTailandia = {"Bangkok", "Ayutthaya", "Ubud"};
-//		            hotelesOferta = obtenerHotelesMasBaratosMultiplesCiudades(hotelesPorCiudad, ciudadesTailandia);
-//		            break;
-//		            
-//		        case 8: // Nueva York
-//		            Hotel hotelNY = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, "Nueva York");
-//		            if (hotelNY != null) hotelesOferta.add(hotelNY);
-//		            break;
-//		            
-//		        case 9: // Oslo
-//		            Hotel hotelOslo = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, "Oslo");
-//		            if (hotelOslo != null) hotelesOferta.add(hotelOslo);
-//		            break;
-//		            
-//		        default:
-//		            System.err.println("Número de oferta no válido: " + numeroOferta);
-//		    }
-//		    
-//		    return hotelesOferta;
-//		}
 		
 	static class Hotel {
         private String nombre;
