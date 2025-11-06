@@ -103,13 +103,14 @@ public class CuadriculaOfertas extends JFrame{
 	            iconoOriginal = null; 
 	        }
 			
+			
 			try {
 		        // images/OFerta(num)_sup.jpg
 		        Image originalImageHover = ImageIO.read(new File("images/Oferta" + numero + "_sup.jpg"));
 		        
 		        if (originalImageHover != null) {
 			        int anchoIconSup = 200;
-		            int altoIconSup = 120;
+		            int altoIconSup = 140;
 		        
 			        Image scaledImageHover = originalImageHover.getScaledInstance(anchoIconSup, altoIconSup, Image.SCALE_SMOOTH);
 			        iconoSuperior = new ImageIcon(scaledImageHover);
@@ -146,7 +147,6 @@ public class CuadriculaOfertas extends JFrame{
 					// 1. CAMBIAR IMAGEN (a la versión ligeramente más grande)
 					botonActual.setIcon(iconoAlternativo); 
 					
-					// 2. CAMBIAR ASPECTO (Borde y Fondo)
 					botonActual.setBackground(new Color(200, 220, 255)); // Fondo azul claro
 					botonActual.setBorder(new LineBorder(new Color(0, 100, 255), 3)); // Borde azul resaltado
 				}
@@ -155,10 +155,8 @@ public class CuadriculaOfertas extends JFrame{
 				public void mouseExited(MouseEvent evt) {
 					// 1. RESTAURAR IMAGEN (a la versión pequeña)
 					botonActual.setIcon(iconoInicial); 
-					
-					// 2. RESTAURAR ASPECTO
+			
 					botonActual.setBackground(new Color(255, 255, 255)); // Fondo blanco
-					botonActual.setBorder(new LineBorder(Color.BLACK, 2)); // Borde negro
 				}
 			});
 				
