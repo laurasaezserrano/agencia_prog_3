@@ -14,7 +14,10 @@ import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,11 +80,13 @@ public class CuadriculaOfertas extends JFrame{
 	    	private JSpinner spinFechaIda;
 	    	private JSpinner spinFechaVuelta;
 	    	private String ciudadSeleccionada;
+	    	
+	    	private double precioFinalCalculado = 0.0;
 	    	    
 	   public VentanaReserva(String ciudadSeleccionada, double precioBaseNoche) { 
 	                this.ciudadSeleccionada = ciudadSeleccionada;
 	                this.precioBaseNoche = precioBaseNoche;
-	                this.hotelSeleccionado = hotelSeleccionado;
+	                this.hotelSeleccionado = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, ciudadSeleccionada);;
 	                
 	                if (hotelSeleccionado != null) {
 	                    this.precioBaseNoche = hotelSeleccionado.getPrecio();
@@ -185,6 +190,13 @@ public class CuadriculaOfertas extends JFrame{
 	        btnCancelar.setForeground(Color.WHITE);
 
 	        btnConfirmar.addActionListener(e -> {
+	        	
+	        	String nombreUsuario = txtNombre.getText().trim();
+	            
+	            if (nombreUsuario.isEmpty() || txtEmail.getText().trim().isEmpty()) {
+	                JOptionPane.showMessageDialog(this, "Por favor, rellena tu nombre y email.", "Datos Incompletos", JOptionPane.WARNING_MESSAGE);
+	                return;
+	            }
 
 	            if (txtNombre.getText().trim().isEmpty() || txtEmail.getText().trim().isEmpty()) {
 	                JOptionPane.showMessageDialog(this, "Por favor, rellena tu nombre y email.", "Datos Incompletos", JOptionPane.WARNING_MESSAGE);
@@ -195,6 +207,29 @@ public class CuadriculaOfertas extends JFrame{
 	                "Reserva de " + txtNombre.getText() + " para " + ciudadSeleccionada + " confirmada.", 
 	                "Reserva Exitosa", 
 	                JOptionPane.INFORMATION_MESSAGE);
+	            
+	            String ciudad = ciudadSeleccionada;
+	            String hotel = (hotelSeleccionado != null) ? hotelSeleccionado.getNombre() : "N/A";
+	            String email = txtEmail.getText().trim();
+	            String hab = (String) cmbHabitacion.getSelectedItem();
+	            int adultos = (int) spinAdultos.getValue();
+	            int ninos = (int) spinNinos.getValue();
+	            Date salida = (Date) spinFechaIda.getValue();
+	            Date regreso = (Date) spinFechaVuelta.getValue();
+	            // Usamos la variable de clase actualizada por actualizarPrecioTotal()
+	            double precio = this.precioFinalCalculado; 
+
+	            // 2. Llamar al método de guardado
+	            guardarReservaEnCSV(nombreUsuario, ciudad, hotel, email, hab, adultos, ninos, salida, regreso, precio);
+
+	            // 3. Confirmar y cerrar
+	            JOptionPane.showMessageDialog(this, 
+	                "Reserva de " + nombreUsuario + " para " + ciudad + " confirmada.", 
+	                "Reserva Exitosa", 
+	                JOptionPane.INFORMATION_MESSAGE);
+	            dispose();
+	            
+	            
 	            dispose(); 
 	        });
 	        btnCancelar.addActionListener(e -> {
@@ -257,13 +292,18 @@ public class CuadriculaOfertas extends JFrame{
 		        // Usamos el precio base por habitación del hotel, y luego multiplicamos por personas.
 		        // Asumimos que el precioBaseNoche del CSV es por persona y noche, o por habitación doble.
 		        // Lo trataremos como Precio por Habitación Estándar por Noche:
-		        
+	        
+	        double totalPersonasFactor = adultos + ninos;
 	        double precioNocheAjustado = precioBaseNoche * factorHabitacion;
+	        
+	        double precioFinal = (precioBaseNoche * factorHabitacion) * totalPersonasFactor * difDias;
+	        
+	        this.precioFinalCalculado = precioFinal;
 	        
 	        // Si hay más de 2 adultos/niños, cobramos un extra por persona adicional
 	        double extraPersonas = Math.max(0, totalPersonas - 2) * 0.3; // 30% extra por persona adicional (simplificado)
 	        
-	        double precioFinal = (precioNocheAjustado * (1 + extraPersonas)) * difDias;
+//	        double precioFinal = (precioNocheAjustado * (1 + extraPersonas)) * difDias;
 	
 	        lblPrecioTotal.setText(String.format("€ %.2f (%d días)", precioFinal, difDias));
 	    }
@@ -683,6 +723,52 @@ public class CuadriculaOfertas extends JFrame{
         public double getPrecio() { return precio; }
 
 	}
+	
+	private void guardarReservaEnCSV(String usuario, String ciudad, String hotel, String email, 
+            String hab, int adultos, int ninos, Date salida, Date regreso, 
+            double precioFinal) {
+                
+		final String FILE_NAME = "reservas.csv";
+		// Formato de fecha estándar para CSV
+		final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
+
+		File file = new File(FILE_NAME);
+		// Comprueba si el archivo es nuevo para añadir la cabecera
+		boolean needsHeader = !file.exists() || file.length() == 0;
+
+		// Usamos try-with-resources para asegurar que se cierre el writer
+		try (FileWriter fw = new FileWriter(file, true); // true = modo append
+				PrintWriter pw = new PrintWriter(fw)) {
+
+			if (needsHeader) {
+				// El "Usuario" es la primera columna, para filtrar en VentanaReservas
+				pw.println("Usuario,Ciudad,Hotel,Email,Habitacion,Adultos,Ninos,Salida,Regreso,Precio");
+			}
+
+			// Formatea la línea CSV
+			String csvLine = String.format("%s,%s,%s,%s,%s,%d,%d,%s,%s,%.2f",
+					usuario,
+					ciudad,
+					hotel.replace(",", ";"), // Evita problemas si el nombre tiene comas
+					email,
+					hab,
+					adultos,
+					ninos,
+					SDF.format(salida),
+					SDF.format(regreso),
+					precioFinal
+					);
+
+			// Escribe la nueva reserva
+			pw.println(csvLine);
+
+		} catch (IOException e) {
+			System.err.println("Error al guardar la reserva en CSV: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
+	
 	
 	public static void main(String[] args) {
 		CuadriculaOfertas ofertas = new CuadriculaOfertas();

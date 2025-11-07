@@ -11,19 +11,26 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
+
 import agencia_prog_3_GUI.Ventana1Login;
 
 public class VentanaReservas extends JFrame {
 
 	private static final long serialVersionUID = 1L;
     JPanel centerPanel = new JPanel();
+    private DefaultTableModel modeloTabla;
+    private String usuarioLogueado;
 
 	
 	public VentanaReservas() {
@@ -60,7 +67,15 @@ public class VentanaReservas extends JFrame {
         // Añadimos el JScrollPane (que contiene el panel) al centro de la ventana
         add(scrollPane, BorderLayout.CENTER);
         
-       
+        try {
+            // ESTA LÍNEA ES DE TU CÓDIGO ORIGINAL
+           this.usuarioLogueado = Ventana1Login.userField.getText();
+       } catch(Exception e) {
+           // Si Ventana1Login no está disponible (p.ej. probando esta clase sola)
+           // usamos un valor por defecto.
+           System.err.println("ADVERTENCIA: No se pudo leer 'Ventana1Login.userField'. Usando 'Test User'.");
+           this.usuarioLogueado = "Test User"; // <-- CAMBIA ESTO SI ES NECESARIO
+       }
         
         
 		botonInicio.addActionListener(new ActionListener() {
@@ -76,27 +91,51 @@ public class VentanaReservas extends JFrame {
 		    }
 		});
         
-		
-		cargarReservas();
-		
+		// 1. Definir las columnas que leeremos del CSV (omitimos 'Usuario')
+        String[] columnas = {
+            "Ciudad", "Hotel", "Email", "Habitación", "Adultos", 
+            "Niños", "Salida", "Regreso", "Precio (€)"
+        };
+        
+        // 2. Crear el modelo de la tabla (vacío) y hacerlo no editable
+        modeloTabla = new DefaultTableModel(columnas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+               return false; // Las celdas no se pueden editar
+            }
+        };
+
+        // 3. Crear la JTable usando el modelo
+        JTable tablaReservas = new JTable(modeloTabla);
+        tablaReservas.setRowHeight(25); // Filas más altas
+        tablaReservas.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        tablaReservas.setFillsViewportHeight(true);
+        
+        // 4. Añadir la JTable a un JScrollPane
+        JScrollPane scrollPaneReservas = new JScrollPane(tablaReservas);
+        scrollPaneReservas.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        
+        // 5. Añadir el JScrollPane al centro de la ventana
+        add(scrollPaneReservas, BorderLayout.CENTER);
+        
+		cargarReservas(usuarioLogueado);
 		
 		
 		
 	}
 	
 	
-	private void cargarReservas() {
+	private void cargarReservas(String usuarioFiltrar) {
 		
         File archivo = new File("reservas.csv");
         
         int contador = 0;
 
-        // Usamos try-with-resources para que el reader se cierre solo
         try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
             
             String linea;
-            reader.readLine(); // Saltamos la cabecera ("Usuario,CodigoReserva")
-            
+            reader.readLine(); // Saltamos la cabecera
+                        
             // Leemos el resto del archivo línea por línea
             while ((linea = reader.readLine()) != null) {
                 if (linea.trim().isEmpty()) {
@@ -105,49 +144,71 @@ public class VentanaReservas extends JFrame {
                 
                 String[] datos = linea.split(",");
                 
-                // Comprobamos que la línea tiene el formato esperado
-                if (datos.length >= 2) {
-                    String usuarioCSV = datos[0];
-                    String codigoReserva = datos[1];
+                // Formato CSV: Usuario,Ciudad,Hotel,Email,Habitacion,Adultos,Ninos,Salida,Regreso,Precio
+                if (datos.length < 10) {
+                    System.err.println("Línea CSV malformada: " + linea);
+                    continue; 
+                }
+                
+                String usuarioCSV = datos[0];
+                
+                // ¡AQUÍ ESTÁ EL FILTRO!
+                // Comparamos el usuario del CSV con el usuario logueado
+                if (usuarioCSV.equalsIgnoreCase(usuarioFiltrar)) {
                     
-                    if (usuarioCSV.equals(Ventana1Login.userField.getText())) {
-                    	JPanel panelReserva = crearPanelReserva(codigoReserva);
-                    	centerPanel.add(panelReserva);
-                        contador++;
-                    }
+                    // Extraemos los datos (índices corridos por el usuario)
+                    String ciudad = datos[1];
+                    String hotel = datos[2].replace(";", ","); // Re-convierte ; a ,
+                    String email = datos[3];
+                    String hab = datos[4];
+                    int adultos = Integer.parseInt(datos[5]);
+                    int ninos = Integer.parseInt(datos[6]);
+                    String salida = datos[7];
+                    String regreso = datos[8];
+                    double precio = Double.parseDouble(datos[9]);
+                    
+                    // Creamos la fila para el modelo
+                    Object[] fila = {
+                        ciudad, hotel, email, hab, adultos, ninos, salida, regreso, precio
+                    };
+                    
+                    // Añadimos la fila al modelo de la JTable
+                    modeloTabla.addRow(fila);
+                    contador++;
                 }
             }
             
-        } catch (IOException ex) {
+            System.out.println("Se encontraron " + contador + " reservas para " + usuarioFiltrar);
+            
+        } catch (IOException | NumberFormatException ex) {
             ex.printStackTrace();
-//            areaReservas.setForeground(Color.RED);
-//            areaReservas.setText("Error al leer el archivo CSV: " + ex.getMessage());
-            return; 
+            JOptionPane.showMessageDialog(this, 
+                "Error al leer el archivo de reservas: " + ex.getMessage(), 
+                "Error de Lectura", 
+                JOptionPane.ERROR_MESSAGE);
         }
         
-        if (contador == 0) {
-            JLabel lblVacio = new JLabel("No se encontraron reservas para " + Ventana1Login.userField.getText());
-            lblVacio.setFont(new Font("Arial", Font.ITALIC, 14));
-            lblVacio.setHorizontalAlignment(JLabel.CENTER);
-            centerPanel.add(lblVacio);
+        if (modeloTabla.getRowCount() == 0) {
+             System.out.println("No se encontraron reservas para " + usuarioFiltrar);
+             // Opcional: mostrar un mensaje en la GUI
         }
         
     }
 
-	private JPanel crearPanelReserva(String codigoReserva) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
-        panel.setBackground(Color.WHITE);
-        
-        // Creamos una etiqueta para el código de reserva
-        JLabel lblCodigo = new JLabel(codigoReserva);
-        lblCodigo.setFont(new Font("Arial", Font.BOLD, 16));
-        
-        // Podrías añadir más cosas aquí (un icono, más detalles, etc.)
-        panel.add(lblCodigo);
-        
-        
-        return panel;
-    }
+//	private JPanel crearPanelReserva(String codigoReserva) {
+//        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+//        panel.setBackground(Color.WHITE);
+//        
+//        // Creamos una etiqueta para el código de reserva
+//        JLabel lblCodigo = new JLabel(codigoReserva);
+//        lblCodigo.setFont(new Font("Arial", Font.BOLD, 16));
+//        
+//        // Podrías añadir más cosas aquí (un icono, más detalles, etc.)
+//        panel.add(lblCodigo);
+//        
+//        
+//        return panel;
+//    }
 	
 	
 	
