@@ -28,11 +28,11 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable {
 		this.duracionvuelo = duracionvuelo;
 		this.aerolinea = aerolinea;
 		this.avion = avion;
-		this.asientos = if (avion == null) {
-		    				this.asientos = 0;
-						} else {
-							this.asientos = avion.getNumeroasientos();
-						};
+//		this.asientos = if (avion == null) {
+//		    				this.asientos = 0;
+//						} else {
+//							this.asientos = avion.getNumeroasientos();
+//						};
 		this.precio = precio;
 		this.reservas = new ArrayList<>();
 	}
