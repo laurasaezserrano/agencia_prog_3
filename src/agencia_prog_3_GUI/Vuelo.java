@@ -1,12 +1,11 @@
 package agencia_prog_3_GUI;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.swing.table.DefaultTableModel;
 
 public class Vuelo extends DefaultTableModel{
+	private static final long serialVersionUID = 1L;
 	private List<DatosVuelos> vuelos; //crear clase de datosvuelos
 	private final List<String> datos = Arrays.asList(
 			"AEROLÍNEA", 

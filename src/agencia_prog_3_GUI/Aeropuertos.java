@@ -3,6 +3,7 @@ package agencia_prog_3_GUI;
 import java.io.Serializable;
 
 public class Aeropuertos implements Comparable<Aeropuertos>, Serializable {
+	private static final long serialVersionUID = 1L;
 	private String nombre;
 	private String ciudad;
 	private String pais;
