@@ -5,6 +5,7 @@ import java.util.List;
 
 
 public class ReservaVuelo implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private String codigoreserva;
 	private DatosVuelos vuelo;
 	private long fecha;
