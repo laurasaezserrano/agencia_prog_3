@@ -20,8 +20,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import agencia_prog_3_GUI.Ventana1Login;
 
@@ -31,6 +34,7 @@ public class VentanaReservas extends JFrame {
     JPanel centerPanel = new JPanel();
     private DefaultTableModel modeloTabla;
     private String usuarioLogueado;
+    private TableRowSorter<DefaultTableModel> sorter;
 
 	
 	public VentanaReservas() {
@@ -55,6 +59,22 @@ public class VentanaReservas extends JFrame {
         panelSuperior.add(botonInicio, BorderLayout.WEST); // Botón a la izquierda
         panelSuperior.add(titleLabel, BorderLayout.CENTER); // Título en el centro
 
+        
+        JPanel panelFiltro = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Panel para los filtros
+		JLabel lblFiltrarCiudad = new JLabel("Filtrar por Ciudad:");
+		JTextField txtFiltroCiudad = new JTextField(20); // Campo de texto de 20 cols
+		JButton btnFiltrar = new JButton("Filtrar");
+		JButton btnLimpiarFiltro = new JButton("Limpiar Filtro");
+		
+		panelFiltro.add(lblFiltrarCiudad);
+		panelFiltro.add(txtFiltroCiudad);
+		panelFiltro.add(btnFiltrar);
+		panelFiltro.add(btnLimpiarFiltro);
+		
+		// Añadimos el panel de filtro debajo del título
+		panelSuperior.add(panelFiltro, BorderLayout.SOUTH);
+        
+        
 //        centerPanel.add(panelSuperior, BorderLayout.NORTH); // <-- MIRA AQUÍ (El panel completo va arriba)
 		
         add(panelSuperior, BorderLayout.NORTH);
@@ -111,12 +131,47 @@ public class VentanaReservas extends JFrame {
         tablaReservas.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
         tablaReservas.setFillsViewportHeight(true);
         
+        sorter = new TableRowSorter<>(modeloTabla);
+		tablaReservas.setRowSorter(sorter);        
+        
         // 4. Añadir la JTable a un JScrollPane
         JScrollPane scrollPaneReservas = new JScrollPane(tablaReservas);
         scrollPaneReservas.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         
         // 5. Añadir el JScrollPane al centro de la ventana
         add(scrollPaneReservas, BorderLayout.CENTER);
+        
+        
+        btnFiltrar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String texto = txtFiltroCiudad.getText();
+				if (texto.trim().length() == 0) {
+					// Si el campo está vacío, no se aplica filtro
+					sorter.setRowFilter(null);
+				} else {
+					// Aplicamos un filtro Regex.
+					// "(?i)" lo hace insensible a mayúsculas/minúsculas.
+					// El '0' indica que debe filtrar por la columna 0 (Ciudad).
+					try {
+						sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto, 0));
+					} catch (java.util.regex.PatternSyntaxException ex) {
+						System.err.println("Error en la sintaxis del filtro: " + ex.getMessage());
+					}
+				}
+			}
+		});
+		
+		btnLimpiarFiltro.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Limpiamos el campo de texto
+				txtFiltroCiudad.setText("");
+				// Quitamos cualquier filtro aplicado
+				sorter.setRowFilter(null);
+			}
+		});
+        
         
 		cargarReservas(usuarioLogueado);
 		
