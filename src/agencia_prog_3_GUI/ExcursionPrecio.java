@@ -13,7 +13,10 @@ public class ExcursionPrecio extends DefaultTableCellRenderer{
 	
 	@Override //
     protected void setValue(Object value) {
-        if (value instanceof Number n) setText(String.format(Locale.US, "%.2f €", n.doubleValue()));
-        else super.setValue(value);
+        if (value instanceof Number n) { //
+        	setText(String.format(Locale.US, "%.2f €", n.doubleValue())); 
+        }else {
+        	super.setValue(value); 
+        }
     }
 }

@@ -1,7 +1,6 @@
 package agencia_prog_3_GUI;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class Avion implements Serializable{
 
@@ -35,7 +34,6 @@ public class Avion implements Serializable{
 	}
 
 
-	//FALTA HASHCODE, EQUALS Y TOSTRING
 	
 	
 

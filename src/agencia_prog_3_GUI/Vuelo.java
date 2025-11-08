@@ -16,7 +16,6 @@ public class Vuelo extends DefaultTableModel{
 			"PRECIO", 
 			"RESERVAS",
 			"ASIENTOS LIBRES",
-			"DISPONIBILIDAD", 
 			"RESERVAR");
 			
 	
@@ -44,8 +43,9 @@ public class Vuelo extends DefaultTableModel{
 		return datos.get(columna);
 	}
 	
+	//Para saber que tiene que devolver cada columna
 	@Override
-	public Object getValueAt(int fila, int columna) {
+	public Object getValueAt(int fila, int columna) { 
 		DatosVuelos vuelo = vuelos.get(fila);
 		switch (columna) {
 		case 0: {

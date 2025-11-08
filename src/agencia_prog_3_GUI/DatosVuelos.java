@@ -16,8 +16,6 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable {
 	private float precio;
 	private List<ReservaVuelo> reservas;
 	
-	
-
 
 	public DatosVuelos(String codigo, Aeropuertos origen, Aeropuertos destino, int duracionvuelo, Aerolinea aerolinea,
 			Avion avion, int asientos, float precio, List<ReservaVuelo> reservas) {
@@ -47,11 +45,9 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable {
 	}
 
 
-
 	public String getCodigo() {
 		return codigo;
 	}
-
 
 	public Aeropuertos getOrigen() {
 		return origen;
@@ -88,8 +84,6 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable {
 	public void setReservas(List<ReservaVuelo> reservas) {
 		this.reservas = reservas;
 	}
-
-	//HASHCODE Y EQUALS Y EL TOSTRING -- FALTAN DE HACER
 
 	@Override
 	public int compareTo(DatosVuelos other) {

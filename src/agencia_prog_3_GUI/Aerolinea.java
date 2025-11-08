@@ -38,8 +38,4 @@ public class Aerolinea implements Serializable {
 	}
 	
 	
-
-	//HASHCODE, EQUALS Y TOSTRING -- FALTAN
-	
-	
 }

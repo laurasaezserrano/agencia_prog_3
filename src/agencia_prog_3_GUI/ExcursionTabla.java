@@ -25,24 +25,29 @@ public class ExcursionTabla extends AbstractTableModel{
     	
     }
     
-    @Override public String getColumnName(int c) {
+    @Override 
+    public String getColumnName(int c) {
     	return columnas[c]; 
     	
     }
     
-    @Override public boolean isCellEditable(int r, int c) { 
-    	return c == 4; 
+    @Override 
+    public boolean isCellEditable(int row, int column) { 
+    	return column == 4; 
     	
     }
     
-    @Override public Class<?> getColumnClass(int c) {
+    @Override 
+    public Class<?> getColumnClass(int c) {
         return switch (c) {
             case 0 -> Integer.class;
             case 3 -> Double.class;
             default -> Object.class;
         };
     }
-    @Override public Object getValueAt(int r, int c) {
+    
+    @Override 
+    public Object getValueAt(int r, int c) {
         Excursion e = excursion.get(r);
         return switch (c) {
             case 0 -> e.getId();

@@ -92,7 +92,6 @@ public class VentanaInicio extends JFrame{
 	}
 	
 	
-	
 	public static void main(String[] args) {
 		VentanaInicio VentanaInicial = new VentanaInicio();
 		VentanaInicial.setVisible(true);

@@ -40,6 +40,5 @@ public class ReservaVuelo implements Serializable{
 		return pasajeros;
 	}
 
-	//FALTA HASHCODE; EQUALS; TOSTRING
 	
 }

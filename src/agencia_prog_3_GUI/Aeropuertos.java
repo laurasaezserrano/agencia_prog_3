@@ -15,6 +15,7 @@ public class Aeropuertos implements Comparable<Aeropuertos>, Serializable {
 		this.pais = pais;
 		this.codigo = codigo;
 	}
+	
 	public String getNombre() {
 		return nombre;
 	}
@@ -27,9 +28,7 @@ public class Aeropuertos implements Comparable<Aeropuertos>, Serializable {
 	public String getCodigo() {
 		return codigo;
 	}
-	
-	//TO STRING, HASHCODE, EQUALS -- FALTAN DE HACER
-	
+		
 	@Override
 	public int compareTo(Aeropuertos other) {
 		// TODO Auto-generated method stub
