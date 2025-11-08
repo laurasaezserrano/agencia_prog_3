@@ -1,42 +1,28 @@
 package agencia_prog_3_GUI;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.swing.JComboBox;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-
-import org.w3c.dom.html.HTMLCollection;
 import javax.swing.BorderFactory;
 
 public class VentanaVueloYHotel extends JFrame{
@@ -48,7 +34,6 @@ public class VentanaVueloYHotel extends JFrame{
 	private JTextField txtPersonas;
 	private JComboBox<String> cmbDestino;
     private JComboBox<String> cmbOrigen;
-    private static final int VUELO_BOTON_HEIGHT = 50;
     
     
     
