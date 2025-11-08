@@ -61,7 +61,7 @@ public class VentanaExcursiones extends JFrame{
 	        "Visita la maravillosa ciudad de Florencia"
 	    };
 	
-	double[] precio = {89, 55, 64, 49, 72, 95, 38, 41, 59};
+	double[] precio = {89, 65, 70, 49, 72, 95, 38, 30, 59};
 	private JTextField campoFiltro;
     private JTextField campoPersonas;
 
@@ -78,9 +78,7 @@ public class VentanaExcursiones extends JFrame{
 		
 		JPanel mainpanel = new JPanel(new BorderLayout(10, 10));
 		mainpanel.setBackground(new Color(50, 150, 200));
-		add(mainpanel, BorderLayout.CENTER); 
-
-		
+		add(mainpanel, BorderLayout.CENTER);
 		
 		JPanel panelBusqueda = configurarBusquedaExcursion();
 		mainpanel.add(panelBusqueda, BorderLayout.NORTH);
@@ -122,7 +120,6 @@ public class VentanaExcursiones extends JFrame{
         int columnareserva = 4;
         tabla.getColumnModel().getColumn(columnareserva).setCellRenderer(new ButtonRenderer("Reservar"));
         tabla.getColumnModel().getColumn(columnareserva).setCellEditor(new ButtonEditor(modelo, tabla, this::abrirReserva));
-
         JScrollPane sp = new JScrollPane(tabla);
         sp.setBorder(new LineBorder(Color.BLACK, 1));
         mainpanel.add(sp, BorderLayout.CENTER);
@@ -143,10 +140,12 @@ public class VentanaExcursiones extends JFrame{
 		});
         
 	}
-        private List<Excursion> crearListaExcursiones() {
+	
+		
+        private List<Excursion> crearListaExcursiones() { 
             List<Excursion> out = new ArrayList<>();
             for (int i = 0; i < tituloexcursion.length; i++) {
-                out.add(new Excursion(i + 1, tituloexcursion[i], descrip[i], precio[i]));
+                out.add(new Excursion(i + 1, tituloexcursion[i], descrip[i], precio[i])); //añade a la lista la excursion
             }
             return out;
         }

@@ -47,17 +47,34 @@ public class ExcursionTabla extends AbstractTableModel{
     }
     
     @Override 
-    public Object getValueAt(int r, int c) {
-        Excursion e = excursion.get(r);
-        return switch (c) {
-            case 0 -> e.getId();
-            case 1 -> e.getNombre();
-            case 2 -> e.getDescripcion();
-            case 3 -> e.getPrecio();
-            case 4 -> "Reservar";
-            default -> null;
-        };
+    public Object getValueAt(int fila, int columna) {
+        Excursion exc = excursion.get(fila); //obtiene la excursion
+        switch (columna) {
+            case 0: {
+            	return exc.getId();
+            }
+            case 1: {
+            	return exc.getNombre();
+            }
+            case 2: {
+            	return exc.getDescripcion();
+            }
+            case 3: {
+            	return exc.getPrecio();
+            }
+            case 4: {
+            	return "Reservar";
+            }
+            default: {
+            	return null;
+            }
+        }
     }
-    public Excursion getAt(int r) { return excursion.get(r); }
+    
+    
+    public Excursion getAt(int fila) { 
+    //devuelve la excursion que esta en la fila indicada
+    	return excursion.get(fila); 
+    	}
 
 }
