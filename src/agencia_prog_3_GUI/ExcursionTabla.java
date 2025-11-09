@@ -32,18 +32,24 @@ public class ExcursionTabla extends AbstractTableModel{
     }
     
     @Override 
-    public boolean isCellEditable(int row, int column) { 
-    	return column == 4; 
+    public boolean isCellEditable(int fila, int columna) { 
+    	return columna == 4; 
     	
     }
     
     @Override 
-    public Class<?> getColumnClass(int c) {
-        return switch (c) {
-            case 0 -> Integer.class;
-            case 3 -> Double.class;
-            default -> Object.class;
-        };
+    public Class<?> getColumnClass(int columna) {
+        switch (columna) {
+            case 0: {
+            	return Integer.class;
+            }
+            case 3: {
+            	return Double.class;
+            }
+            default: {
+            	return Object.class;
+            }
+        }
     }
     
     @Override 
