@@ -10,7 +10,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -364,16 +370,67 @@ public class VentanaExcursiones extends JFrame{
             JButton confirmar = new JButton("Confirmar reserva");
             confirmar.setFont(new Font("Segoe UI", Font.BOLD, 12));
             confirmar.addActionListener(e -> {
-            	int seleccion = (Integer) numpersonas.getSelectedItem();
-            	double totalprecio = (ex.getPrecio() * seleccion);
+
+                // --- 1. RECOGER DATOS (de los componentes de ESTE diálogo) ---
+                int numPersonas = (Integer) numpersonas.getSelectedItem();
+                double totalPrecioCalculado = (ex.getPrecio() * numPersonas);
+                
+                // --- 2. GESTIONAR DATOS FALTANTES (Fecha y Ciudad) ---
+                
+                // FECHA: Tu diálogo no pide fecha, así que usamos la fecha actual.
+                // (Si quieres pedir una fecha, debes añadir un JSpinner de fecha a este diálogo)
+                java.util.Date fechaExcursion = new java.util.Date(); 
+
+                // CIUDAD: Tu objeto Excursion no tiene ciudad. La ponemos como "N/A".
+                String ciudadExcursion = "N/A"; 
+                // (La alternativa es intentar adivinarla del nombre, pero es complicado)
+                
+                // --- 3. OBTENER USUARIO (de Ventana1Login) ---
+                String usuario = "UsuarioDesconocido"; // Valor por defecto
+                try {
+                     usuario = Ventana1Login.userField.getText();
+                } catch(Exception ex2) {
+                     System.err.println("No se pudo leer el usuario de Ventana1Login");
+                }
+                
+                // --- 4. "MAPEAR" DATOS AL FORMATO CSV ---
+                String ciudad_csv = ciudadExcursion;
+                String hotel_csv = ex.getNombre();          // TRUCO: Nombre de excursión en columna "Hotel"
+                String email_csv = "N/A";
+                String habitacion_csv = "Excursión";        // TRUCO: Identificador en columna "Habitación"
+                int adultos_csv = numPersonas;
+                int ninos_csv = 0;
+                java.util.Date salida_csv = fechaExcursion;
+                java.util.Date regreso_csv = fechaExcursion; // Mismo día
+                double precioFinal_csv = totalPrecioCalculado;
+
+                // --- 5. LLAMAR AL MÉTODO DE GUARDADO (¡ANTES DE CERRAR!) ---
+                guardarReservaEnCSV(
+                    usuario, 
+                    ciudad_csv, 
+                    hotel_csv, 
+                    email_csv, 
+                    habitacion_csv, 
+                    adultos_csv, 
+                    ninos_csv, 
+                    salida_csv, 
+                    regreso_csv, 
+                    precioFinal_csv
+                );
+
+                // --- 6. CONFIRMAR AL USUARIO ---
+                // (Esto es de tu código original, está bien)
                 JOptionPane.showMessageDialog(
-                		mensaje,
-                		"Excursión: " + ex.getNombre() + "\n" +
-                	    "Personas: " + seleccion + "\n" +
-                	    "Total: " + String.format(Locale.US, "%.2f €", totalprecio),
-                	    "Confirmación",
-                	    JOptionPane.INFORMATION_MESSAGE
-                	    );
+                        mensaje,
+                        "Excursión: " + ex.getNombre() + "\n" +
+                        "Personas: " + numPersonas + "\n" +
+                        "Total: " + String.format(Locale.US, "%.2f €", totalPrecioCalculado) + "\n\n" +
+                        "¡Reserva guardada en su perfil!", // Mensaje añadido
+                        "Confirmación",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+                
+                // --- 7. CERRAR EL DIÁLOGO ---
                 mensaje.dispose();
             });
 
@@ -468,6 +525,55 @@ public class VentanaExcursiones extends JFrame{
     	   };
        };
      
+       
+       
+       
+       private void guardarReservaEnCSV(String usuario, String ciudad, String hotel, String email, 
+               String hab, int adultos, int ninos, Date salida, Date regreso, 
+               double precioFinal) {
+                   
+   		final String FILE_NAME = "reservas.csv";
+   		// Formato de fecha estándar para CSV
+   		final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
+
+   		File file = new File(FILE_NAME);
+   		// Comprueba si el archivo es nuevo para añadir la cabecera
+   		boolean needsHeader = !file.exists() || file.length() == 0;
+
+   		// Usamos try-with-resources para asegurar que se cierre el writer
+   		try (FileWriter fw = new FileWriter(file, true); // true = modo append
+   				PrintWriter pw = new PrintWriter(fw)) {
+
+   			if (needsHeader) {
+   				// El "Usuario" es la primera columna, para filtrar en VentanaReservas
+   				pw.println("Usuario,Ciudad,Hotel,Email,Habitacion,Adultos,Ninos,Salida,Regreso,Precio");
+   			}
+
+   			// Formatea la línea CSV
+   			String csvLine = String.format("%s,%s,%s,%s,%s,%d,%d,%s,%s,%.2f",
+   					usuario,
+   					ciudad,
+   					hotel.replace(",", ";"), // Evita problemas si el nombre tiene comas
+   					email,
+   					hab,
+   					adultos,
+   					ninos,
+   					SDF.format(salida),
+   					SDF.format(regreso),
+   					precioFinal
+   					);
+
+   			// Escribe la nueva reserva
+   			pw.println(csvLine);
+
+   		} catch (IOException e) {
+   			System.err.println("Error al guardar la reserva en CSV: " + e.getMessage());
+   			e.printStackTrace();
+   		}
+   	}
+       
+       
+    
 	
 	public static void main(String[] args) {
 		VentanaExcursiones excurs = new VentanaExcursiones();

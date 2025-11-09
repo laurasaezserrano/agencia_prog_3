@@ -49,8 +49,8 @@ public class VentanaReservas extends JFrame {
         titleLabel.setForeground(new Color(0, 102, 204));
  
         //Panel Central para las dos columnas (reservas anteriores y siguientes)
-        centerPanel.setLayout(new GridLayout(1, 2, 10, 0)); // 1 fila, 2 columnas, 10px de espacio horizontal
-        centerPanel.setBackground(Color.LIGHT_GRAY);
+//        centerPanel.setLayout(new GridLayout(1, 2, 10, 0)); // 1 fila, 2 columnas, 10px de espacio horizontal
+//        centerPanel.setBackground(Color.LIGHT_GRAY);
         
         JPanel panelSuperior = new JPanel(new BorderLayout());
         
@@ -80,12 +80,12 @@ public class VentanaReservas extends JFrame {
         add(panelSuperior, BorderLayout.NORTH);
 //        add(centerPanel, BorderLayout.CENTER);
         
-        JScrollPane scrollPane = new JScrollPane(centerPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        
-        // Añadimos el JScrollPane (que contiene el panel) al centro de la ventana
-        add(scrollPane, BorderLayout.CENTER);
+//        JScrollPane scrollPane = new JScrollPane(centerPanel);
+//        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+//        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//        
+//        // Añadimos el JScrollPane (que contiene el panel) al centro de la ventana
+//        add(scrollPane, BorderLayout.CENTER);
         
         try {
             // ESTA LÍNEA ES DE TU CÓDIGO ORIGINAL
