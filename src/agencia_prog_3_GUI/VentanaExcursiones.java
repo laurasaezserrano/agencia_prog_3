@@ -6,8 +6,11 @@ import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -51,7 +54,13 @@ public class VentanaExcursiones extends JFrame{
 		    "Visita a Florencia"         
 		};
 	String[] descrip = {
-	        "Increible visita a las Cataratas del Niagara",
+	        "Al acercarte a la zona de las cataratas, ya se escucha el rugido del agua cayendo con fuerza. "
+	        + "Las cataratas están en la frontera entre Canadá y Estados Unidos, divididas por el río Niágara. "
+	        + "La vista más famosa se encuentra en el lado canadiense (Ontario), desde donde se puede observar mejor "
+	        + "el conjunto formado por:\r\n" + "\r\n" + "Horseshoe Falls (la Herradura), la más grande y curvada.\r\n"
+	        + "\r\n" + "American Falls (la Americana).\r\n" + "\r\n" + "Bridal Veil Falls (el Velo de Novia), más pequeña "
+	        + "pero muy pintoresca.\r\n" + "\r\n" + "Desde el paseo junto al río, el aire está cargado de humedad y se forma una niebla constante que brilla "
+	        + "con el sol, creando arcoíris casi permanentes.",
 	        "Gran ruta del cafe por Colombia",
 	        "Descubre las vistas de Suiza desde el teleferico de Lucerna",
 	        "Descubre los tesoros del Vaticano",
@@ -102,7 +111,7 @@ public class VentanaExcursiones extends JFrame{
 		
 		//que la tabla se ajuste a la ventana
 		tabla.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		int[] ancho = {50, 200, 390, 90, 90};
+		int[] ancho = {50, 200, 90, 90, 90};
 		for (int i = 0; i < ancho.length; i++) {
             TableColumn col = tabla.getColumnModel().getColumn(i);
             col.setPreferredWidth(ancho[i]);
@@ -113,9 +122,55 @@ public class VentanaExcursiones extends JFrame{
 		DefaultTableCellRenderer center = new DefaultTableCellRenderer();
 		center.setHorizontalAlignment(SwingConstants.CENTER);
 		tabla.getColumnModel().getColumn(0).setCellRenderer(center); //se centra el texto
-        tabla.getColumnModel().getColumn(2).setCellRenderer(new TruncatingRenderer(100)); // Descripción truncada
+        tabla.getColumnModel().getColumn(2).setCellRenderer(verInfoboton); // Boton para ver la informacion
         tabla.getColumnModel().getColumn(3).setCellRenderer(new ExcursionPrecio()); // Precio formateado
-        
+        tabla.addMouseListener(new MouseAdapter() {
+        	
+        	@Override
+        	public void mouseClicked(MouseEvent e) {
+        		int fila = tabla.rowAtPoint(e.getPoint());
+        		int columna = tabla.columnAtPoint(e.getPoint());
+        		if (columna == 2 && fila >= 0) {
+        			int modelo = tabla.convertRowIndexToModel(fila);
+        			ExcursionTabla exc = (ExcursionTabla) tabla.getModel();
+        			Excursion excur = exc.getAt(modelo);
+        			mostrardescripcion(excur);
+        		}
+        		
+        	}
+        	
+        	//muestra la descripcion de la excursion
+			private void mostrardescripcion(Excursion exc) {
+				JDialog dialogo = new JDialog(VentanaExcursiones.this, "Informacion", true);
+				dialogo.setLayout(new BorderLayout(10, 10));
+				dialogo.setSize(480, 300);
+				dialogo.setLocationRelativeTo(VentanaExcursiones.this);
+				
+				JTextArea texto = new JTextArea();
+				texto.setText(exc.getDescripcion());
+				texto.setEditable(false);
+				texto.setLineWrap(true); //hace salto de linea automatico
+				texto.setWrapStyleWord(true); //salto de linea entre palabaras completas
+				texto.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+				
+				//boton de cerrar
+				JButton cerrar = new JButton("Cerrar");
+				cerrar.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+						VentanaExcursiones ventanaexc = new VentanaExcursiones();
+						ventanaexc.setVisible(true);
+						
+					}
+				});
+				JPanel añadir = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+				añadir.add(cerrar);
+				dialogo.add(new JScrollPane(texto), BorderLayout.CENTER);
+				dialogo.setVisible(true);
+			}
+        });
 		
 		//Boton reserva
         int columnareserva = 4;
@@ -257,38 +312,21 @@ public class VentanaExcursiones extends JFrame{
             	
             }
             
-            @Override 
+            @Override //filas pares unn color e impares de otro
             public Component prepareRenderer(TableCellRenderer r, int row, int col) {
                 Component c = super.prepareRenderer(r, row, col);
-                if (!isRowSelected(row)) c.setBackground((row % 2 == 0) ? par : impar);
+                if (!isRowSelected(row)) {
+                	if (row % 2 == 0) {
+                		c.setBackground(par);
+                	} else {
+                		c.setBackground(impar);
+                	}
+                }
+               
                 return c;
             }
         }
-
-        
-        
-        
-      ///Crear clase aparte ///
-     // Descripción limitada
-        static class TruncatingRenderer extends DefaultTableCellRenderer {
-        	private static final long serialVersionUID = 1L;
-			private final int maxChars; //maximo de caracteres por fila
-            public TruncatingRenderer(int maxChars) { 
-        		this.maxChars = maxChars; 
-        		
-				}
-            @Override protected void setValue(Object value) {
-                String s = (value == null) ? "" : value.toString();
-                setToolTipText(s);
-                if (s.length() > maxChars) s = s.substring(0, maxChars - 1) + "…";
-                super.setValue(s);
-            }
-        }
-//        
-//        
-        
-        
-      ///Crear clase aparte ///
+      
         static class ButtonRenderer extends JButton implements TableCellRenderer {
         	private static final long serialVersionUID = 1L;
           	public ButtonRenderer(String text) { setText(text); setOpaque(true); }
@@ -327,7 +365,20 @@ public class VentanaExcursiones extends JFrame{
             }
         }
         
-        
+        //Ver informacion de las descripciones
+        DefaultTableCellRenderer verInfoboton = new DefaultTableCellRenderer() {
+    	   public Component getTableCellRendererComponent (JTable tabla, 
+    			   											Object value, 
+    			   											boolean seleccionado, 
+    			   											boolean hasFocus, 
+    			   											int fila, 
+    			   											int columna) {
+    		   JButton boton = new JButton("Ver info");
+    		   boton.setFocusable(false); //mejora de IAG
+    		   boton.setBackground(Color.WHITE);
+    		   return boton;
+    	   };
+       };
      
 	
 	public static void main(String[] args) {
