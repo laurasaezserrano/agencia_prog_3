@@ -450,4 +450,3 @@ public class VentanaVueloYHotel extends JFrame{
 		vuelosyhotel.setVisible(true);
 	}
 }
-
