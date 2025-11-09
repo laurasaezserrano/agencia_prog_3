@@ -3,6 +3,7 @@ package agencia_prog_3_GUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -64,7 +65,6 @@ public class VentanaExcursiones extends JFrame{
 	double[] precio = {89, 65, 70, 49, 72, 95, 38, 30, 59};
 	private JTextField campoFiltro;
     private JTextField campoPersonas;
-
     private JTable tabla;
     private TableRowSorter<TableModel> ordena;
     private ExcursionTabla modelo;
@@ -95,13 +95,14 @@ public class VentanaExcursiones extends JFrame{
 		ordena = new TableRowSorter<>(tabla.getModel());
 		tabla.setRowSorter(ordena);
 		
+		// configuracion del encabezado de la tabla
 		JTableHeader cabecera = tabla.getTableHeader();
-		cabecera.setReorderingAllowed(false);
+		cabecera.setReorderingAllowed(false); //no se puedecambiar el orden de las columnas
 		cabecera.setFont(cabecera.getFont().deriveFont(Font.BOLD));
 		
-		//que no se modifiquen los tamaños de los huecos de la tabla
-		tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		int[] ancho = {50, 220, 420, 90, 110};
+		//que la tabla se ajuste a la ventana
+		tabla.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		int[] ancho = {50, 200, 390, 90, 90};
 		for (int i = 0; i < ancho.length; i++) {
             TableColumn col = tabla.getColumnModel().getColumn(i);
             col.setPreferredWidth(ancho[i]);
@@ -111,18 +112,23 @@ public class VentanaExcursiones extends JFrame{
 		//Renderer
 		DefaultTableCellRenderer center = new DefaultTableCellRenderer();
 		center.setHorizontalAlignment(SwingConstants.CENTER);
-		tabla.getColumnModel().getColumn(0).setCellRenderer(center); 
+		tabla.getColumnModel().getColumn(0).setCellRenderer(center); //se centra el texto
         tabla.getColumnModel().getColumn(2).setCellRenderer(new TruncatingRenderer(100)); // Descripción truncada
         tabla.getColumnModel().getColumn(3).setCellRenderer(new ExcursionPrecio()); // Precio formateado
-
+        
 		
 		//Boton reserva
         int columnareserva = 4;
         tabla.getColumnModel().getColumn(columnareserva).setCellRenderer(new ButtonRenderer("Reservar"));
         tabla.getColumnModel().getColumn(columnareserva).setCellEditor(new ButtonEditor(modelo, tabla, this::abrirReserva));
-        JScrollPane sp = new JScrollPane(tabla);
-        sp.setBorder(new LineBorder(Color.BLACK, 1));
-        mainpanel.add(sp, BorderLayout.CENTER);
+        
+        //scroll pane para deslizarse entre las diferentes excursiones
+        JScrollPane sp = new JScrollPane(tabla, 
+        		JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+        		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        sp.setBorder(new LineBorder(Color.BLACK, 2));
+        sp.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);//texto a la izquierda y sp a la derecha
+        mainpanel.add(sp, BorderLayout.CENTER); 
  
         //Boton de retorno a interfaz principal
         JButton botonInicio = new JButton("Atras"); //luego cambiarlo a un icono
@@ -136,8 +142,9 @@ public class VentanaExcursiones extends JFrame{
 				VentanaInicio ventanainicio = new VentanaInicio();
 				ventanainicio.setVisible(true);
 			}
-        
+         
 		});
+        mainpanel.add(botonInicio, BorderLayout.SOUTH);
         
 	}
 	
@@ -157,15 +164,15 @@ public class VentanaExcursiones extends JFrame{
             panel1.add(new JLabel("Personas:"));
             campoPersonas = new JTextField("1", 6);
             panel1.add(campoPersonas);
-            panel1.add(new JLabel("Filtro por título:"));
+            panel1.add(new JLabel("Busqueda de excursion:"));
             campoFiltro = new JTextField(24);
             panel1.add(campoFiltro);
             JButton buscar = new JButton("Buscar");
             buscar.addActionListener(e -> aplicabusqueda());
 			panel1.add(buscar);
 			
+			//permite detectar cambios cuando escribe el usuario
             campoFiltro.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() { 
-            	//permite saber que texto hay en la busqueda que estamos haciendo
                 private void go() {
                 	aplicabusqueda(); 
                 	}
@@ -194,6 +201,9 @@ public class VentanaExcursiones extends JFrame{
         //Resumen de la excursion seleccionada
         private void abrirReserva(Excursion ex) {
             int personas;
+            /**
+             * try catch generado con IAG
+             */ 
             try {
 				personas = Integer.parseInt(campoPersonas.getText().trim());
 				if (personas <= 0) throw new NumberFormatException();
@@ -202,6 +212,7 @@ public class VentanaExcursiones extends JFrame{
 		                "Dato incorrecto", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
+            
             JDialog mensaje = new JDialog(this, "Reserva", true);
             mensaje.setLayout(new BorderLayout(10, 10));
             mensaje.setSize(420, 260);
@@ -235,8 +246,8 @@ public class VentanaExcursiones extends JFrame{
         }
 
         
-      ///Crear clase aparte ///
-     // Zebra-striping sin romper la selección
+      
+     // Crea la tabla de dos colores
         static class StripedTable extends JTable {
 			private static final long serialVersionUID = 1L;
 			private final Color par = new Color(245, 250, 255);
@@ -317,15 +328,7 @@ public class VentanaExcursiones extends JFrame{
         }
         
         
-        
-        
-        
-        
-        
-		
-
- 
-	
+     
 	
 	public static void main(String[] args) {
 		VentanaExcursiones excurs = new VentanaExcursiones();
