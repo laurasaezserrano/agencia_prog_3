@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
@@ -142,15 +144,17 @@ public class CuadriculaOfertas extends JFrame{
 	        
 	        //Fecha de Ida (A partir de hoy)
 	        panelDatos.add(new JLabel("Fecha de Salida:"));
-	        SpinnerDateModel modelIda = new SpinnerDateModel(new Date(), null, null, java.util.Calendar.DAY_OF_MONTH);
+	        Calendar calendario = Calendar.getInstance();
+	        
+	        SpinnerDateModel modelIda = new SpinnerDateModel( calendario.getTime(), null, null, java.util.Calendar.DAY_OF_MONTH);
 	        spinFechaIda = new JSpinner(modelIda);
 	        JSpinner.DateEditor editorIda = new JSpinner.DateEditor(spinFechaIda, "dd/MM/yyyy");
 	        spinFechaIda.setEditor(editorIda);
 	        panelDatos.add(spinFechaIda);
-	        
+	        calendario.add(Calendar.DATE, 1); //Calculamos el día de mañana
 	        //Fecha de Vuelta
 	        panelDatos.add(new JLabel("Fecha de Regreso:"));
-	        SpinnerDateModel modelVuelta = new SpinnerDateModel(new Date().get+1, null, null, java.util.Calendar.DAY_OF_MONTH);
+	        SpinnerDateModel modelVuelta = new SpinnerDateModel( calendario.getTime(), null, null, java.util.Calendar.DAY_OF_MONTH);
 	        spinFechaVuelta = new JSpinner(modelVuelta);
 	        JSpinner.DateEditor editorVuelta = new JSpinner.DateEditor(spinFechaVuelta, "dd/MM/yyyy");
 	        spinFechaVuelta.setEditor(editorVuelta);
@@ -304,7 +308,7 @@ public class CuadriculaOfertas extends JFrame{
 	        
 //	        double precioFinal = (precioNocheAjustado * (1 + extraPersonas)) * difDias;
 	
-	        lblPrecioTotal.setText(String.format("€ %.2f (%d días)", precioFinal, duracionViaje));
+	        lblPrecioTotal.setText(String.format("%.2f € (%d días)", precioFinal, duracionViaje));
 	    }
 }
 	public CuadriculaOfertas() {
