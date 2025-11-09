@@ -125,8 +125,8 @@ public class Ventana1Login extends JFrame {
             }
         } else {
            // Usuario no existe
-            statusLabel.setText("No tienes usuario. Regístrate.");
-            JOptionPane.showMessageDialog(this, "No tienes usuario. Por favor, regístrate.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            statusLabel.setText("Contraseña incorrecta. Vuelva a intentarlo.");
+            JOptionPane.showMessageDialog(this, "Contraseña incorrecta. Vuelva a intentarlo.", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
         }
 

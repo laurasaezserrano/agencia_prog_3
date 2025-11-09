@@ -72,7 +72,7 @@ public class VentanaComienzoPrev extends JFrame{
 	boton.addActionListener(new ActionListener(){
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(VentanaComienzoPrev.this, "Has accecido a la app web de Sunny Agencia de Viajes!");
+			JOptionPane.showMessageDialog(VentanaComienzoPrev.this, "Has accedido a la app web de Sunny Agencia de Viajes!");
 	
             // Cerrar la ventana actual
             dispose();
