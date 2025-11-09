@@ -346,9 +346,9 @@ public class VentanaReservas extends JFrame {
                     
                     // Extraemos los datos del CSV
                     String ciudad = datos[1];
-                    String hotelOExcursion = datos[2].replace(";", ",");
+                    String HotelOExcursion = datos[2].replace(";", ",");
                     String email = datos[3];
-                    String habOtipo = datos[4]; // Esta es la clave
+                    String HabOTipo = datos[4]; // Esta es la clave
                     int adultos = Integer.parseInt(datos[5]);
                     int ninos = Integer.parseInt(datos[6]);
                     String salida = datos[7];
@@ -357,12 +357,17 @@ public class VentanaReservas extends JFrame {
                     
                     // Creamos la fila (incluyendo el "Cancelar")
                     Object[] fila = {
-                        ciudad, hotelOExcursion, email, habOtipo, adultos, ninos, 
+                        ciudad, HotelOExcursion, email, HabOTipo, adultos, ninos, 
                         salida, regreso, precio, "Cancelar"
                     };
-
+                    
+                    Object[] filaEx = {
+                            ciudad, HotelOExcursion, email, HabOTipo, adultos, ninos, 
+                            salida, regreso, precio, "Cancelar"
+                        };
+                    
                     // --- NUEVA LÓGICA DE CLASIFICACIÓN ---
-                    if (habOtipo.equalsIgnoreCase("Excursión")) {
+                    if (HabOTipo.equalsIgnoreCase("Excursión")) {
                         modeloTablaExcursiones.addRow(fila);
                         contadorExcursiones++;
                     } else {
@@ -445,7 +450,7 @@ public class VentanaReservas extends JFrame {
                         ciudadCSV.equalsIgnoreCase(ciudad) &&
                         hotelCSV.equalsIgnoreCase(hotelOExcursion) &&
                         salidaCSV.equals(salida) &&
-                        precioCSV.equals(precioStr);
+                        (Double.parseDouble(precioCSV) == Double.parseDouble( precioStr));
                 
                 if (!esLaReservaABorrar) {
                     writer.println(linea); // Si NO es la línea, la escribimos en el temp
