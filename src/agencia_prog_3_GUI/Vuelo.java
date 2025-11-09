@@ -8,16 +8,18 @@ public class Vuelo extends DefaultTableModel{
 	private static final long serialVersionUID = 1L;
 	private List<DatosVuelos> vuelos; //guarda una lista con los datos del vuelo
 	private final List<String> datos = Arrays.asList( //definimos los nombres de las columnas
+			"CODIGO",
 			"AEROLÍNEA", 
 			"VUELO", 
 			"ORIGEN", 
 			"DESTINO", 
 			"DURACIÓN", 
 			"PRECIO", 
-			"RESERVAS",
 			"ASIENTOS LIBRES",
+			"",
 			"RESERVAR");
 			
+	
 	
 	public Vuelo(List<DatosVuelos> vuelos) {
 		this.vuelos = vuelos;
