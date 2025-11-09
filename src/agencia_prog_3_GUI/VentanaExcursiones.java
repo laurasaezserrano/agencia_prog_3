@@ -470,6 +470,44 @@ public class VentanaExcursiones extends JFrame{
                
                 return c;
             }
+            
+            @Override
+            public String getToolTipText(java.awt.event.MouseEvent e) {
+                java.awt.Point p = e.getPoint();
+                int viewRow = rowAtPoint(p); // Fila sobre la que está el ratón
+
+                if (viewRow >= 0) {
+                    try {
+                        // Convierte la fila de la vista al modelo (importante si la tabla está ordenada)
+                        int modelRow = convertRowIndexToModel(viewRow);
+                        
+                        // Obtiene el modelo de la tabla
+                        ExcursionTabla model = (ExcursionTabla) getModel();
+                        
+                        // Obtiene la excursión de esa fila
+                        Excursion ex = model.getAt(modelRow);
+                        
+                        // Obtiene la descripción completa
+                        String fullDescription = ex.getDescripcion();
+                        
+                        // Acorta la descripción para la previsualización (p.ej. 150 caracteres)
+                        String shortDesc = fullDescription;
+                        if (fullDescription.length() > 150) {
+                            shortDesc = fullDescription.substring(0, 150) + "...";
+                        }
+                        
+                        // Devuelve el texto formateado en HTML.
+                        // El 'width' hace que el texto se ajuste automáticamente si es largo.
+                        return "<html><p width='300px'>" + shortDesc + "</p></html>";
+
+                    } catch (Exception ex) {
+                        System.err.println("Error al generar tooltip: " + ex.getMessage());
+                    }
+                }
+                return null; // Sin tooltip si no está sobre una fila válida
+            }
+            
+            
         }
       
         static class ButtonRenderer extends JButton implements TableCellRenderer {
