@@ -32,6 +32,12 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	}
 
 	
+	public DatosVuelos(String origen2, String destino2, String fechaSalida, String fechaRegreso, String aerolinea2,
+			double precioVuelo, double precioHotel, int asientos) {
+		// TODO Auto-generated constructor stub
+	}
+
+
 	public int asientosrestantes() {
 		int asi = 0;
 		for (ReservaVuelo r : reservas) {
@@ -85,6 +91,30 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	@Override
 	public int compareTo(DatosVuelos o) {
 		return codigo.compareTo(o.codigo);
+	}
+
+
+	public String getFechaSalida() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public String getFechaRegreso() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public double getPrecioVuelo() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	public double getPrecioHotel() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	

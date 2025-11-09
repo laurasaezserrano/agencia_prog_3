@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -137,8 +138,8 @@ public class VentanaVueloYHotel extends JFrame{
         }
 
         //precio
-        tabla.getColumnModel().getColumn(6).setCellRenderer(new PrecioRenderer());
-
+        tabla.getColumnModel().getColumn(5).setCellRenderer(new PrecioRenderer()); // Columna Precio Vuelo
+        tabla.getColumnModel().getColumn(6).setCellRenderer(new PrecioRenderer()); // Columna Precio Hotel
         
 
         tabla.addMouseListener(new MouseAdapter() {
@@ -157,10 +158,9 @@ public class VentanaVueloYHotel extends JFrame{
 
         
         //boton reserva
-        int colReserva = 9;
+        int colReserva = 8; // <-- Índice 8
         tabla.getColumnModel().getColumn(colReserva).setCellRenderer(new ButtonRenderer("Reservar"));
-        tabla.getColumnModel().getColumn(colReserva).setCellEditor(new ButtonEditor(modelo, tabla, this::abrirreserva));
-
+        tabla.getColumnModel().getColumn(colReserva).setCellEditor(new ButtonEditor(modelo, tabla, this::abrirreserva)); // <-- Actualizado
         JScrollPane sp = new JScrollPane(
                 tabla,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -185,18 +185,60 @@ public class VentanaVueloYHotel extends JFrame{
 
     //crearlistavuelos
     private List<DatosVuelos> crearlistavuelos() {
-        List<DatosVuelos> salida = new ArrayList<>();
-        salida.add(new DatosVuelos("IB1234", null, null, 155, null, null, 180, 489f, null));
-        salida.add(new DatosVuelos("AF2201", null, null, 120, null, null, 180, 65f, null));
-        salida.add(new DatosVuelos("LX3902", null, null, 140, null, null, 160, 79f, null));
-        salida.add(new DatosVuelos("AZ1010", null, null, 135, null, null, 150, 49f, null));
-        salida.add(new DatosVuelos("JL0080", null, null, 720, null, null, 280, 399f, null));
-        salida.add(new DatosVuelos("TG0909", null, null, 780, null, null, 300, 200f, null));
-        salida.add(new DatosVuelos("DL4501", null, null, 480, null, null, 240, 678f, null));
-        salida.add(new DatosVuelos("DY3107", null, null, 210, null, null, 180, 97f, null));
-        salida.add(new DatosVuelos("AZ2102", null, null, 155, null, null, 180, 59f, null));
+        
+    	List<DatosVuelos> salida = new ArrayList<>();
+        File archivo = new File(CSV_PATH);
+        
+        if (!archivo.exists()) {
+            System.err.println("Error: No se encontró el archivo CSV en: " + archivo.getAbsolutePath());
+            JOptionPane.showMessageDialog(this, "No se encontró el archivo de datos:\n" + CSV_PATH, "Error de Archivo", JOptionPane.ERROR_MESSAGE);
+            return salida; // Devuelve lista vacía
+        }
 
-        return salida;
+        // Usamos try-with-resources para que se cierre solo
+        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            // Opcional: Si tu CSV tiene cabecera, sáltala
+            // br.readLine(); 
+            
+            while ((linea = br.readLine()) != null) {
+                if (linea.trim().isEmpty()) continue; // Ignora líneas vacías
+                
+                String[] datos = linea.split(",");
+                
+                // CSV: "Madrid,Lisboa,2025-11-10,2025-11-17,TAP Portugal,78.00 EUR,215.00 EUR,38"
+                if (datos.length >= 8) {
+                    try {
+                        String origen = datos[0].trim();
+                        String destino = datos[1].trim();
+                        String fechaSalida = datos[2].trim();
+                        String fechaRegreso = datos[3].trim();
+                        String aerolinea = datos[4].trim();
+                        // Parsear precios (quitar " EUR" y espacios)
+                        double precioVuelo = Double.parseDouble(datos[5]);
+                        double precioHotel = Double.parseDouble(datos[6]);
+                        int asientos = Integer.parseInt(datos[7].trim());
+                        
+                        // Añadir el nuevo objeto DatosVuelos
+                        salida.add(new DatosVuelos(origen, destino, fechaSalida, fechaRegreso, aerolinea, precioVuelo, precioHotel, asientos));
+
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error al parsear datos en línea: " + linea);
+                    } catch (Exception e) {
+                        System.err.println("Error inesperado en línea: " + linea);
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al leer el archivo CSV:\n" + e.getMessage(), "Error de Lectura", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        return salida;    	
+    	
+    	
+    	
     }
 
         
@@ -221,16 +263,16 @@ public class VentanaVueloYHotel extends JFrame{
     }
         
     private void aplicarbusqueda() {
-        String txt = campofiltro.getText().trim();
+    	String txt = campofiltro.getText().trim();
         if (txt.isEmpty()) {
             ordenado.setRowFilter(null);
         } else {
-            //filtra por origen, destino, fecha y hora
+            //filtra por origen, destino, fecha y aerolínea (índices 0, 1, 2, 4)
             RowFilter<TableModel, Object> rf = RowFilter.orFilter(Arrays.asList(
-                    RowFilter.regexFilter("(?i)"+Pattern.quote(txt), 1),
-                    RowFilter.regexFilter("(?i)"+Pattern.quote(txt), 2),
-                    RowFilter.regexFilter("(?i)"+Pattern.quote(txt), 3),
-                    RowFilter.regexFilter("(?i)"+Pattern.quote(txt), 4)
+                    RowFilter.regexFilter("(?i)"+Pattern.quote(txt), 0), // Origen
+                    RowFilter.regexFilter("(?i)"+Pattern.quote(txt), 1), // Destino
+                    RowFilter.regexFilter("(?i)"+Pattern.quote(txt), 2), // Fecha Salida
+                    RowFilter.regexFilter("(?i)"+Pattern.quote(txt), 4)  // Aerolínea
             ));
             ordenado.setRowFilter(rf);
         }
@@ -238,7 +280,7 @@ public class VentanaVueloYHotel extends JFrame{
         
         
     private void mostrarDescripcion(DatosVuelos vuelo) {
-        JDialog descripcion = new JDialog(this, "Información del vuelo", true);
+    	JDialog descripcion = new JDialog(this, "Información del vuelo", true);
         descripcion.setLayout(new BorderLayout(10,10));
         descripcion.setSize(520, 320);
         descripcion.setLocationRelativeTo(this);
@@ -248,15 +290,17 @@ public class VentanaVueloYHotel extends JFrame{
         texto.setLineWrap(true);
         texto.setWrapStyleWord(true);
         texto.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        
+        // Actualizado a los nuevos getters
         texto.setText(
-            "ID: " + vuelo.getCodigo() + "\n" +
-            "Origen: " + vuelo.getOrigen() + "\n" +
-            "Aerolinea" + vuelo.getAerolinea() + "\n" +
-            "Destino: " + vuelo.getDestino() + "\n" +
-            "Duracion: " + vuelo.getDuracionvuelo() + "\n" + 
-            "Asientos disponibles: " + vuelo.getAsientos() + "\n" +
-            "Precio:" + vuelo.getPrecio() + "€ \n"
-           
+            "Aerolínea: " + vuelo.getAerolinea() + "\n" +
+            "Origen: "    + vuelo.getOrigen() + "\n" +
+            "Destino: "   + vuelo.getDestino() + "\n\n" +
+            "Fecha Salida: "  + vuelo.getFechaSalida() + "\n" +
+            "Fecha Regreso: " + vuelo.getFechaRegreso() + "\n\n" +
+            "Asientos disponibles: " + vuelo.getAsientos() + "\n\n" +
+            "Precio Vuelo: " + PrecioRenderer.format(vuelo.getPrecioVuelo()) + " €\n" +
+            "Precio Hotel (Ref): " + PrecioRenderer.format(vuelo.getPrecioHotel()) + " €"
         );
 
         descripcion.add(new JScrollPane(texto), BorderLayout.CENTER);
