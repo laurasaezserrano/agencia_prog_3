@@ -9,7 +9,7 @@ import javax.swing.table.AbstractTableModel;
 public class VueloTabla extends AbstractTableModel{
 	private static final long serialVersionUID = 1L;
 	private final List<String> columnas = Arrays.asList(
-			"CODIGO",
+			"CÓDIGO",
 	        "AEROLÍNEA",
 	        "VUELO",
 	        "ORIGEN",
@@ -18,6 +18,7 @@ public class VueloTabla extends AbstractTableModel{
 	        "PRECIO",
 	        "RESERVAS",
 	        "ASIENTOS LIBRES",
+	        "RESERVAS",
 	        "RESERVAR"
 	    );
 	private List<DatosVuelos> data = new ArrayList<>();
@@ -67,32 +68,30 @@ public class VueloTabla extends AbstractTableModel{
 		DatosVuelos vuel = data.get(fila);
 		switch (columna) {
         	case 0: {
-        		return vuel.getAerolinea();
-        	}
-        	case 1:{
         		return vuel.getCodigo();
         	}
-        	case 2: {
-        		return vuel.getOrigen();
+        	case 1:{
+        		return vuel.getAerolinea();
         	}
         	case 3: {
-        		return vuel.getDestino();
+        		return vuel.getOrigen();
         	}
         	case 4: {
-        		return vuel.getDuracionvuelo();  
+        		return vuel.getDestino();
         	}
         	case 5: {
-        		return vuel.getPrecio();
+        		return (vuel.getDuracionvuelo()/60) + "h " + (vuel.getDuracionvuelo()%60) + " min";  
         	}
         	case 6: {
-        		return vuel.getReservas();
+        		return vuel.getPrecio();
         	}
         	case 7: {
-        		return vuel.getAsientos();
+        		return vuel.getAsientos() -vuel.getReservas().size();
         	}
         	case 8: {
-        		return "Reservar"; // texto del botón
+        		return vuel.getReservas().size();
         	}
+
         	default: {
         		return null;
         	}

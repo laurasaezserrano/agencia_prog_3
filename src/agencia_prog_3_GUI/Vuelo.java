@@ -16,7 +16,7 @@ public class Vuelo extends DefaultTableModel{
 			"DURACIÓN", 
 			"PRECIO", 
 			"ASIENTOS LIBRES",
-			"",
+			"RESERVAS",
 			"RESERVAR");
 			
 	
@@ -74,23 +74,32 @@ public class Vuelo extends DefaultTableModel{
 		DatosVuelos vuelo = vuelos.get(fila);
 		switch (columna) {
 		case 0: {
-			return vuelo.getAerolinea();}
+			return vuelo.getCodigo();
+			}
 		case 1: {
-			return vuelo.getCodigo();}
+			return vuelo.getAerolinea();
+			}
 		case 2: {
-			return vuelo.getOrigen();}
+			return vuelo.getAvion();}
 		case 3: {
-			return vuelo.getDestino();}
+			return vuelo.getOrigen();
+				}
 		case 4: {
-			return vuelo.getDuracionvuelo();}
+			return vuelo.getDestino();
+			}
 		case 5: {
-			return vuelo.getPrecio();}
+			return (vuelo.getDuracionvuelo()/60) + "h " + (vuelo.getDuracionvuelo()%60) + " min"; 
+			}
 		case 6: {
-			return vuelo.getReservas();}
+			return vuelo.getPrecio();
+			}
 		case 7: {
-			return vuelo.getAsientos();}
+			return vuelo.getAsientos() - vuelo.getReservas().size() ;
+			}
 		case 8: {
-			return "Reservar";}
+			return vuelo.getReservas().size();
+			}
+		
 		default: {
 			return null;}
 		}

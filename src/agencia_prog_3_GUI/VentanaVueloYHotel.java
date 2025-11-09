@@ -85,7 +85,7 @@ public class VentanaVueloYHotel extends JFrame{
      
 	public VentanaVueloYHotel() {
 		setTitle("Búsqueda de vuelos");
-		setSize(900, 600);
+		setSize(1300, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
@@ -122,7 +122,7 @@ public class VentanaVueloYHotel extends JFrame{
         cabecera.setFont(cabecera.getFont().deriveFont(Font.BOLD));
         
         tabla.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        int[] ancho = {50,120,160,110,90,100,120,110};
+        int[] ancho = {80,120,160,110,90,100,120,130};
         for (int i = 0; i < ancho.length; i++) {
             TableColumn col = tabla.getColumnModel().getColumn(i);
             col.setPreferredWidth(ancho[i]);
@@ -251,11 +251,12 @@ public class VentanaVueloYHotel extends JFrame{
         texto.setText(
             "ID: " + vuelo.getCodigo() + "\n" +
             "Origen: " + vuelo.getOrigen() + "\n" +
+            "Aerolinea" + vuelo.getAerolinea() + "\n" +
             "Destino: " + vuelo.getDestino() + "\n" +
-            "Duracion: " + vuelo.getDuracionvuelo() + 
-            "Asientod disponibles: " + vuelo.getAsientos() + "\n\n" +
-            "Precio:" + vuelo.getPrecio() + "\n" +
-            "Aerolinea" + vuelo.getAerolinea()
+            "Duracion: " + vuelo.getDuracionvuelo() + "\n" + 
+            "Asientos disponibles: " + vuelo.getAsientos() + "\n" +
+            "Precio:" + vuelo.getPrecio() + "€ \n"
+           
         );
 
         descripcion.add(new JScrollPane(texto), BorderLayout.CENTER);
@@ -286,7 +287,7 @@ public class VentanaVueloYHotel extends JFrame{
 
         JTextArea info = new JTextArea(
             "• " + vuelo.getOrigen() + " → " + vuelo.getDestino() + " (" + vuelo.getDuracionvuelo() + " " + vuelo.getAsientos() + ")\n" +
-            "• Precio por persona: " + PrecioRenderer.format(vuelo.getPrecio()) + "\n\n"
+            "• Precio por persona: " + PrecioRenderer.format(vuelo.getPrecio()) + " €\n\n"
     
         );
         
