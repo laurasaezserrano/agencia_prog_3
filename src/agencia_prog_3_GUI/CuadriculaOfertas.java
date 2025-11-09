@@ -311,6 +311,7 @@ public class CuadriculaOfertas extends JFrame{
 	        lblPrecioTotal.setText(String.format("%.2f € (%d días)", precioFinal, duracionViaje));
 	    }
 }
+	    
 	public CuadriculaOfertas() {
 		this.hotelesPorCiudad = cargarHotelesDesdeCSV();
 		JPanel mainpanel = new JPanel();
