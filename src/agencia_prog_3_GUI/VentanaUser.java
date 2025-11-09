@@ -64,6 +64,7 @@ public class VentanaUser extends JFrame{
 		if (user != null) {
             nusuario.setText(user); 
         }
+		
 		nusuario.setEditable(false);
 		panelUsuario.add(nusuario);
 		

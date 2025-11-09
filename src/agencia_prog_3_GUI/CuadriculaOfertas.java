@@ -150,7 +150,7 @@ public class CuadriculaOfertas extends JFrame{
 	        
 	        //Fecha de Vuelta
 	        panelDatos.add(new JLabel("Fecha de Regreso:"));
-	        SpinnerDateModel modelVuelta = new SpinnerDateModel(new Date(), null, null, java.util.Calendar.DAY_OF_MONTH);
+	        SpinnerDateModel modelVuelta = new SpinnerDateModel(new Date().get+1, null, null, java.util.Calendar.DAY_OF_MONTH);
 	        spinFechaVuelta = new JSpinner(modelVuelta);
 	        JSpinner.DateEditor editorVuelta = new JSpinner.DateEditor(spinFechaVuelta, "dd/MM/yyyy");
 	        spinFechaVuelta.setEditor(editorVuelta);
@@ -264,10 +264,8 @@ public class CuadriculaOfertas extends JFrame{
 	        Date fechaIda = (Date) spinFechaIda.getValue();
 	        Date fechaVuelta = (Date) spinFechaVuelta.getValue();
 	        
-	        long diferencia = fechaVuelta.getTime() - fechaIda.getTime();
-	        long difDias = diferencia;
-	        
-	        if (difDias <= 0) {
+	       int duracionViaje = diasEntreFechas(fechaIda, fechaVuelta);
+	        if ( duracionViaje  <= 0) {
 	            lblPrecioTotal.setText("Error: Fechas incorrectas.");
 	            return;
 	        }
@@ -297,7 +295,7 @@ public class CuadriculaOfertas extends JFrame{
 	        double totalPersonasFactor = adultos + ninos;
 	        double precioNocheAjustado = precioBaseNoche * factorHabitacion;
 	        
-	        double precioFinal = (precioBaseNoche * factorHabitacion) * totalPersonasFactor * difDias;
+	        double precioFinal = (precioBaseNoche * factorHabitacion) * totalPersonasFactor * duracionViaje;
 	        
 	        this.precioFinalCalculado = precioFinal;
 	        
@@ -306,7 +304,7 @@ public class CuadriculaOfertas extends JFrame{
 	        
 //	        double precioFinal = (precioNocheAjustado * (1 + extraPersonas)) * difDias;
 	
-	        lblPrecioTotal.setText(String.format("€ %.2f (%d días)", precioFinal, difDias));
+	        lblPrecioTotal.setText(String.format("€ %.2f (%d días)", precioFinal, duracionViaje));
 	    }
 }
 	public CuadriculaOfertas() {
@@ -803,6 +801,10 @@ public class CuadriculaOfertas extends JFrame{
 			System.err.println("Error al guardar la reserva en CSV: " + e.getMessage());
 			e.printStackTrace();
 		}
+	}
+	
+	public int diasEntreFechas (Date inicio, Date fin) {
+		return (int) ((fin.getTime() - inicio.getTime()) / 86400000);
 	}
 	
 	
