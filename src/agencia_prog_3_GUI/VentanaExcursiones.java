@@ -1,4 +1,4 @@
-698package agencia_prog_3_GUI;
+package agencia_prog_3_GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

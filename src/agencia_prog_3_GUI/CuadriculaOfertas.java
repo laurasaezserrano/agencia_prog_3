@@ -55,12 +55,12 @@ public class CuadriculaOfertas extends JFrame{
 	private HashMap<String, List<Hotel>> hotelesPorCiudad;
 	
 	String[] ciudadesOferta = {
-		    "Caribe",      
-		    "Paris",       
-		    "Suiza",       
+		    "Ciudad de México",      
+		    "París",       
+		    "Zúrich",       
 		    "Roma",        
 		    "Toronto",     
-		    "Tokyo",       
+		    "Tokio",       
 		    "Bangkok",     
 		    "Nueva York",  
 		    "Oslo"         
