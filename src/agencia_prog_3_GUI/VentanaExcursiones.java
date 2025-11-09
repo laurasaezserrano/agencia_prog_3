@@ -6,7 +6,6 @@ import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -17,7 +16,10 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -55,25 +57,66 @@ public class VentanaExcursiones extends JFrame{
 		};
 	String[] descrip = {
 	        "Al acercarte a la zona de las cataratas, ya se escucha el rugido del agua cayendo con fuerza. "
-	        + "Las cataratas están en la frontera entre Canadá y Estados Unidos, divididas por el río Niágara. "
+	        + "Las cataratas están en la frontera entre Canadá y Estados Unidos, divididas por el río Niágara.\n"
 	        + "La vista más famosa se encuentra en el lado canadiense (Ontario), desde donde se puede observar mejor "
-	        + "el conjunto formado por:\r\n" + "\r\n" + "Horseshoe Falls (la Herradura), la más grande y curvada.\r\n"
-	        + "\r\n" + "American Falls (la Americana).\r\n" + "\r\n" + "Bridal Veil Falls (el Velo de Novia), más pequeña "
-	        + "pero muy pintoresca.\r\n" + "\r\n" + "Desde el paseo junto al río, el aire está cargado de humedad y se forma una niebla constante que brilla "
+	        + "el conjunto formado por:\n\n * Horseshoe Falls (la Herradura), la más grande y curvada.\n"
+	        + " * American Falls (la Americana).\n * Bridal Veil Falls (el Velo de Novia), más pequeña "
+	        + "pero muy pintoresca.\n \n Desde el paseo junto al río, el aire está cargado de humedad y se forma una niebla constante que brilla "
 	        + "con el sol, creando arcoíris casi permanentes.",
-	        "Gran ruta del cafe por Colombia",
-	        "Descubre las vistas de Suiza desde el teleferico de Lucerna",
-	        "Descubre los tesoros del Vaticano",
-	        "Descubre el templo de Nikko en Japón",
-	        "Disfruta de un maravilloso dia en la gran ciudad de Bali",
-	        "Descubre las maravillosas vistas desde el Empire State",
-	        "Visita la famosa Opera de Oslo",
-	        "Visita la maravillosa ciudad de Florencia"
+	        
+	        "La ruta comienza en Manizales, ciudad de montaña con aire fresco y vistas impresionantes del Nevado del Ruiz.\r\n"
+	        + "Aquí visitaras las fincas cafeteras tradicionales donde los caficultores te explicaran cada etapa del proceso. \n"
+	        + "Desde Manizales, el viaje continúa hacia el Quindío, pasando por Salento, un pueblo encantador de casas coloridas y balcones de flores.\r\n"
+	        + "El Valle de Cocora, con sus palmas de cera gigantes, ofrece un paisaje de cuento. En Armenia, capital del Quindío, se encuentra el famoso "
+	        + "Parque del Café, una mezcla entre parque temático y museo vivo del cultivo.\r\n"
+	        + "Entre montañas y cafetales puedes:\n Ver recreaciones del proceso cafetero.\n Disfrutar de montañas rusas, teleféricos y miradores.\n"
+	        + "Participar en una catación profesional, guiada por baristas expertos.\r\n El ambiente combina diversión familiar y aprendizaje sobre "
+	        + "la cultura cafetera.",
+	        
+	        "Desde Lucerna, en Suiza, se toma el teleférico panorámico que asciende al Monte Pilatus, una de las montañas más emblemáticas del país.\n"
+	        + "El recorrido empieza en Kriens, sube entre bosques y praderas hasta Fräkmüntegg, y luego continúa en el moderno Dragon Ride, que ofrece "
+	        + "vistas espectaculares del lago de los Cuatro Cantones y los Alpes.\n En la cima (2.132 m) hay miradores, senderos y restaurantes "
+	        + "con vistas impresionantes.\n El descenso puede hacerse en el tren cremallera más empinado del mundo, que baja hacia Alpnachstad.\n"
+	        + "Una experiencia corta pero inolvidable, perfecta para disfrutar la esencia alpina de Suiza.",
+	        
+	        "El Vaticano, en el corazón de Roma, es el Estado más pequeño del mundo y el centro espiritual de la Iglesia Católica.\n"
+	        + "Su joya principal es la Basílica de San Pedro, con la imponente cúpula de Miguel Ángel y la Plaza de San Pedro, diseñada por Bernini.\n"
+	        + "Dentro, se puede admirar la Piedad, esculturas y mosaicos únicos.\n Los Museos Vaticanos guardan siglos de arte, culminando "
+	        + "en la Capilla Sixtina, famosa por los frescos de Miguel Ángel.\n El ambiente mezcla silencio, historia y devoción, haciendo "
+	        + "de la visita una experiencia cultural y espiritual inolvidable.",
+	        
+	        "El Santuario Tōshō-gū, en Nikkō, es uno de los templos más impresionantes de Japón. Rodeado de cedros milenarios, combina arquitectura "
+	        + "tradicional con una decoración muy elaborada.\n Fue construido en honor a Tokugawa Ieyasu, fundador del shogunato Tokugawa.\r\n"
+	        + "Sus puertas doradas, tallas de animales sagrados —como los famosos tres monos sabios— y la atmósfera de niebla entre los árboles "
+	        + "crean un ambiente místico y solemne.\n Es Patrimonio de la Humanidad y una de las joyas espirituales del país.",
+	        
+	        "Sales de Bangkok al amanecer, vuelo rumbo a Bali con destino Denpasar. Al llegar, un guía te lleva directo a los arrozales de Tegallalang,"
+	        + " donde el verde de las terrazas parece un océano.\n Luego visitas el Templo de Tirta Empul, participas en una ceremonia de purificación "
+	        + "y almuerzas con vista al volcán Batur.\n Por la tarde, paseo por las playas de Seminyak y una puesta de sol mágica en Tanah Lot, con el "
+	        + "templo flotando sobre las olas.\n Después de cenar frente al mar, te alojaras entre arrozales. \n Al dia siguiente"
+	        + "desayuno temprano y salida hacia el Templo de Uluwatu, en lo alto de un acantilado sobre el océano Índico.\n Baño y relax en la playa de "
+	        + "Padang Padang o Nusa Dua.\n Al atardecer, visita al Templo de Tanah Lot para disfrutar una de las puestas de sol más famosas del mundo.\n"
+	        + "Cena junto al mar en Jimbaran antes del vuelo nocturno de regreso a Bangkok. ",
+	        
+	        "El Empire State Building, en el corazón de Manhattan, es uno de los símbolos más reconocidos de Nueva York.\n El ascensor lleva en segundos "
+	        + "hasta los miradores del piso 86 o 102, desde donde se disfruta una vista panorámica de la ciudad: Central Park, Times Square, el río Hudson"
+	        + " y, a lo lejos, la Estatua de la Libertad.\n De día, las vistas son nítidas y llenas de vida; de noche, el horizonte brilla con miles de luces.\n"
+	        + "El interior conserva su estilo Art Déco, y el ambiente mezcla historia, glamour y emoción.\n Una visita imprescindible para sentir el alma "
+	        + "de Nueva York desde las alturas.",
+	        
+	        "La Ópera de Oslo, situada frente al fiordo, es una joya moderna de la arquitectura nórdica.\n Su techo blanco de mármol inclinado permite"
+	        + " caminar sobre él, ofreciendo vistas espectaculares del mar y la ciudad.\n En el interior, la madera y la luz natural crean un ambiente"
+	        + " cálido y elegante.\n Es sede del Ballet y la Ópera Nacional de Noruega, con espectáculos de gran nivel internacional.\n"
+	        + "Incluso sin asistir a una función, el edificio es una obra de arte en sí misma: símbolo de diseño, cultura y apertura al público.",
+	        
+	        "En solo 1 hora y media en tren rápido, se llega desde Roma a Florencia, cuna del Renacimiento.\n\n El recorrido puede comenzar en la Catedral"
+	        + " de Santa María del Fiore, con su famosa cúpula de Brunelleschi, seguir por el Puente Vecchio y la Piazza della Signoria, rodeada de "
+	        + "esculturas históricas.\r\n Una visita a la Galería de los Uffizi o al David de Miguel Ángel completa el día.\r\n Antes de regresar, nada "
+	        + "mejor que un café o un helado frente al Arno, disfrutando del encanto toscano.\n Un día intenso entre arte, historia y belleza italiana."
 	    };
 	
 	double[] precio = {89, 65, 70, 49, 72, 95, 38, 30, 59};
 	private JTextField campoFiltro;
-    private JTextField campoPersonas;
     private JTable tabla;
     private TableRowSorter<TableModel> ordena;
     private ExcursionTabla modelo;
@@ -151,7 +194,10 @@ public class VentanaExcursiones extends JFrame{
 				texto.setEditable(false);
 				texto.setLineWrap(true); //hace salto de linea automatico
 				texto.setWrapStyleWord(true); //salto de linea entre palabaras completas
-				texto.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+				texto.setBorder(BorderFactory.createCompoundBorder(
+						BorderFactory.createLineBorder(new Color(180, 200, 230)),
+						BorderFactory.createEmptyBorder(12,12,12,10)));
+				texto.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 				
 				//boton de cerrar
 				JButton cerrar = new JButton("Cerrar");
@@ -216,9 +262,6 @@ public class VentanaExcursiones extends JFrame{
         public JPanel configurarBusquedaExcursion() {
             JPanel panel1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
             panel1.setBackground(new Color(230, 240, 255));
-            panel1.add(new JLabel("Personas:"));
-            campoPersonas = new JTextField("1", 6);
-            panel1.add(campoPersonas);
             panel1.add(new JLabel("Busqueda de excursion:"));
             campoFiltro = new JTextField(24);
             panel1.add(campoFiltro);
@@ -254,48 +297,93 @@ public class VentanaExcursiones extends JFrame{
         
         
         //Resumen de la excursion seleccionada
-        private void abrirReserva(Excursion ex) {
-            int personas;
-            /**
-             * try catch generado con IAG
-             */ 
-            try {
-				personas = Integer.parseInt(campoPersonas.getText().trim());
-				if (personas <= 0) throw new NumberFormatException();
-			} catch (NumberFormatException e) {
-				JOptionPane.showMessageDialog(this, "Introduce un número de personas válido (>0).",
-		                "Dato incorrecto", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-            
+        private void abrirReserva(Excursion ex) {           
             JDialog mensaje = new JDialog(this, "Reserva", true);
             mensaje.setLayout(new BorderLayout(10, 10));
-            mensaje.setSize(420, 260);
+            mensaje.setSize(560, 460);
             mensaje.setLocationRelativeTo(this);
 
+            //panel de resumen
+            JPanel resumen = new JPanel();
+            resumen.setLayout(new BoxLayout(resumen, BoxLayout.Y_AXIS));
+            resumen.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            
+            //titulo    
+            JLabel titulo = new JLabel("Has seleccionado:");
+            titulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+            titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 14f));
+            resumen.add(titulo);
+            resumen.add(Box.createVerticalStrut(6));
+            
+            //informacion de la reserva
             JTextArea informacionreserva = new JTextArea(
-                "Has seleccionado:\n" +
-                "• " + ex.getNombre() + "\n" +
-                "• " + ex.getDescripcion() + "\n" +
-                "• Precio por persona: " + String.format(Locale.US, "%.2f €", ex.getPrecio()) + "\n" +
-                "• Personas: " + personas + "\n\n" +
-                "Total: " + String.format(Locale.US, "%.2f €", ex.getPrecio() * personas)
+            		"• " + ex.getNombre() + "\n" +
+            		"• " + ex.getDescripcion() + "\n\n" +
+            		"• Precio por persona: " + String.format("%.2f €", ex.getPrecio())
             );
+            
             informacionreserva.setEditable(false);
+            informacionreserva.setFont(new Font("Segoe UI", Font.PLAIN, 12));
             informacionreserva.setLineWrap(true);
             informacionreserva.setWrapStyleWord(true);
-            informacionreserva.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
+            JScrollPane sp = new JScrollPane(informacionreserva,
+            		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            		JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            sp.setAlignmentX(Component.LEFT_ALIGNMENT);
+            resumen.add(sp);
+            resumen.add(Box.createVerticalStrut(8));
+           
+            //desplegable de numero de personas
+            JPanel personasdesplegar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            personasdesplegar.add(new JLabel("Personas: "));
+            JComboBox<Integer> numpersonas = new JComboBox<>();
+            for (int i=1; i<= 10; i++) {
+            	numpersonas.addItem(i);
+            }
+            numpersonas.setSelectedItem(1);
+            personasdesplegar.add(numpersonas);
+            personasdesplegar.setAlignmentX(Component.LEFT_ALIGNMENT);
+            resumen.add(personasdesplegar);
+           
+            //total
+            int per = (Integer) numpersonas.getSelectedItem();
+            JLabel textototal = new JLabel("Total: " + String.format("%.2f €", ex.getPrecio() * per));
+            textototal.setFont(new Font("Segoe UI", Font.BOLD, 12));		
+            textototal.setAlignmentX(Component.LEFT_ALIGNMENT);
+            resumen.add(textototal);
+            
+          //actualiza el precio total
+            numpersonas.addActionListener(change ->  {
+            	int seleccion = (Integer) numpersonas.getSelectedItem();
+            	double totalprecio = (ex.getPrecio() * seleccion);
+            	textototal.setText("Total: " + String.format("%.2f €", totalprecio));
+            });
+             
+            //Boton de confirmar reserva
             JButton confirmar = new JButton("Confirmar reserva");
+            confirmar.setFont(new Font("Segoe UI", Font.BOLD, 12));
             confirmar.addActionListener(e -> {
-                JOptionPane.showMessageDialog(mensaje, "¡Reserva confirmada!\n" + ex.getNombre());
+            	int seleccion = (Integer) numpersonas.getSelectedItem();
+            	double totalprecio = (ex.getPrecio() * seleccion);
+                JOptionPane.showMessageDialog(
+                		mensaje,
+                		"Excursión: " + ex.getNombre() + "\n" +
+                	    "Personas: " + seleccion + "\n" +
+                	    "Total: " + String.format(Locale.US, "%.2f €", totalprecio),
+                	    "Confirmación",
+                	    JOptionPane.INFORMATION_MESSAGE
+                	    );
                 mensaje.dispose();
             });
 
-            JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            panel.add(confirmar);
+            
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(textototal, BorderLayout.WEST);
+            panel.add(confirmar, BorderLayout.EAST);
 
-            mensaje.add(new JScrollPane(informacionreserva), BorderLayout.CENTER);
+            mensaje.add(sp, BorderLayout.CENTER);
+            mensaje.add(personasdesplegar, BorderLayout.NORTH);
             mensaje.add(panel, BorderLayout.SOUTH);
             mensaje.setVisible(true);
         }
