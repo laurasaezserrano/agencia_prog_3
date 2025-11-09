@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -313,10 +314,45 @@ public class CuadriculaOfertas extends JFrame{
 		JPanel mainpanel = new JPanel();
 		JPanel panel1 = new JPanel(new GridLayout(3, 3, 20, 20));
 		
-		
-				JButton botonInicio = new JButton("Atras"); //luego cambiarlo a un icono
-				
-				botonInicio.setBounds(0, 0, 10, 30);
+		JButton botonInicio = new JButton();
+		ImageIcon iconoCasa = null;
+		Image imageIcon = null;
+
+		try {
+		    imageIcon = ImageIO.read(new File("images/icono_casa.png"));
+
+		    int anchoDeseado = 30; //30 píxeles de ancho
+		    int altoDeseado = 30;  //30 píxeles de alto
+
+		    Image scaledImage = imageIcon.getScaledInstance(anchoDeseado, altoDeseado, Image.SCALE_SMOOTH);
+		    
+		    iconoCasa = new ImageIcon(scaledImage);
+		    
+		    botonInicio.setIcon(iconoCasa);
+
+		    
+		    botonInicio.setPreferredSize(new Dimension(anchoDeseado, altoDeseado));
+
+
+		} catch (IOException e) {
+		    // Si la imagen no se encuentra o hay un error de lectura
+		    System.err.println("¡ERROR! No se pudo cargar o redimensionar la imagen 'icono_casa.png': " + e.getMessage());
+		    System.err.println("La ruta actual intentada fue: images/icono_casa.png");
+		    
+		    // Como alternativa, el botón tendrá solo texto
+		    botonInicio.setText("Atras");
+		    botonInicio.setPreferredSize(new Dimension(80, 30)); // Un tamaño razonable para el texto
+		    botonInicio.setBorderPainted(true); // Vuelve a poner el borde si hay texto
+		    botonInicio.setContentAreaFilled(true);
+		    
+		} catch (IllegalArgumentException e) {
+		    // Esto podría pasar si la imagen no se lee correctamente y originalImage es null
+		    System.err.println("¡ERROR! La imagen leída era nula o inválida: " + e.getMessage());
+		    botonInicio.setText("Atras");
+		    botonInicio.setPreferredSize(new Dimension(80, 30));
+		    botonInicio.setBorderPainted(true);
+		    botonInicio.setContentAreaFilled(true);
+		}
 				
 				botonInicio.addActionListener(new ActionListener() {
 				    
@@ -327,7 +363,8 @@ public class CuadriculaOfertas extends JFrame{
 				        VentanaInicio vInicio = new VentanaInicio();
 				        vInicio.setVisible(true);
 				    }
-			});
+				}
+				);
 				
 				mainpanel.add(botonInicio);
 		
