@@ -445,7 +445,7 @@ public class VentanaReservas extends JFrame {
                         ciudadCSV.equalsIgnoreCase(ciudad) &&
                         hotelCSV.equalsIgnoreCase(hotelOExcursion) &&
                         salidaCSV.equals(salida) &&
-                        precioCSV.equals(precioStr);
+                        (Double.parseDouble(precioCSV) == Double.parseDouble( precioStr));
                 
                 if (!esLaReservaABorrar) {
                     writer.println(linea); // Si NO es la línea, la escribimos en el temp
