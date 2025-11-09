@@ -43,6 +43,29 @@ public class Vuelo extends DefaultTableModel{
 		return datos.get(columna);
 	}
 	
+	@Override
+	public boolean isCellEditable(int fila, int columna) {
+		return columna == 8; //solo la columna de reservas se puede editar
+	}
+	
+	@Override
+	public Class<?> getColumnClass(int columna) {
+		switch (columna) {
+        	case 5: { //precio
+        		return Double.class;   
+        	}
+        	case 6: { //reservas
+        		return Integer.class;  
+        	}
+        	case 7: { //asientos libres
+        		return Integer.class;  
+        	}
+        	default: {
+        		return String.class;
+        	}
+    }
+	}
+	
 	//Para saber que tiene que devolver cada columna
 	@Override
 	public Object getValueAt(int fila, int columna) { 
@@ -69,6 +92,10 @@ public class Vuelo extends DefaultTableModel{
 		default: {
 			return null;}
 		}
+	}
+	
+	public DatosVuelos getAt(int fila) {
+		return vuelos.get(fila);
 	}
 	
 }

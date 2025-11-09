@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatosVuelos implements Comparable<DatosVuelos>, Serializable {
+public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	private static final long serialVersionUID = 1L;
 	private String codigo;
 	private Aeropuertos origen;
@@ -12,13 +12,13 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable {
 	private int duracionvuelo;
 	private Aerolinea aerolinea;
 	private Avion avion;
-	private int asientos;
+	private int plazas;
 	private float precio;
 	private List<ReservaVuelo> reservas;
 	
 
 	public DatosVuelos(String codigo, Aeropuertos origen, Aeropuertos destino, int duracionvuelo, Aerolinea aerolinea,
-			Avion avion, int asientos, float precio, List<ReservaVuelo> reservas) {
+			Avion avion, int plazas, float precio, List<ReservaVuelo> reservas) {
 		super();
 		this.codigo = codigo;
 		this.origen = origen;
@@ -26,11 +26,7 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable {
 		this.duracionvuelo = duracionvuelo;
 		this.aerolinea = aerolinea;
 		this.avion = avion;
-//		this.asientos = if (avion == null) {
-//		    				this.asientos = 0;
-//						} else {
-//							this.asientos = avion.getNumeroasientos();
-//						};
+		this.plazas = plazas;
 		this.precio = precio;
 		this.reservas = new ArrayList<>();
 	}
@@ -41,13 +37,13 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable {
 		for (ReservaVuelo r : reservas) {
 			asi += r.getPasajeros().size();
 		}
-		return (asientos - asi);
+		return (plazas - asi);
 	}
-
 
 	public String getCodigo() {
 		return codigo;
 	}
+
 
 	public Aeropuertos getOrigen() {
 		return origen;
@@ -70,7 +66,7 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable {
 	}
 
 	public int getAsientos() {
-		return asientos;
+		return plazas;
 	}
 
 	public float getPrecio() {
@@ -85,8 +81,11 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable {
 		this.reservas = reservas;
 	}
 
+
 	@Override
-	public int compareTo(DatosVuelos other) {
-		return codigo.compareTo(other.codigo);
+	public int compareTo(DatosVuelos o) {
+		return codigo.compareTo(o.codigo);
 	}
+
+	
 }

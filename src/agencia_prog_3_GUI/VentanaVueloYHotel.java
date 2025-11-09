@@ -2,15 +2,20 @@ package agencia_prog_3_GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.swing.JComboBox;
 import javax.swing.Box;
@@ -21,29 +26,31 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
+import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 
 public class VentanaVueloYHotel extends JFrame{
 	private JTextField titulo;
 	private static final long serialVersionUID = 1L;
 	private static final String CSV_PATH = "vuelosagencia_completo.csv";
-	//Por si suceden futuras extensiones
-	private String [] origenVuelos = {"Madrid"};
-	private JTextField txtPersonas;
-	private JComboBox<String> cmbDestino;
+	
+    private final String[] origenVuelos = {"Madrid"}; //de momento solo Madrid
+    
+    private JTextField txtPersonas;
+    private JComboBox<String> cmbDestino;
     private JComboBox<String> cmbOrigen;
-    
-    
-    
-//    private List<DatosVuelos> vuelos = new ArrayList<>();
-//    private JTable tablavuelos = new JTable();
-//    private JComboBox<String> cmbDestino;
-//    private JComboBox<String> cmbOrigen;
-//    private JButton botonBusqueda;
-//	private JLabel informacion = new JLabel("Selecciona un aeropuerto origen");
 
+    //tabla
+    private JTable tabla;
+    private VueloTabla modelo;
+    private TableRowSorter<VueloTabla> ordenado;
     
 	public VentanaVueloYHotel() {
 		setTitle("Búsqueda de vuelos");
@@ -51,9 +58,109 @@ public class VentanaVueloYHotel extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
-    JPanel mainpanel = new JPanel();
-    mainpanel.setLayout(new BorderLayout());
-    mainpanel.setBackground(Color.WHITE);
+        
+        //titulo
+        JTextField titulo = new JTextField("Búsqueda de Vuelos y Ofertas");
+        titulo.setEditable(false);
+        titulo.setHorizontalAlignment(JTextField.CENTER);
+        titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 22f));
+        add(titulo, BorderLayout.SOUTH);
+        
+        //panel busqueda
+        JPanel panelBusqueda = configurarbusqueda();
+        panelBusqueda.add(panelBusqueda, BorderLayout.NORTH);
+        
+     	//cargar datos
+        List<DatosVuelos> listaVuelos = cargarVuelosDesdeCSV();
+        
+        
+        modelo = new VueloTabla(listaVuelos);
+        tabla = new JTable(modelo);
+        tabla.setRowHeight(28);
+        
+        
+        //alineacion en centro
+        DefaultTableCellRenderer center = new DefaultTableCellRenderer();
+        center.setHorizontalAlignment(SwingConstants.CENTER);
+        for (int i = 0; i < 8; i++) { 
+            tabla.getColumnModel().getColumn(i).setCellRenderer(center);
+        }
+        
+        //precio del vuelo
+        DefaultTableCellRenderer precioRenderer = new DefaultTableCellRenderer() {
+            @Override
+            protected void setValue(Object value) {
+                if (value instanceof Number) {
+                    setText(String.format("%.2f €", ((Number) value).doubleValue()));
+                } else if (value != null) {
+                    setText(value.toString());
+                } else {
+                    setText("");
+                }
+                setHorizontalAlignment(SwingConstants.CENTER);
+            }
+        };
+        tabla.getColumnModel().getColumn(5).setCellRenderer(precioRenderer);
+
+        //boton de reservar
+        ButtonRendererEditor nuevo = new ButtonRendererEditor();
+        TableColumn reserva = tabla.getColumnModel().getColumn(8);
+        reserva.setCellRenderer(nuevo);
+        reserva.setCellEditor(nuevo);
+        reserva.setPreferredWidth(110);
+        
+        ordenado = new TableRowSorter<>(modelo);
+        tabla.setRowSorter(ordenado);
+        add(new JScrollPane(tabla), BorderLayout.CENTER)
+	}
+        
+	
+		private JPanel configurarbusqueda() {
+			Set<String> destinos = obtenerDestinosUnicos();
+	        List<String> lista = new ArrayList<>(destinos);
+	        Collections.sort(lista); //ordena la lista
+	        lista.add(0, "Todos");  
+	        String[] destinosarr = lista.toArray(new String[0]);
+
+	        JPanel busqueda = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+	        busqueda.setBackground(new Color(230, 240, 255));
+	        busqueda.add(new JLabel("Personas:"));
+	        txtPersonas = new JTextField("1", 6);
+	        busqueda.add(txtPersonas);
+	        busqueda.add(new JLabel("Seleccione origen:"));
+	        cmbOrigen = new JComboBox<>(origenVuelos);
+	        cmbOrigen.setPreferredSize(new Dimension(150, 25));
+	        busqueda.add(cmbOrigen);
+	        busqueda.add(new JLabel("Seleccione destino:"));
+	        cmbDestino = new JComboBox<>(destinosarr);
+	        cmbDestino.setPreferredSize(new Dimension(150, 25));
+	        busqueda.add(cmbDestino);
+
+	        //buscar
+	        JButton botonBusqueda = new JButton("Buscar");
+	        botonBusqueda.addActionListener(e -> applyFilters());
+	        panelBusqueda.add(botonBusqueda);
+
+	        JButton borrar = new JButton("Limpiar filtros");
+	        borrar.addActionListener(e -> {
+	            txtPersonas.setText("1");
+	            cmbOrigen.setSelectedIndex(0);
+	            cmbDestino.setSelectedIndex(0);
+	            if (sorter != null) {
+	            	sorter.setRowFilter(null);
+	            }
+	        });
+	        busqueda.add(botonLimpiar);
+
+	        return panelBusqueda;
+	    }
+	
+	
+	
+	
+        JPanel mainpanel = new JPanel();
+        mainpanel.setLayout(new BorderLayout());
+        mainpanel.setBackground(Color.WHITE);
         
 //        cmbOrigen.setPrototypeDisplayValue("Seleccione aeropuerto de origen");
 //        cmbOrigen.addActionListener((e) -> {
@@ -109,8 +216,7 @@ public class VentanaVueloYHotel extends JFrame{
 //      paneldestino.add(cmbDestino);
 //    
       
-      JPanel panelBusqueda = configurarPanelBusqueda();
-      panelBusqueda.setAlignmentX(JComponent.CENTER_ALIGNMENT); 
+      
 //      JPanel panelbusqueda = new JPanel();
 //      panelbusqueda.setBorder(new TitledBorder("Búsqueda de vuelos"));
 //      panelbusqueda.setLayout(new GridLayout(3, 1));
@@ -158,28 +264,34 @@ public class VentanaVueloYHotel extends JFrame{
          * IAG - IDEA BORDE VACIO PARA MEJOR ESTRUCTURA (setBorder - linea 58)
          */
         vuelospanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		for (int i = 1; i<10; i++) {
-			JButton boton = new JButton("Vuelo" + i);
-			boton.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-			Dimension botonDim = new Dimension(850, 60);
-			boton.setMaximumSize(botonDim);
-			boton.setPreferredSize(botonDim);
-			boton.setMaximumSize(botonDim);
-			boton.setBackground(new Color(255, 255, 255));
-			boton.setBorder(new LineBorder(Color.BLACK, 2));
-//			boton.addActionListener(new ActionListener() {
-//				
-//				@Override
-//				public void actionPerformed(ActionEvent e) {
-//					abrirvuelo(i);
-//					
-//				}
-//			});
-			
-			vuelospanel.add(boton);
-			vuelospanel.add(Box.createVerticalStrut(10));
-		}
 		
+        //Tabla de vuelos
+        List<DatosVuelos> listaVuelos = cargarVuelosDesdeCSV(); //FALTA LECTURA CSV
+        Vuelo modelo = new Vuelo(listaVuelos);
+        
+        JTable tabla = new JTable(modelo);
+        tabla.setRowHeight(28);
+        
+        //precio
+        DefaultTableCellRenderer precioRenderer = new DefaultTableCellRenderer() {
+        	@Override
+        	protected void setValue(Object value) {
+        		if (value instanceof Number) {
+        			setText(String.format("%.2f €", ((Number) value).doubleValue()));
+        		} else {
+        			setText("");
+        		}
+        		setHorizontalAlignment(SwingConstants.CENTER);
+        	};
+        };
+        tabla.getColumnModel().getColumn(5).setCellRenderer(precioRenderer);
+        
+        //Boton de reservas
+        tabla.getColorModel().getColumn(8).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent
+        
+        
         
 		JScrollPane scroll = new JScrollPane(vuelospanel);
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -307,4 +419,5 @@ public class VentanaVueloYHotel extends JFrame{
 		VentanaVueloYHotel vuelosyhotel = new VentanaVueloYHotel();
 		vuelosyhotel.setVisible(true);
 	}
+}
 }
