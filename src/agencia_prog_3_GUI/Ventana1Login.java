@@ -115,12 +115,14 @@ public class Ventana1Login extends JFrame {
             JOptionPane.showMessageDialog(this, "Inicio de sesión correcto.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             VentanaInicio vInicio = new VentanaInicio();
             vInicio.setVisible(true);
+            dispose();
         } else if (!validUsers.containsKey(user)) {
             int option = JOptionPane.showConfirmDialog(this, "El usuario no está registrado. ¿Deseas registrarte?",
                     "Usuario no encontrado", JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 registerUser();
                 AlmacenajeSesion.iniciarSesion(user,pass);
+                dispose();
 //                JOptionPane.showMessageDialog(this, "Registro realizado con éxito", "Continuar", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {

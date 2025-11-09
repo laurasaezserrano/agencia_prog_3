@@ -47,7 +47,7 @@ public class VentanaReservas extends JFrame {
     private TableRowSorter<DefaultTableModel> sorter;
     
     private DefaultTableModel modeloTablaHoteles;
-    private DefaultTableModel modeloTablaExcursiones;
+    private DefaultTableModel modeloTablaExcursiones ;
     private TableRowSorter<DefaultTableModel> sorterHoteles;
     private TableRowSorter<DefaultTableModel> sorterExcursiones;
     private JTabbedPane tabbedPane;
@@ -135,7 +135,7 @@ public class VentanaReservas extends JFrame {
         };
         
         
-        DefaultTableModel modeloTablaHoteles = new DefaultTableModel(columnas, 0) {
+        modeloTablaHoteles = new DefaultTableModel(columnas, 0) {
             private static final long serialVersionUID = 1L;
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -152,7 +152,7 @@ public class VentanaReservas extends JFrame {
         tabbedPane.addTab("Hoteles y Alojamiento", scrollHoteles);
         
         
-        DefaultTableModel modeloTablaExcursiones = new DefaultTableModel(columnas, 0) {
+         modeloTablaExcursiones = new DefaultTableModel(columnas, 0) {
             private static final long serialVersionUID = 1L;
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -323,6 +323,7 @@ public class VentanaReservas extends JFrame {
 	
 	
 	private void cargarReservasDesdeCSV(String usuarioFiltrar) {
+		
         File archivo = new File("reservas.csv");
         if (!archivo.exists()) {
             System.err.println("No se encontró el archivo reservas.csv");
@@ -341,7 +342,7 @@ public class VentanaReservas extends JFrame {
                 if (datos.length < 10) continue;
 
                 String usuarioCSV = datos[0];
-                if (usuarioCSV.equalsIgnoreCase(usuarioFiltrar)) {
+                if (usuarioCSV.compareToIgnoreCase(usuarioFiltrar) == 0) {
                     
                     // Extraemos los datos del CSV
                     String ciudad = datos[1];
