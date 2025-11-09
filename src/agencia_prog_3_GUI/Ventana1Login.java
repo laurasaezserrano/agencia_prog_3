@@ -2,18 +2,13 @@ package agencia_prog_3_GUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
+
 import java.util.HashMap;
 
 public class Ventana1Login extends JFrame {
@@ -21,7 +16,6 @@ public class Ventana1Login extends JFrame {
 	protected static JTextField userField;
     protected static JPasswordField passField;
     private JButton loginButton;
-    private JButton registerButton;
     private JLabel statusLabel;
 
     // HashMap de usuarios
