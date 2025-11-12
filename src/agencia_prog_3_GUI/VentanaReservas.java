@@ -97,16 +97,6 @@ public class VentanaReservas extends JFrame {
         
         tabbedPane = new JTabbedPane();
         
-        
-//        add(centerPanel, BorderLayout.CENTER);
-        
-//        JScrollPane scrollPane = new JScrollPane(centerPanel);
-//        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-//        
-//        // Añadimos el JScrollPane (que contiene el panel) al centro de la ventana
-//        add(scrollPane, BorderLayout.CENTER);
-        
         try {
            this.usuarioLogueado = Ventana1Login.userField.getText();
        } catch(Exception e) {
@@ -129,13 +119,13 @@ public class VentanaReservas extends JFrame {
 		});
         
 		// 1. Definir las columnas que leeremos del CSV (omitimos 'Usuario')
-        String[] columnas = {
+        String[] columnasHoteles  = {
             "Ciudad", "Hotel", "Email", "Habitación", "Adultos", 
             "Niños", "Salida", "Regreso", "Precio (€)", "Cancelar"
         };
         
         
-        modeloTablaHoteles = new DefaultTableModel(columnas, 0) {
+        modeloTablaHoteles = new DefaultTableModel(columnasHoteles , 0) {
             private static final long serialVersionUID = 1L;
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -151,8 +141,12 @@ public class VentanaReservas extends JFrame {
         JScrollPane scrollHoteles = new JScrollPane(tablaHoteles);
         tabbedPane.addTab("Hoteles y Alojamiento", scrollHoteles);
         
+        String[] columnasExcursiones = {
+                "Destino", "Excursión", "Email", "Tipo", "Adultos", 
+                "Niños", "Fecha Inicio", "Fecha Fin", "Precio (€)", "Cancelar"
+            };
         
-         modeloTablaExcursiones = new DefaultTableModel(columnas, 0) {
+         modeloTablaExcursiones = new DefaultTableModel(columnasExcursiones, 0) {
             private static final long serialVersionUID = 1L;
             @Override
             public boolean isCellEditable(int row, int column) {

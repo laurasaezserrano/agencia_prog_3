@@ -7,43 +7,63 @@ import java.util.List;
 public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	private static final long serialVersionUID = 1L;
 	private String codigo;
-	private Aeropuertos origen;
-	private Aeropuertos destino;
-	private int duracionvuelo;
 	private Aerolinea aerolinea;
-	private Avion avion;
-	private int plazas;
-	private float precio;
+	private Aeropuertos origen;
+	private int duracionvuelo;
+	private Aeropuertos destino;
+	private String fecha;
+    private String hora;
+    private int asientos; // El campo se llama 'asientos'
+    private float precio;
+    private String descripcion;
 	private List<ReservaVuelo> reservas;
 	
 
-	public DatosVuelos(String codigo, Aeropuertos origen, Aeropuertos destino, int duracionvuelo, Aerolinea aerolinea,
-			Avion avion, int plazas, float precio, List<ReservaVuelo> reservas) {
-		super();
-		this.codigo = codigo;
-		this.origen = origen;
-		this.destino = destino;
-		this.duracionvuelo = duracionvuelo;
-		this.aerolinea = aerolinea;
-		this.avion = avion;
-		this.plazas = plazas;
-		this.precio = precio;
-		this.reservas = new ArrayList<>();
-	}
-
+	// CONSTRUCTOR DE 10 PARÁMETROS (CORREGIDO PARA COINCIDIR CON LA LLAMADA DESDE VentanaVueloYHotel)
+	// NOTA: Se asume que Aerolinea y Aeropuertos tienen un constructor que acepta un String.
+	public DatosVuelos(
+	    String codigo, 
+	    String aerolineaNombre, 
+	    String origenNombre, 
+	    int duracionvuelo, 
+	    String destinoNombre, 
+	    String fecha, 
+	    String hora, 
+	    int asientos, 
+	    float precio, 
+	    String descripcion
+	) {
+        this.codigo = codigo;
+        // CONVERSIÓN ASUMIDA: Crea un objeto Aerolinea/Aeropuertos a partir del nombre String.
+        this.aerolinea = new Aerolinea(aerolineaNombre); 
+        this.origen = new Aeropuertos(origenNombre);
+        this.duracionvuelo = duracionvuelo;
+        this.destino = new Aeropuertos(destinoNombre);
+        
+        // Campos que estaban sin inicializar:
+        this.fecha = fecha; 
+        this.hora = hora;
+        this.asientos = asientos; // Se inicializa el campo 'asientos'
+        this.precio = precio;
+        this.descripcion = descripcion;
+        this.reservas = new ArrayList<>(); // Inicializamos la lista para evitar NullPointerException
+    }
+    
+    // El constructor anterior ha sido eliminado o comentado para evitar conflictos.
+    // Si aún necesitas el constructor anterior, asegúrate de que tome 10 parámetros
+    // o que el constructor que uses en VentanaVueloYHotel tenga la firma correcta.
 	
-	public DatosVuelos(String origen2, String destino2, String fechaSalida, String fechaRegreso, String aerolinea2,
-			double precioVuelo, double precioHotel, int asientos) {
-		// TODO Auto-generated constructor stub
-	}
-
-
+	
 	public int asientosrestantes() {
 		int asi = 0;
-		for (ReservaVuelo r : reservas) {
-			asi += r.getPasajeros().size();
+		if (reservas != null) {
+			for (ReservaVuelo r : reservas) {
+				// Se asume que getPasajeros() devuelve una lista
+				asi += r.getPasajeros().size(); 
+			}
 		}
-		return (plazas - asi);
+		// CORRECCIÓN: Usa el campo 'asientos' en lugar de la variable 'plazas'
+		return (asientos - asi); 
 	}
 
 	public String getCodigo() {
@@ -66,13 +86,23 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	public Aerolinea getAerolinea() {
 		return aerolinea;
 	}
-
-	public Avion getAvion() {
-		return avion;
+	
+	public String getFecha() {
+		return fecha;
 	}
 
-	public int getAsientos() {
-		return plazas;
+	public String getHora() {
+		return hora;
+	}
+
+	// El campo Avion no está definido, se elimina su getter si existiera.
+	/* public Avion getAvion() {
+		return avion;
+	} */
+
+	// CORRECCIÓN: Usa el campo 'asientos' en lugar de la variable 'plazas'
+	public int getAsientos() { 
+		return asientos;
 	}
 
 	public float getPrecio() {
@@ -81,6 +111,10 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 
 	public List<ReservaVuelo> getReservas() {
 		return reservas;
+	}
+	
+	public String getDescripcion() {
+		return descripcion;
 	}
 
 	public void setReservas(List<ReservaVuelo> reservas) {
@@ -92,30 +126,4 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	public int compareTo(DatosVuelos o) {
 		return codigo.compareTo(o.codigo);
 	}
-
-
-	public String getFechaSalida() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public String getFechaRegreso() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public double getPrecioVuelo() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-	public double getPrecioHotel() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	
 }

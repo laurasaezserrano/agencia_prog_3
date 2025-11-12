@@ -79,8 +79,6 @@ public class Vuelo extends DefaultTableModel{
 		case 1: {
 			return vuelo.getAerolinea();
 			}
-		case 2: {
-			return vuelo.getAvion();}
 		case 3: {
 			return vuelo.getOrigen();
 				}
