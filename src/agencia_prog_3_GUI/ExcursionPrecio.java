@@ -1,7 +1,5 @@
 package agencia_prog_3_GUI;
 
-import java.util.Locale;
-
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
