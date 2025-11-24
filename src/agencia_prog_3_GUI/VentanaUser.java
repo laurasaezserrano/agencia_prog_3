@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class VentanaUser extends JFrame{
+
+	private static final long serialVersionUID = 1L;
 	private JTextField nusuario;
 	private JTextField contraseña;
 	private JTextField titulo;
