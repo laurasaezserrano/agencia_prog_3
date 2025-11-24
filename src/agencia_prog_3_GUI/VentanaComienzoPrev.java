@@ -25,9 +25,12 @@ import javax.swing.SwingUtilities;
 public class VentanaComienzoPrev extends JFrame{
 	private static final long serialVersionUID = 1L;
 	// Se inicia la app con una imagen de fondo y un botón donde poder acceder
+	private static final int ANCHO_VENTANA = 900;
+    private static final int ALTO_VENTANA = 700;
+    
 	public  VentanaComienzoPrev() {
 		super.setTitle("Bienvenid@! / Welcome! / Ongi Etorri!");
-		setSize(600,400);
+		setSize(ANCHO_VENTANA, ALTO_VENTANA); 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 		setLayout(null);
@@ -39,7 +42,7 @@ public class VentanaComienzoPrev extends JFrame{
 		
 		try {
 	    	imagenAjustada = ImageIO.read(new File(rutaImagen));
-	    	imagenAjustada = imagenAjustada.getScaledInstance(600, 400, Image.SCALE_SMOOTH);
+	    	imagenAjustada = imagenAjustada.getScaledInstance(ANCHO_VENTANA, ALTO_VENTANA, Image.SCALE_SMOOTH);
 	    	
 	    } catch (IOException e){
 	    	System.err.println("Imagen no cargada correctamente: " + e.getMessage());
@@ -50,14 +53,13 @@ public class VentanaComienzoPrev extends JFrame{
 	    
 //	    JPanel panelImagen = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		JLabel fondoLabel = new JLabel(new ImageIcon(imagenAjustada));
-		fondoLabel.setBounds(0, 0, 600, 400);
-	
+		fondoLabel.setBounds(0, 0, ANCHO_VENTANA, ALTO_VENTANA);	
 	    
 	    //JButton de comienzo
-	    JButton boton = new JButton("Start");
+	    JButton boton = new JButton("START");
 	    boton.setFont(new Font ("Calibri", Font.BOLD, 18));
 	    boton.setForeground(Color.BLACK);
-	    boton.setBackground(new Color(0, 120, 215, 180));
+	    boton.setBackground(new Color(195, 176, 145));
 	    int ANCHO_BOTON = 120; 
 		int ALTO_BOTON = 60;
 	    boton.setOpaque(true);
@@ -65,12 +67,12 @@ public class VentanaComienzoPrev extends JFrame{
 		    
 		    //Posicion X - Centrado Horizontalmente
 	    	int margen = 20;
-		    int botonX = 400;
+		    int botonX = 700;;
 		    //Posicion Y - Centrado Verticalmente
-		    int botonY = 60;
+		    int botonY = 200;;
 		    
-		    boton.setBounds(botonX, botonY, 85, 50);
-    
+		    boton.setBounds(botonX, botonY, ANCHO_BOTON, ALTO_BOTON);
+		    
 	//Action Listener
 	boton.addActionListener(new ActionListener(){
 		@Override
