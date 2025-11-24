@@ -32,6 +32,7 @@ public class VentanaComienzoPrev extends JFrame{
 		setResizable(false);
 		setLayout(null);
 		
+		setLocationRelativeTo(null);
 		//Ruta de la Imagen de Fondo
 	    String rutaImagen = "images\\fondoVentana0.png";
 		Image imagenAjustada = null ;
@@ -57,6 +58,8 @@ public class VentanaComienzoPrev extends JFrame{
 	    boton.setFont(new Font ("Calibri", Font.BOLD, 18));
 	    boton.setForeground(Color.BLACK);
 	    boton.setBackground(new Color(0, 120, 215, 180));
+	    int ANCHO_BOTON = 120; 
+		int ALTO_BOTON = 60;
 	    boton.setOpaque(true);
 	    boton.setBorderPainted(false);
 		    
