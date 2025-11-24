@@ -5,13 +5,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 public class VentanaInicio extends JFrame{
@@ -25,7 +31,7 @@ public class VentanaInicio extends JFrame{
 			"Perfil",
 			"Reservas", 
 			"Ofertas",
-			"Vuelo + Hotel",
+			"VueloyHotel",
 			"Excursiones",
 			"Contacto"
 		};
@@ -33,6 +39,36 @@ public class VentanaInicio extends JFrame{
 		for (int i = 0; i < 6; i++) {
 			int numero = i+1;
 			JButton boton = new JButton(nombresboton [numero-1]);
+			try {
+				 BufferedImage originalImage = ImageIO.read(new File("images/"+nombresboton[i]+".png"));
+		            
+		            int anchoDeseado = 110; 
+		            int altoDeseado = 80;  
+		            
+		            Image scaledImage = originalImage.getScaledInstance(anchoDeseado, altoDeseado, Image.SCALE_SMOOTH);
+		            ImageIcon iconoOriginal = new ImageIcon(scaledImage);
+		            
+				if (originalImage != null) {
+					ImageIcon originalIcon = new ImageIcon(originalImage);
+					// Redimensionar la imagen a un tamaño apropiado (e.g., 90x90)
+					// Esto es crucial para que quepan en el botón.
+					ImageIcon resizedIcon = new ImageIcon(originalIcon.getImage().getScaledInstance(90, 90, java.awt.Image.SCALE_SMOOTH));
+					boton.setIcon(resizedIcon);
+					
+					// Ajustar el texto para que esté debajo del icono
+					boton.setHorizontalTextPosition(SwingConstants.CENTER);
+					boton.setVerticalTextPosition(SwingConstants.BOTTOM);
+					
+					// Aumentamos la fuente para que el texto sea visible
+					boton.setFont(new Font("SansSerif", Font.BOLD, 14));
+
+				} else {
+					System.err.println("No se pudo encontrar la imagen: " + nombresboton[i]);
+				}
+			} catch (Exception e) {
+				System.err.println("Error al cargar la imagen " + nombresboton[i] + ": " + e.getMessage());
+			}
+			
 			boton.setPreferredSize(new Dimension(220, 180));
 			boton.setBackground(new Color(255, 255, 255));
 			boton.setBorder(new LineBorder(Color.BLACK, 2));
