@@ -48,6 +48,9 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import agencia_prog_3_data.Excursion;
+import agencia_prog_3_data.ExcursionPrecio;
+
 public class VentanaExcursiones extends JFrame{
 	private static final long serialVersionUID = 1L;
 	String[] tituloexcursion = {

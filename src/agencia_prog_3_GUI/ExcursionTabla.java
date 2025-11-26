@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import agencia_prog_3_data.Excursion;
+
 public class ExcursionTabla extends AbstractTableModel{
 	private static final long serialVersionUID = 1L;
 	private final String[] columnas = {"ID", "Título", "Descripción", "Precio", "Reservar"};

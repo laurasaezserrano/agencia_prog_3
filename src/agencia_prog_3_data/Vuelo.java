@@ -1,8 +1,10 @@
-package agencia_prog_3_GUI;
+package agencia_prog_3_data;
 
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
+
+import agencia_prog_3_GUI.DatosVuelos;
 
 public class Vuelo extends DefaultTableModel{
 	private static final long serialVersionUID = 1L;

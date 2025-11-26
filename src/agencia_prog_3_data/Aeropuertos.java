@@ -1,4 +1,4 @@
-package agencia_prog_3_GUI;
+package agencia_prog_3_data;
 
 import java.io.Serializable;
 
