@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import agencia_prog_3_data.Aerolinea;
+
 public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	private static final long serialVersionUID = 1L;
 	private String codigo;
