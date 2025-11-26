@@ -319,7 +319,7 @@ public class CuadriculaOfertas extends JFrame{
 		Image imageIcon = null;
 
 		try {
-		    imageIcon = ImageIO.read(new File("images/icono_casa.png"));
+		    imageIcon = ImageIO.read(new File("resources/images/icono_casa.png"));
 
 		    int anchoDeseado = 30; //30 píxeles de ancho
 		    int altoDeseado = 30;  //30 píxeles de alto
@@ -337,7 +337,7 @@ public class CuadriculaOfertas extends JFrame{
 		} catch (IOException e) {
 		    // Si la imagen no se encuentra o hay un error de lectura
 		    System.err.println("¡ERROR! No se pudo cargar o redimensionar la imagen 'icono_casa.png': " + e.getMessage());
-		    System.err.println("La ruta actual intentada fue: images/icono_casa.png");
+		    System.err.println("La ruta actual intentada fue: resources/images/icono_casa.png");
 		    
 		    // Como alternativa, el botón tendrá solo texto
 		    botonInicio.setText("Atras");
@@ -376,7 +376,7 @@ public class CuadriculaOfertas extends JFrame{
 			
 			try {
 	            // Carga la imagen original
-	            originalImage = ImageIO.read(new File("images/Oferta"+numero+".png"));
+	            originalImage = ImageIO.read(new File("resources/images/Oferta"+numero+".png"));
 	            
 	            int anchoDeseado = 110; 
 	            int altoDeseado = 80;  
@@ -386,13 +386,13 @@ public class CuadriculaOfertas extends JFrame{
 	            
 				
 	        } catch (IOException e) {
-	            System.err.println("Error al cargar imagen " + "images/Oferta"+numero+".png" + ": " + e.getMessage());
+	            System.err.println("Error al cargar imagen " + "resources/images/Oferta"+numero+".png" + ": " + e.getMessage());
 	            iconoOriginal = null; 
 	        }
 			
 			try {
 		        // images/OFerta(num)_sup.jpg
-		        Image originalImageHover = ImageIO.read(new File("images/Oferta" + numero + "_sup.jpg"));
+		        Image originalImageHover = ImageIO.read(new File("resources/images/Oferta" + numero + "_sup.jpg"));
 		        
 		        if (originalImageHover != null) {
 			        int anchoIconSup = 200;
@@ -552,7 +552,7 @@ public class CuadriculaOfertas extends JFrame{
 	    
 	    //Ruta imagen
 	    //Habra que añadir un try / catch por si no la encuentra o no la carga
-	    String rutaImagen = "images/Oferta" + numero + ".png" ;
+	    String rutaImagen = "resources/images/Oferta" + numero + ".png" ;
 	    try {
 	    	Image originalImage = ImageIO.read(new File(rutaImagen));
 	    	

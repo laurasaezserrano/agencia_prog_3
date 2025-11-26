@@ -37,7 +37,7 @@ public class VentanaComienzoPrev extends JFrame{
 		
 		setLocationRelativeTo(null);
 		//Ruta de la Imagen de Fondo
-	    String rutaImagen = "images\\fondoVentana0.png";
+	    String rutaImagen = "resources\\images\\fondoVentana0.png";
 		Image imagenAjustada = null ;
 		
 		try {
