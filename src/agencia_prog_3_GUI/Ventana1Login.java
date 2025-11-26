@@ -17,7 +17,8 @@ public class Ventana1Login extends JFrame {
     protected static JPasswordField passField;
     private JButton loginButton;
     private JLabel statusLabel;
-
+    private String userCSV = "resources/data/userCSV.csv";
+    
     // HashMap de usuarios
     private HashMap<String, String> validUsers;
 
@@ -67,7 +68,7 @@ public class Ventana1Login extends JFrame {
     
    
     private HashMap<String, String> loadUsers () {
-        File file = new File("UserCSV.csv");
+        File file = new File(userCSV);
         if (!file.exists()) return new HashMap<>();
         HashMap<String, String> usuarios = new HashMap<>();
         try (BufferedReader in = new BufferedReader(new FileReader(file))) {
@@ -151,7 +152,7 @@ public class Ventana1Login extends JFrame {
     // Guardar usuarios en archivo
     private void saveUsers(String user, String password) {
         try {
-        	BufferedWriter  pw =   new BufferedWriter (new FileWriter("UserCSV.csv", true)) ;
+        	BufferedWriter  pw =   new BufferedWriter (new FileWriter(userCSV, true)) ;
                 pw.write(user + "," + password);
                 pw.newLine();
                 pw.close();
