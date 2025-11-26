@@ -63,7 +63,6 @@ public class VentanaExcursiones extends JFrame{
 		    "Subida al Empire State",     
 		    "Visita a la Opera de Oslo",  
 		    "Visita a Florencia", 
-		    
 		    "Safari en el Serengeti",
 		    "Crucero por los Fiordos Noruegos",
 		    "Ascenso al Monte Fuji",
@@ -181,7 +180,7 @@ public class VentanaExcursiones extends JFrame{
 
 	};
 	
-	double[] precio = {89, 65, 70, 49, 72, 95, 38, 30, 59};
+	double[] precio = {89, 65, 70, 49, 72, 95, 38, 30, 59, 89, 65, 70, 49, 72, 95, 38, 30, 59};
 	private JTextField campoFiltro;
     private JTable tabla;
     private TableRowSorter<TableModel> ordena;
@@ -194,7 +193,7 @@ public class VentanaExcursiones extends JFrame{
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout(10, 10));
 		
-		JPanel mainpanel = new JPanel(new BorderLayout(10, 10));
+		JPanel mainpanel = new JPanel(new BorderLayout(19, 10));
 		mainpanel.setBackground(new Color(50, 150, 200));
 		add(mainpanel, BorderLayout.CENTER);
 		
