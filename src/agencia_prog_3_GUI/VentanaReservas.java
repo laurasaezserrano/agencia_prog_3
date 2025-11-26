@@ -163,31 +163,6 @@ public class VentanaReservas extends JFrame {
         add(tabbedPane, BorderLayout.CENTER);
         
         
-//        // 2. Crear el modelo de la tabla (vacío) y hacerlo no editable
-//        modeloTabla = new DefaultTableModel(columnas, 0) {
-//            @Override
-//            public boolean isCellEditable(int row, int column) {
-//               return false; // Las celdas no se pueden editar
-//            }
-//        };
-//
-//        // 3. Crear la JTable usando el modelo
-//        JTable tablaReservas = new JTable(modeloTabla);
-//        tablaReservas.setRowHeight(25); // Filas más altas
-//        tablaReservas.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-//        tablaReservas.setFillsViewportHeight(true);
-//        
-//        sorter = new TableRowSorter<>(modeloTabla);
-//		tablaReservas.setRowSorter(sorter);        
-//        
-//        // 4. Añadir la JTable a un JScrollPane
-//        JScrollPane scrollPaneReservas = new JScrollPane(tablaReservas);
-//        scrollPaneReservas.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//        
-//        // 5. Añadir el JScrollPane al centro de la ventana
-//        add(scrollPaneReservas, BorderLayout.CENTER);
-        
-        
         btnFiltrar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
