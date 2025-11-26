@@ -1,4 +1,4 @@
-package agencia_prog_3_GUI;
+package agencia_prog_3_data;
 
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
