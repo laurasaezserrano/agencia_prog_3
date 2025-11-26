@@ -62,8 +62,19 @@ public class VentanaExcursiones extends JFrame{
 		    "Dia en Bali",       
 		    "Subida al Empire State",     
 		    "Visita a la Opera de Oslo",  
-		    "Visita a Florencia"         
+		    "Visita a Florencia", 
+		    
+		    "Safari en el Serengeti",
+		    "Crucero por los Fiordos Noruegos",
+		    "Ascenso al Monte Fuji",
+		    "Tour por la Gran Muralla China",
+		    "Ruta por las Tierras Altas de Escocia",
+		    "Visita a las Pirámides de Guiza",
+		    "Paseo en Góndola por Venecia",
+		    "Excursión al Desierto del Sahara",
+		    "Recorrido por la Selva Amazónica"
 		};
+	
 	String[] descrip = {
 	        "Al acercarte a la zona de las cataratas, ya se escucha el rugido del agua cayendo con fuerza. "
 	        + "Las cataratas están en la frontera entre Canadá y Estados Unidos, divididas por el río Niágara.\n"
@@ -121,8 +132,54 @@ public class VentanaExcursiones extends JFrame{
 	        "En solo 1 hora y media en tren rápido, se llega desde Roma a Florencia, cuna del Renacimiento.\n\n El recorrido puede comenzar en la Catedral"
 	        + " de Santa María del Fiore, con su famosa cúpula de Brunelleschi, seguir por el Puente Vecchio y la Piazza della Signoria, rodeada de "
 	        + "esculturas históricas.\r\n Una visita a la Galería de los Uffizi o al David de Miguel Ángel completa el día.\r\n Antes de regresar, nada "
-	        + "mejor que un café o un helado frente al Arno, disfrutando del encanto toscano.\n Un día intenso entre arte, historia y belleza italiana."
-	    };
+	        + "mejor que un café o un helado frente al Arno, disfrutando del encanto toscano.\n Un día intenso entre arte, historia y belleza italiana.",
+	        
+	        "El Parque Nacional del Serengeti, en Tanzania, es uno de los lugares más impresionantes del planeta para observar fauna salvaje.\n"
+	        + "Al amanecer, los guías conducen el vehículo 4x4 por praderas infinitas donde habitan leones, cebras, jirafas y elefantes.\n"
+	        + "Durante la Gran Migración, millones de ñus cruzan el territorio creando un espectáculo único.\n"
+	        + "El campamento ofrece cenas bajo un cielo repleto de estrellas y el sonido nocturno de la sabana como banda sonora.",
+
+	        "Desde Bergen parte un barco que recorre los fiordos noruegos, enormes montañas que se levantan a los lados del agua como murallas naturales.\n"
+	        + "El clima frío, las cascadas que caen desde acantilados y los pueblos pesqueros crean un paisaje sereno e imponente.\n"
+	        + "El crucero incluye paradas en miradores, caminatas suaves y la posibilidad de ver focas y águilas marinas.\n"
+	        + "Un viaje perfecto para desconectar y sumergirse en la naturaleza nórdica.",
+
+	        "El Monte Fuji, símbolo de Japón, se asciende comenzando en la Quinta Estación.\n"
+	        + "El sendero serpentea entre paisajes volcánicos y vistas amplias del archipiélago.\n"
+	        + "La subida suele hacerse durante la noche para llegar a la cima al amanecer, cuando el sol tiñe el cielo de tonos rojos y dorados.\n"
+	        + "Una experiencia física y espiritual que atrae tanto a viajeros como a peregrinos.",
+
+	        "A pocos kilómetros de Pekín se extiende una de las construcciones más monumentales de la humanidad: la Gran Muralla.\n"
+	        + "La excursión incluye tramos restaurados en Badaling o Jinshanling, donde se puede caminar por sus torres y rampas.\n"
+	        + "El paisaje montañoso, la extensión infinita de la muralla y la historia que encierra cada ladrillo crean una visita inolvidable.\n"
+	        + "Ideal para mezclarse con la cultura china y comprender la magnitud de su pasado imperial.",
+
+	        "Las Highlands de Escocia ofrecen lagos misteriosos, castillos en ruinas y pueblos donde parece haberse detenido el tiempo.\n"
+	        + "El recorrido puede incluir el Lago Ness, el Castillo de Eilean Donan y las montañas de Glencoe.\n"
+	        + "Entre nieblas, praderas verdes y ovejas pastando, el paisaje transmite una calma única.\n"
+	        + "Una ruta perfecta para amantes de la naturaleza, la historia y la cultura celta.",
+
+	        "En las afueras de El Cairo se alzan las imponentes pirámides de Keops, Kefrén y Micerinos, acompañadas por la misteriosa Esfinge.\n"
+	        + "La excursión permite recorrer el interior de algunas pirámides y caminar por la meseta de Guiza, donde el contraste entre desierto y ciudad es sorprendente.\n"
+	        + "Un guía especializado explica la historia de los faraones y el proceso de construcción de estas maravillas antiguas.\n"
+	        + "Un viaje directo a la cuna de una de las civilizaciones más influyentes de la historia.",
+
+	        "En el corazón de Venecia, el paseo en góndola recorre canales estrechos, puentes históricos y palacios con siglos de historia.\n"
+	        + "El gondolero, con maniobras precisas, avanza mientras el agua refleja las fachadas antiguas.\n"
+	        + "Se pasa por el Gran Canal, el Puente de Rialto y rincones menos turísticos que muestran la esencia veneciana.\n"
+	        + "Una experiencia romántica y tranquila, perfecta para conocer la ciudad desde su perspectiva más auténtica.",
+
+	        "El desierto del Sahara, con sus dunas doradas y su horizonte infinito, ofrece un paisaje que parece sacado de otro planeta.\n"
+	         + "La excursión comienza en un campamento bereber, donde te reciben con té y música tradicional.\n"
+	         + "Un paseo en camello permite internarse en las dunas para ver la puesta de sol más mágica que puedas imaginar.\n"
+	         + "La noche se pasa en jaimas bajo un cielo lleno de estrellas, con cena típica y fogata.",
+
+	        "Desde Manaos parte una lancha que se adentra en la selva amazónica, el pulmón verde más grande del mundo.\n"
+	         + "El guía local enseña plantas medicinales, animales exóticos y técnicas de supervivencia.\n"
+	         + "Se pueden observar delfines rosados, monos, aves de colores intensos y bosques inundados.\n"
+	         + "La noche en una cabaña flotante permite escuchar los sonidos vibrantes de la selva, creando una experiencia salvaje e inolvidable."
+
+	};
 	
 	double[] precio = {89, 65, 70, 49, 72, 95, 38, 30, 59};
 	private JTextField campoFiltro;
