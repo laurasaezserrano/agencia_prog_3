@@ -40,7 +40,7 @@ public class VentanaInicio extends JFrame{
 			int numero = i+1;
 			JButton boton = new JButton(nombresboton [numero-1]);
 			try {
-				 BufferedImage originalImage = ImageIO.read(new File("images/"+nombresboton[i]+".png"));
+				 BufferedImage originalImage = ImageIO.read(new File("resources/images/"+nombresboton[i]+".png"));
 		            
 		            int anchoDeseado = 110; 
 		            int altoDeseado = 80;  
