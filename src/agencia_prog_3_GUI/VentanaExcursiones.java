@@ -629,7 +629,7 @@ public class VentanaExcursiones extends JFrame{
                String hab, int adultos, int ninos, Date salida, Date regreso, 
                double precioFinal) {
                    
-   		final String FILE_NAME = "reservas.csv";
+   		final String FILE_NAME = "resources/data/reservas.csv";
    		// Formato de fecha estándar para CSV
    		final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
 
