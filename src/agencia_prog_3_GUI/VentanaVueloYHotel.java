@@ -50,7 +50,7 @@ import javax.swing.BorderFactory;
 public class VentanaVueloYHotel extends JFrame {
     private JTextField titulo;
     private static final long serialVersionUID = 1L;
-    private static final String CSV_PATH = "vuelosagencia_completo.csv";
+    private static final String CSV_PATH = "resources/data/vuelosagencia_completo.csv";
     
     private final String[] codigos = {"IB1234", "AF2201", "LX3902", "AZ1010", "JL0080", "TG0909", "DL4501", "DY3107", "AZ2102"};
     private final String[] aerolineas = {"Iberia", "Air France", "Swiss Air", "Alitalia", "JAL", "Thai Airways", "Delta", "Norwegian", "Alitalia"};

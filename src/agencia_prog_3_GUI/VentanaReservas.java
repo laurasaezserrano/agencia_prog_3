@@ -291,7 +291,7 @@ public class VentanaReservas extends JFrame {
 	
 	private void cargarReservasDesdeCSV(String usuarioFiltrar) {
 		
-        File archivo = new File("reservas.csv");
+        File archivo = new File("resources/data/reservas.csv");
         if (!archivo.exists()) {
             System.err.println("No se encontró el archivo reservas.csv");
             return;
@@ -380,7 +380,7 @@ public class VentanaReservas extends JFrame {
 	
 	
 	private boolean eliminarReservaDelCSV(DefaultTableModel model, int row) {
-        File inputFile = new File("reservas.csv");
+        File inputFile = new File("resources/data/reservas.csv");
         File tempFile = new File("reservas.temp.csv"); // Archivo temporal
 
         // Obtenemos los datos clave de la fila para identificarla
