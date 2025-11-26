@@ -660,7 +660,7 @@ public class CuadriculaOfertas extends JFrame{
 //	        }
 		    
 		    try {
-		    	BufferedReader br = new BufferedReader(new FileReader("src/hoteles.txt"));
+		    	BufferedReader br = new BufferedReader(new FileReader("resources/data/hoteles.txt"));
 		        String linea;
 		        
 		     // Saltar la cabecera
