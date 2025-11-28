@@ -34,6 +34,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -232,8 +233,9 @@ public class VentanaVueloYHotel extends JFrame {
         panel1.add(new JLabel("Buscar (origen/destino/fecha):"));
         campofiltro = new JTextField(24);
         panel1.add(campofiltro);
+        
         JButton buscar = new JButton("Buscar");
-        buscar.addActionListener(e -> aplicarbusqueda());
+        buscar.addActionListener(e -> buscarvueloshilo());
         panel1.add(buscar);
 
         campofiltro.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -545,7 +547,30 @@ public class VentanaVueloYHotel extends JFrame {
             setHorizontalAlignment(SwingConstants.CENTER);
         }
     }
-
+    
+    private void buscarvueloshilo() {
+    	VentanaBuscandoVuelo dialog = new VentanaBuscandoVuelo(this);
+    	
+    	Thread hiloBusqueda = new Thread(() -> {
+            try {
+                // Aquí iría la lógica real de búsqueda lenta (lectura CSV grande, BD, API…)
+                // De momento simulamos que tarda 3 segundos:
+                Thread.sleep(3000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        SwingUtilities.invokeLater(() -> {
+       // Cerrar ventana de busqueda
+        dialog.cerrarVentana();
+        aplicarbusqueda();
+        });
+   });
+    	hiloBusqueda.start();
+    	dialog.setVisible(true);
+    }
+    
+    	
+    	
     public static void main(String[] args) {
         VentanaVueloYHotel vuelosyhotel = new VentanaVueloYHotel();
         vuelosyhotel.setVisible(true);
