@@ -45,6 +45,9 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+
+import agencia_prog_3_thread.VentanaBuscandoVuelo;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 

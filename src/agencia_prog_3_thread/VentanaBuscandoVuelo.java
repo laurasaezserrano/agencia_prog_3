@@ -1,5 +1,6 @@
-package agencia_prog_3_GUI;
+package agencia_prog_3_thread;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
