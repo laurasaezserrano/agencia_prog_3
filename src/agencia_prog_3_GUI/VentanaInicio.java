@@ -18,7 +18,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
+
+import agencia_prog_3_thread.VentanaBuscandoVuelo;
 
 public class VentanaInicio extends JFrame{
 	private static final long serialVersionUID = 1L;
@@ -85,8 +88,7 @@ public class VentanaInicio extends JFrame{
 						//ventanaoferta.dispose(); para que no se vea de fondo la de ofertas 
 						
 					} else if (nombresboton[numero-1].equals("Vuelo+Hotel")) {
-						VentanaVueloYHotel vVueloHotel = new VentanaVueloYHotel();
-						vVueloHotel.setVisible(true);
+					    abrirVueloHotelhilo();
 					} else if (nombresboton[numero-1].equals("Contacto")) {
 						VentanaContacto ventanaContacto = new VentanaContacto(VentanaInicio.this);
 						ventanaContacto.setVisible(true);
@@ -102,8 +104,10 @@ public class VentanaInicio extends JFrame{
 					}
 					
 				}
+				
 			});
 		panel1.add(boton);
+		
 		}
 		
 		mainpanel.add(panel1);
@@ -127,6 +131,29 @@ public class VentanaInicio extends JFrame{
 		
 	}
 	
+	
+
+	private void abrirVueloHotelhilo() {
+	    // Ventana "Buscando vuelos..."
+		VentanaBuscandoVuelo dialog = new VentanaBuscandoVuelo(this);
+	    Thread hilo = new Thread(() -> {
+	        try {
+	            // Aquí búsqueda de lla BD
+	            Thread.sleep(10000); //tarda 10 segundos
+	        } catch (InterruptedException ex) {
+	            ex.printStackTrace();
+	        }
+	        SwingUtilities.invokeLater(() -> {
+	            dialog.cerrarVentana(); // cierra "Buscando vuelos..."
+	            VentanaVueloYHotel v = new VentanaVueloYHotel();
+	            v.setVisible(true); // abre la ventana de vuelos
+	        });
+	    });
+
+	    hilo.start();
+	    dialog.setVisible(true); // muestra el diálogo mientras el hilo trabaja
+	}
+
 	
 	public static void main(String[] args) {
 		VentanaInicio VentanaInicial = new VentanaInicio();

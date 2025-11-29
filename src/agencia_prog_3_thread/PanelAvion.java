@@ -12,7 +12,7 @@ public class PanelAvion extends JPanel {
     private Image avionImg;
 
     public PanelAvion() {
-        ImageIcon icon = new ImageIcon("avion.png"); // ajusta ruta si hace falta
+        ImageIcon icon = new ImageIcon("resources/images/avion.png");
         avionImg = icon.getImage();
         setOpaque(false);
     }
@@ -34,6 +34,9 @@ public class PanelAvion extends JPanel {
         }
     }
 
+    /**
+     * paintComponent generado con IAG
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

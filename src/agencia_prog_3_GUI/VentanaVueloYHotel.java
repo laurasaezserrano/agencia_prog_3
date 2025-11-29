@@ -238,7 +238,7 @@ public class VentanaVueloYHotel extends JFrame {
         panel1.add(campofiltro);
         
         JButton buscar = new JButton("Buscar");
-        buscar.addActionListener(e -> buscarvueloshilo());
+        buscar.addActionListener(e -> aplicarbusqueda());
         panel1.add(buscar);
 
         campofiltro.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -551,26 +551,7 @@ public class VentanaVueloYHotel extends JFrame {
         }
     }
     
-    private void buscarvueloshilo() {
-    	VentanaBuscandoVuelo dialog = new VentanaBuscandoVuelo(this);
-    	
-    	Thread hiloBusqueda = new Thread(() -> {
-            try {
-                // Aquí iría la lógica real de búsqueda lenta (lectura CSV grande, BD, API…)
-                // De momento simulamos que tarda 3 segundos:
-                Thread.sleep(3000);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        SwingUtilities.invokeLater(() -> {
-       // Cerrar ventana de busqueda
-        dialog.cerrarVentana();
-        aplicarbusqueda();
-        });
-   });
-    	hiloBusqueda.start();
-    	dialog.setVisible(true);
-    }
+  
     
     	
     	
