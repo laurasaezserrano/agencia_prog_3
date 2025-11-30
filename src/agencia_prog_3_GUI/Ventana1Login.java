@@ -1,6 +1,9 @@
 package agencia_prog_3_GUI;
 
 import javax.swing.*;
+
+import agencia_prog_3_thread.VentanaCarga;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -132,8 +135,20 @@ public class Ventana1Login extends JFrame {
             statusLabel.setText("Bienvenido, " + user + "!"); 
             JOptionPane.showMessageDialog(this, "Inicio de sesión correcto.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             VentanaInicio vInicio = new VentanaInicio();
-            vInicio.setVisible(true);
-            dispose();
+            this.setVisible(false);
+            
+            VentanaCarga carga = new VentanaCarga(this);
+            
+            // Usamos un Runnable que define la acción a realizar después de la carga
+            Runnable abrirVentanaInicio = () -> {
+                // Aquí se crea la instancia de VentanaInicio, se muestra, y se cierra la ventana de Login
+                VentanaInicio inicio = new VentanaInicio();
+                inicio.setVisible(true);
+                dispose(); // Cerrar la ventana de login permanentemente
+            };
+            
+            carga.startLoading(abrirVentanaInicio);
+            
         } else if (!validUsers.containsKey(user)) {
             int option = JOptionPane.showConfirmDialog(this, "El usuario no está registrado. ¿Deseas registrarte?",
                     "Usuario no encontrado", JOptionPane.YES_NO_OPTION);
