@@ -1,7 +1,12 @@
 package agencia_prog_3_GUI;
 
 import javax.swing.*;
+
+import agencia_prog_3_thread.VentanaCarga;
+
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,11 +24,10 @@ public class Ventana1Login extends JFrame {
     private JLabel statusLabel;
     private String userCSV = "resources/data/userCSV.csv";
     
-    // HashMap de usuarios
     private HashMap<String, String> validUsers;
 
     public Ventana1Login() {
-        validUsers = loadUsers(); // Aquí se cargan los usuarios que se han registrado correctamente
+        validUsers = loadUsers(); 
 
         setTitle("Bienvenid@!");
         setSize(350, 160);
@@ -39,34 +43,57 @@ public class Ventana1Login extends JFrame {
         userField = new JTextField();
         passField = new JPasswordField();
         loginButton = new JButton("Iniciar sesión");
-        //registerButton = new JButton ("Registrarse");
         statusLabel = new JLabel("", SwingConstants.CENTER);
         
         
-        // Añadimos los elementos al panel
         panel.add(userLabel);
         panel.add(userField);
         panel.add(passLabel);
         panel.add(passField);
         panel.add(new JLabel());
         panel.add(loginButton);
-        //panel.add(registerButton);
         
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panel.add(new JLabel()); // Espacio vacío en la primera columna
-        panel.add(new JLabel()); // Espacio vacío en la segunda columna
-        buttonPanel.add(loginButton); // Agregamos el botón centrado
+        panel.add(new JLabel()); 
+        panel.add(new JLabel()); 
+        buttonPanel.add(loginButton); 
         panel.add(buttonPanel);
 
         add(panel, BorderLayout.CENTER);
         add(statusLabel, BorderLayout.SOUTH);
 
-        // Action listeners
         loginButton.addActionListener(e -> checkLogin());
-        //registerButton.addActionListener(e -> registerUser());
+
+        // Listener común para la tecla ENTER
+        KeyAdapter introListener = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    checkLogin();
+                }
+            }
+        };
+        
+        // Listener para el campo de usuario que maneja ENTER y TAB
+        KeyAdapter userFieldListener = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    checkLogin();
+                } else if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                    // Acción para el tabulador: Mueve el foco al campo de contraseña
+                    passField.requestFocusInWindow();
+                    e.consume(); // Consume el evento para evitar el comportamiento predeterminado (que podría mover el foco a otro componente)
+                }
+            }
+        };
+
+        // Asignación de listeners
+        userField.addKeyListener(userFieldListener); // userField usa el listener con TAB y ENTER
+        passField.addKeyListener(introListener);    // passField solo necesita ENTER (ya que el foco está ahí)
     }
     
-   
+    
     private HashMap<String, String> loadUsers () {
         File file = new File(userCSV);
         if (!file.exists()) return new HashMap<>();
@@ -78,13 +105,13 @@ public class Ventana1Login extends JFrame {
         	
         	while ((linea = in.readLine()) != null) {
         		numlinea++;
-	        	if (numlinea == 1 && linea.contains("Usuario")|| linea.contains("contraseña")) {
-	        		continue;
-	        	}
-	        	String[] data = linea.split(",");
-	        	String usuario = data[0].trim();
-	        	String password = data[1].trim();
-	        	usuarios.put(usuario, password);
+            	if (numlinea == 1 && (linea.contains("Usuario") || linea.contains("contraseña"))) { 
+            		continue;
+            	}
+            	String[] data = linea.split(",");
+            	String usuario = data[0].trim();
+            	String password = data[1].trim();
+            	usuarios.put(usuario, password);
         	}
         } catch (IOException e) {
             e.printStackTrace();
@@ -95,7 +122,6 @@ public class Ventana1Login extends JFrame {
         return usuarios;
     }
     
-    //Comprobamos si esta en la base de datos
     private void checkLogin() {
         String user = userField.getText().trim();
         String pass = new String(passField.getPassword());
@@ -106,11 +132,23 @@ public class Ventana1Login extends JFrame {
         }
 
         if (validUsers.containsKey(user) && validUsers.get(user).equals(pass)) {
-            statusLabel.setText("Bienvenido, " + user + "!"); //Parte inferior del Layout
+            statusLabel.setText("Bienvenido, " + user + "!"); 
             JOptionPane.showMessageDialog(this, "Inicio de sesión correcto.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             VentanaInicio vInicio = new VentanaInicio();
-            vInicio.setVisible(true);
-            dispose();
+            this.setVisible(false);
+            
+            VentanaCarga carga = new VentanaCarga(this);
+            
+            // Usamos un Runnable que define la acción a realizar después de la carga
+            Runnable abrirVentanaInicio = () -> {
+                // Aquí se crea la instancia de VentanaInicio, se muestra, y se cierra la ventana de Login
+                VentanaInicio inicio = new VentanaInicio();
+                inicio.setVisible(true);
+                dispose(); // Cerrar la ventana de login permanentemente
+            };
+            
+            carga.startLoading(abrirVentanaInicio);
+            
         } else if (!validUsers.containsKey(user)) {
             int option = JOptionPane.showConfirmDialog(this, "El usuario no está registrado. ¿Deseas registrarte?",
                     "Usuario no encontrado", JOptionPane.YES_NO_OPTION);
@@ -118,16 +156,13 @@ public class Ventana1Login extends JFrame {
                 registerUser();
                 AlmacenajeSesion.iniciarSesion(user,pass);
                 dispose();
-//                JOptionPane.showMessageDialog(this, "Registro realizado con éxito", "Continuar", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
-           // Usuario no existe
-            statusLabel.setText("Contraseña incorrecta. Vuelva a intentarlo.");
-            JOptionPane.showMessageDialog(this, "Contraseña incorrecta. Vuelva a intentarlo.", "Aviso", JOptionPane.WARNING_MESSAGE);
-            }
+           statusLabel.setText("Contraseña incorrecta. Vuelva a intentarlo.");
+           JOptionPane.showMessageDialog(this, "Contraseña incorrecta. Vuelva a intentarlo.", "Aviso", JOptionPane.WARNING_MESSAGE);
+           }
         }
 
-    // Registramos el usuario
     private void registerUser() {
         String user = userField.getText().trim();
         String pass = new String(passField.getPassword());
@@ -143,16 +178,15 @@ public class Ventana1Login extends JFrame {
         } else {
             validUsers.put(user, pass);
             validUsers.put(user, pass);
-            saveUsers(user, pass); // Guardamos en archivo
+            saveUsers(user, pass); 
             JOptionPane.showMessageDialog(this, "Usuario registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             statusLabel.setText("Usuario: " + user + " registrado");
         }
     }
     
-    // Guardar usuarios en archivo
     private void saveUsers(String user, String password) {
         try {
-        	BufferedWriter  pw =   new BufferedWriter (new FileWriter(userCSV, true)) ;
+        	BufferedWriter pw = new BufferedWriter (new FileWriter(userCSV, true)) ;
                 pw.write(user + "," + password);
                 pw.newLine();
                 pw.close();
@@ -165,7 +199,6 @@ public class Ventana1Login extends JFrame {
         	}
         }
     
-    //MAIN
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Ventana1Login().setVisible(true));
     }

@@ -34,6 +34,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -44,6 +45,9 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+
+import agencia_prog_3_thread.VentanaBuscandoVuelo;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 
@@ -232,6 +236,7 @@ public class VentanaVueloYHotel extends JFrame {
         panel1.add(new JLabel("Buscar (origen/destino/fecha):"));
         campofiltro = new JTextField(24);
         panel1.add(campofiltro);
+        
         JButton buscar = new JButton("Buscar");
         buscar.addActionListener(e -> aplicarbusqueda());
         panel1.add(buscar);
@@ -545,7 +550,11 @@ public class VentanaVueloYHotel extends JFrame {
             setHorizontalAlignment(SwingConstants.CENTER);
         }
     }
-
+    
+  
+    
+    	
+    	
     public static void main(String[] args) {
         VentanaVueloYHotel vuelosyhotel = new VentanaVueloYHotel();
         vuelosyhotel.setVisible(true);
