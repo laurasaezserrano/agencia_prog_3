@@ -40,6 +40,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import java.util.List;
+import agencia_prog_3_thread.VentanaConfirmacionReserva;
 
 //FALTA
 //Añadir boton de reserva para que acabe de confirmar la reserva con los datos necesarios y añadirla a su perfil
@@ -181,7 +182,7 @@ public class CuadriculaOfertas extends JFrame{
 	        
 	        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
 	        
-	        JButton btnConfirmar = new JButton("CONFIRMAR RESERVA");
+	        JButton btnConfirmar = new JButton("CONTINUAR");
 	        btnConfirmar.setFont(new Font("Arial", Font.BOLD, 14));
 	        btnConfirmar.setBackground(new Color(0, 128, 0)); 
 	        btnConfirmar.setForeground(Color.WHITE);
@@ -206,8 +207,8 @@ public class CuadriculaOfertas extends JFrame{
 	            }
 	            
 	            JOptionPane.showMessageDialog(this, 
-	                "Reserva de " + txtNombre.getText() + " para " + ciudadSeleccionada + " confirmada.", 
-	                "Reserva Exitosa", 
+	                "Reserva de " + txtNombre.getText() + " para " + ciudadSeleccionada + " solicitada.", 
+	                "Reserva en proceso", 
 	                JOptionPane.INFORMATION_MESSAGE);
 	            
 	            String ciudad = ciudadSeleccionada;
@@ -223,17 +224,17 @@ public class CuadriculaOfertas extends JFrame{
 
 	            // 2. Llamar al método de guardado
 	            guardarReservaEnCSV(nombreUsuario, ciudad, hotel, email, hab, adultos, ninos, salida, regreso, precio);
-
+	            
 	            // 3. Confirmar y cerrar
 	            JOptionPane.showMessageDialog(this, 
 	                "Reserva de " + nombreUsuario + " para " + ciudad + " confirmada.", 
 	                "Reserva Exitosa", 
 	                JOptionPane.INFORMATION_MESSAGE);
 	            dispose();
-	            
-	            
-	            dispose(); 
+	            VentanaConfirmacionReserva vConfirmacion = new VentanaConfirmacionReserva();
+	            vConfirmacion.setVisible(true);
 	        });
+ 
 	        btnCancelar.addActionListener(e -> {
 	            dispose(); 
 	        });
