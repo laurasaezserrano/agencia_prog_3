@@ -21,6 +21,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
+import agencia_prog_3_thread.VentanaBuscandoExcursion;
 import agencia_prog_3_thread.VentanaBuscandoVuelo;
 
 public class VentanaInicio extends JFrame{
@@ -96,8 +97,7 @@ public class VentanaInicio extends JFrame{
 						VentanaReservas vReservas = new VentanaReservas();
 						vReservas.setVisible(true);
 					} else if (nombresboton[numero-1].equals("Excursiones")) {
-						VentanaExcursiones vExcursiones = new VentanaExcursiones();
-						vExcursiones.setVisible(true);
+					    abrirExcursionesConThread();
 					}else if (nombresboton[numero-1].equals("Perfil")) {
 						VentanaUser userInfo = new VentanaUser(user, pass );
 						userInfo.setVisible(true);
@@ -134,7 +134,7 @@ public class VentanaInicio extends JFrame{
 	
 
 	private void abrirVueloHotelhilo() {
-	    // Ventana "Buscando vuelos..."
+	    // Ventana buscando vuelos
 		VentanaBuscandoVuelo dialog = new VentanaBuscandoVuelo(this);
 	    Thread hilo = new Thread(() -> {
 	        try {
@@ -144,7 +144,7 @@ public class VentanaInicio extends JFrame{
 	            ex.printStackTrace();
 	        }
 	        SwingUtilities.invokeLater(() -> {
-	            dialog.cerrarVentana(); // cierra "Buscando vuelos..."
+	            dialog.cerrarVentana(); // cierra la ventana buscando vuelos
 	            VentanaVueloYHotel v = new VentanaVueloYHotel();
 	            v.setVisible(true); // abre la ventana de vuelos
 	        });
@@ -152,6 +152,26 @@ public class VentanaInicio extends JFrame{
 
 	    hilo.start();
 	    dialog.setVisible(true); // muestra el diálogo mientras el hilo trabaja
+	}
+
+	private void abrirExcursionesConThread() {
+		//Vnetana buscando excursiones
+	    VentanaBuscandoExcursion dialog = new VentanaBuscandoExcursion(this);
+	    Thread hilo = new Thread(() -> {
+	        try {
+	            Thread.sleep(8000);
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        }
+
+	        SwingUtilities.invokeLater(() -> {
+	            dialog.cerrar();          
+	            new VentanaExcursiones().setVisible(true);
+	        });
+	    });
+
+	    hilo.start();
+	    dialog.setVisible(true);
 	}
 
 	
