@@ -20,7 +20,7 @@ public class VentanaCarga extends JWindow {
         JPanel content = new JPanel(new BorderLayout(10, 10));
         content.setBackground(COLOR_FONDO);
         
-        JLabel titleLabel = new JLabel("Agencia de Viajes S.L.", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Sunny Agencia", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
         titleLabel.setForeground(COLOR_PRINCIPAL);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
@@ -34,7 +34,7 @@ public class VentanaCarga extends JWindow {
         content.add(statusLabel, BorderLayout.SOUTH);
 
         try {
-            java.net.URL imageUrl = getClass().getResource("/avion_animado.gif");
+            java.net.URL imageUrl = getClass().getResource("resources/images/avion_animado.gif");
             if (imageUrl == null) {
                 throw new Exception("Recurso GIF no encontrado.");
             }
