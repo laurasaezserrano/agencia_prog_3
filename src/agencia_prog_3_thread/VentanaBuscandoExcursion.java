@@ -70,6 +70,7 @@ public class VentanaBuscandoExcursion extends JDialog {
         setContentPane(fondo);
     }
 
+    //progreso de la progressbar
     private void iniciarProgreso() {
         timer = new Timer();
 
