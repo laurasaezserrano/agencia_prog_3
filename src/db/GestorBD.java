@@ -23,42 +23,36 @@ import agencia_prog_3_data.VueloData;
 public class GestorBD {
 
     // 1. Constantes y configuración
-	private final String PROPERTIES_FILE = "resources/config/app.properties";
+	//private final String PROPERTIES_FILE = "resources/config/app.properties";
+	private static Logger logger = Logger.getLogger(GestorBD.class.getName());
 	private final String CSV_AEROLINEAS = "resources/data/aerolineas.csv"; 
 	
-	private Properties properties;
-	private String driverName;
-	private String databaseFile;
-	private String connectionString;
-	
-	private static Logger logger = Logger.getLogger(GestorBD.class.getName());
-	
+	private String driverName = "org.sqlite.JDBC";
+	private String databaseFile = "data/agencia.db"; // Asumiendo este es el valor de "file"
+	private String connectionString = "jdbc:sqlite:data/agencia.db"; // Asumiendo este es el valor de "connection"
+	// ...
+
 	public GestorBD() {
-		try (FileInputStream fis = new FileInputStream("resources/config/logger.properties")) {
-			// Inicialización del Logger
-			LogManager.getLogManager().readConfiguration(fis);
-			
-			// Lectura del fichero properties
-			properties = new Properties();
-			properties.load(new FileReader(PROPERTIES_FILE));
-			
-			driverName = properties.getProperty("driver");
-			databaseFile = properties.getProperty("file");
-			// Asegúrate de que la cadena de conexión apunta al archivo correcto (p.ej., data/agencia.db)
-			connectionString = properties.getProperty("connection"); 
-			
-			// Cargar el diver SQLite
-			Class.forName(driverName);
-		} catch (Exception ex) {
-			logger.warning(String.format("Error al cargar el driver de BBDD: %s", ex.getMessage()));
-		}
+	    // Si la carga de logger.properties también da problemas, puedes envolver solo esa parte en un try/catch
+	    try (FileInputStream fis = new FileInputStream("resources/config/logger.properties")) {
+	        LogManager.getLogManager().readConfiguration(fis);
+	    } catch (Exception ex) {
+	        // Ignorar si no se encuentra el logger, pero reportarlo
+	        logger.warning(String.format("Error al cargar logger.properties: %s", ex.getMessage()));
+	    }
+	    
+	    // El resto de inicialización, sin usar properties:
+	    try {
+	        Class.forName(driverName);
+	    } catch (Exception ex) {
+	        logger.warning(String.format("Error al cargar el driver de BBDD: %s", ex.getMessage()));
+	    }
 	}
 	
 	/**
 	 * Crear las 4 tablas.
 	 */
 	public void crearBBDD() {
-		if (properties.get("createBBDD").equals("true")) {
 			
             // Tabla 1: AEROLINEA
 			String sql1 = "CREATE TABLE IF NOT EXISTS Aerolinea (\n"
@@ -109,14 +103,13 @@ public class GestorBD {
 			} catch (Exception ex) {
 				logger.warning(String.format("Error al crear las tablas: %s", ex.getMessage()));
 			}
-		}
+		
 	}
 	
 	/**
 	 * Borra las tablas y el fichero de la BBDD.
 	 */
 	public void borrarBBDD() {
-		if (properties.get("deleteBBDD").equals("true")) {	
 
             String sql1 = "DROP TABLE IF EXISTS Vuelo;"; 
 			String sql2 = "DROP TABLE IF EXISTS Aerolinea;";
@@ -143,14 +136,13 @@ public class GestorBD {
 			} catch (Exception ex) {
 				logger.warning(String.format("Error al borrar el fichero de la BBDD: %s", ex.getMessage()));
 			}
-		}
+		
 	}
 	
 	/**
 	 * Borra los datos de las 4 tablas (mantiene la estructura de tablas).
 	 */
 	public void borrarDatos() {
-		if (properties.get("cleanBBDD").equals("true")) {	
 			String sql1 = "DELETE FROM Vuelo;"; 
 			String sql2 = "DELETE FROM Aerolinea;";
 			String sql3 = "DELETE FROM Avion;";
@@ -169,7 +161,7 @@ public class GestorBD {
 			} catch (Exception ex) {
 				logger.warning(String.format("Error al borrar los datos: %s", ex.getMessage()));
 			}
-		}
+		
 	}
 
     /**
