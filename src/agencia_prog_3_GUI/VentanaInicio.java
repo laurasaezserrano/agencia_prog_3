@@ -97,7 +97,7 @@ public class VentanaInicio extends JFrame{
 						VentanaReservas vReservas = new VentanaReservas();
 						vReservas.setVisible(true);
 					} else if (nombresboton[numero-1].equals("Excursiones")) {
-					    abrirExcursionesConThread();
+						abrirExcursioneshilo();
 					}else if (nombresboton[numero-1].equals("Perfil")) {
 						VentanaUser userInfo = new VentanaUser(user, pass );
 						userInfo.setVisible(true);
@@ -147,31 +147,35 @@ public class VentanaInicio extends JFrame{
 	            dialog.cerrarVentana(); // cierra la ventana buscando vuelos
 	            VentanaVueloYHotel v = new VentanaVueloYHotel();
 	            v.setVisible(true); // abre la ventana de vuelos
+	            VentanaInicio.this.dispose();
 	        });
+
 	    });
 
 	    hilo.start();
 	    dialog.setVisible(true); // muestra el diálogo mientras el hilo trabaja
 	}
 
-	private void abrirExcursionesConThread() {
-		//Vnetana buscando excursiones
+	private void abrirExcursioneshilo() {
 	    VentanaBuscandoExcursion dialog = new VentanaBuscandoExcursion(this);
 	    Thread hilo = new Thread(() -> {
 	        try {
-	            Thread.sleep(8000);
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        }
+	            // Tiempo real de la carga simulada
+	            Thread.sleep(6000);
+	        } catch (InterruptedException e) {}
 
 	        SwingUtilities.invokeLater(() -> {
-	            dialog.cerrar();          
+	            dialog.cerrar();
 	            new VentanaExcursiones().setVisible(true);
+	            VentanaInicio.this.dispose();
 	        });
+	        
 	    });
 
 	    hilo.start();
+	    pack();
 	    dialog.setVisible(true);
+	    
 	}
 
 	
