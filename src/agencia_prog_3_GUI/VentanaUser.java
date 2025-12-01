@@ -321,7 +321,11 @@ public class VentanaUser extends JFrame {
 
 
     public static void main(String[] args) {
-        // LLAMADA DE PRUEBA
-        VentanaUser usuario = new VentanaUser("lorena", "123421");
+    	// Asumiendo que AlmacenajeSesion tiene estos métodos:
+           String usuarioLogeado = AlmacenajeSesion.getNombreUsuario();
+           String pass = AlmacenajeSesion.getPassword();
+
+            // LLAMADA DE PRUEBA
+            //VentanaUser usuario = new VentanaUser("lorena", "123421");
+        }
     }
-}
