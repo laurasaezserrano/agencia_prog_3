@@ -34,7 +34,7 @@ public class VentanaInicio extends JFrame{
 			"Perfil",
 			"Reservas", 
 			"Ofertas",
-			"Vuelo+Hotel",
+			"Vuelos",
 			"Excursiones",
 			"Contacto"
 		};
@@ -87,7 +87,7 @@ public class VentanaInicio extends JFrame{
 						vOfertas.setVisible(true);
 						//ventanaoferta.dispose(); para que no se vea de fondo la de ofertas 
 						
-					} else if (nombresboton[numero-1].equals("Vuelo+Hotel")) {
+					} else if (nombresboton[numero-1].equals("Vuelos")) {
 					    abrirVueloHotelhilo();
 					} else if (nombresboton[numero-1].equals("Contacto")) {
 						VentanaContacto ventanaContacto = new VentanaContacto(VentanaInicio.this);
