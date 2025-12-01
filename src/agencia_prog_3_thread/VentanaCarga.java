@@ -12,12 +12,15 @@ public class VentanaCarga extends JWindow {
 
     private JLabel statusLabel;
     private volatile boolean keepAnimating = true;
+    private Runnable onFinishCallback;
 
-    public VentanaCarga() {
+    public VentanaCarga(Runnable callback) {
+        this.onFinishCallback = callback;
+        
         JPanel content = new JPanel(new BorderLayout(10, 10));
         content.setBackground(COLOR_FONDO);
         
-        JLabel titleLabel = new JLabel("Sunny Agencia", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Agencia de Viajes S.L.", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
         titleLabel.setForeground(COLOR_PRINCIPAL);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
@@ -30,18 +33,15 @@ public class VentanaCarga extends JWindow {
         content.add(titleLabel, BorderLayout.NORTH);
         content.add(statusLabel, BorderLayout.SOUTH);
 
-        // Cargamos el GIF usando ClassLoader para que funcione dentro de un JAR
         try {
-            // NOTA: Asegúrate de que "avion_animado.gif" esté en la raíz de tu classpath
-            java.net.URL imageUrl = getClass().getResource("resources/images/avion_animado.gif");
+            java.net.URL imageUrl = getClass().getResource("/avion_animado.gif");
             if (imageUrl == null) {
-                throw new Exception("Recurso GIF no encontrado. Usando espacio vacío.");
+                throw new Exception("Recurso GIF no encontrado.");
             }
             ImageIcon loadingIcon = new ImageIcon(imageUrl);
             JLabel logo = new JLabel(loadingIcon, SwingConstants.CENTER);
             content.add(logo, BorderLayout.CENTER);
         } catch (Exception e) {
-            // Si hay un error al cargar el GIF, se añade un mensaje de error o un espacio
             JLabel errorLabel = new JLabel("Animación no disponible", SwingConstants.CENTER);
             errorLabel.setForeground(Color.RED);
             content.add(errorLabel, BorderLayout.CENTER);
@@ -58,17 +58,16 @@ public class VentanaCarga extends JWindow {
     }
 
     private void startLoadingProcess() {
-        // HILO DE TRABAJO PESADO (EL HILO PROFESIONAL COMPLEJO)
         new Thread(() -> {
             try {
                 Thread.sleep(TIEMPO_CARGA_SIMULADA_MS / 3);
-                updateStatus("Conectando con base de datos...");
+                updateStatus("Conectando con base de datos");
                 
                 Thread.sleep(TIEMPO_CARGA_SIMULADA_MS / 3);
-                updateStatus("Cargando datos de ofertas...");
+                updateStatus("Cargando datos de ofertas");
                 
                 Thread.sleep(TIEMPO_CARGA_SIMULADA_MS / 3);
-                updateStatus("Inicialización completada.");
+                updateStatus("Inicialización completada");
                 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -79,19 +78,16 @@ public class VentanaCarga extends JWindow {
     }
 
     private void startAnimationThread() {
-        // HILO DE ANIMACIÓN
         new Thread(() -> {
-            String baseText = "Inicializando servicios";
             int dotCount = 0;
-            
             while (keepAnimating) {
                 final int currentDotCount = dotCount;
-                
                 SwingUtilities.invokeLater(() -> {
+                    String currentStatus = statusLabel.getText();
+                    String currentBaseText = currentStatus.replaceAll("\\.+", "");
                     String dots = ".".repeat(currentDotCount % 4);
-                    statusLabel.setText(baseText + dots);
+                    statusLabel.setText(currentBaseText + dots);
                 });
-                
                 dotCount++;
                 try {
                     Thread.sleep(300); 
@@ -112,17 +108,9 @@ public class VentanaCarga extends JWindow {
         keepAnimating = false;
         SwingUtilities.invokeLater(() -> {
             this.dispose();
-            
-            // Aquí iría la llamada a la ventana principal de tu aplicación (VentanaInicio/CuadriculaOfertas)
-            JOptionPane.showMessageDialog(null, "Aplicación lista para iniciar.", 
-                                          "Carga Exitosa", JOptionPane.INFORMATION_MESSAGE);
-        });
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            VentanaCarga splash = new VentanaCarga();
-            splash.setVisible(true);
+            if (onFinishCallback != null) {
+                onFinishCallback.run();
+            }
         });
     }
 }

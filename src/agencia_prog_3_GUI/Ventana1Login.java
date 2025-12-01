@@ -1,9 +1,7 @@
 package agencia_prog_3_GUI;
 
 import javax.swing.*;
-
 import agencia_prog_3_thread.VentanaCarga;
-
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -13,7 +11,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.util.HashMap;
 
 public class Ventana1Login extends JFrame {
@@ -64,7 +61,6 @@ public class Ventana1Login extends JFrame {
 
         loginButton.addActionListener(e -> checkLogin());
 
-        // Listener común para la tecla ENTER
         KeyAdapter introListener = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -74,23 +70,20 @@ public class Ventana1Login extends JFrame {
             }
         };
         
-        // Listener para el campo de usuario que maneja ENTER y TAB
         KeyAdapter userFieldListener = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     checkLogin();
                 } else if (e.getKeyCode() == KeyEvent.VK_TAB) {
-                    // Acción para el tabulador: Mueve el foco al campo de contraseña
                     passField.requestFocusInWindow();
-                    e.consume(); // Consume el evento para evitar el comportamiento predeterminado (que podría mover el foco a otro componente)
+                    e.consume();
                 }
             }
         };
 
-        // Asignación de listeners
-        userField.addKeyListener(userFieldListener); // userField usa el listener con TAB y ENTER
-        passField.addKeyListener(introListener);    // passField solo necesita ENTER (ya que el foco está ahí)
+        userField.addKeyListener(userFieldListener);
+        passField.addKeyListener(introListener);
     }
     
     
@@ -132,22 +125,22 @@ public class Ventana1Login extends JFrame {
         }
 
         if (validUsers.containsKey(user) && validUsers.get(user).equals(pass)) {
-            statusLabel.setText("Bienvenido, " + user + "!"); 
+            statusLabel.setText("Bienvenido, " + user + "!");
             JOptionPane.showMessageDialog(this, "Inicio de sesión correcto.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            VentanaInicio vInicio = new VentanaInicio();
+            
+            // Ocultamos la ventana de Login
             this.setVisible(false);
             
-            VentanaCarga carga = new VentanaCarga(this);
-            
-            // Usamos un Runnable que define la acción a realizar después de la carga
+            // Definimos el Runnable (callback) para abrir la ventana principal y cerrar el login
             Runnable abrirVentanaInicio = () -> {
-                // Aquí se crea la instancia de VentanaInicio, se muestra, y se cierra la ventana de Login
                 VentanaInicio inicio = new VentanaInicio();
                 inicio.setVisible(true);
-                dispose(); // Cerrar la ventana de login permanentemente
+                dispose(); 
             };
             
-            carga.startLoading(abrirVentanaInicio);
+            // Creamos y mostramos la VentanaCarga, que ejecutará el Runnable al terminar
+            VentanaCarga carga = new VentanaCarga(abrirVentanaInicio);
+            carga.setVisible(true);
             
         } else if (!validUsers.containsKey(user)) {
             int option = JOptionPane.showConfirmDialog(this, "El usuario no está registrado. ¿Deseas registrarte?",
@@ -187,10 +180,10 @@ public class Ventana1Login extends JFrame {
     private void saveUsers(String user, String password) {
         try {
         	BufferedWriter pw = new BufferedWriter (new FileWriter(userCSV, true)) ;
-                pw.write(user + "," + password);
-                pw.newLine();
-                pw.close();
-                
+        	pw.write(user + "," + password);
+        	pw.newLine();
+        	pw.close();
+        	
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
