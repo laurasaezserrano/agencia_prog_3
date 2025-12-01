@@ -2,98 +2,127 @@ package agencia_prog_3_thread;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.net.URL;
-import java.util.List;
 
-public class VentanaCarga extends JDialog {
+public class VentanaCarga extends JWindow {
+
     private static final long serialVersionUID = 1L;
-    private JLabel animationLabel;
-    private JProgressBar progressBar;
+    private static final Color COLOR_PRINCIPAL = new Color(51, 102, 153);
+    private static final Color COLOR_FONDO = new Color(240, 240, 240);
+    private static final int TIEMPO_CARGA_SIMULADA_MS = 3000;
 
-    public VentanaCarga(JFrame parent) {
-        super(parent, "Cargando aplicación...", true);
-        setSize(350, 180);
-        setLocationRelativeTo(parent);
-        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) { }
-        });
-        setResizable(false);
+    private JLabel statusLabel;
+    private volatile boolean keepAnimating = true;
 
-        JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        mainPanel.setBackground(Color.WHITE);
+    public VentanaCarga() {
+        JPanel content = new JPanel(new BorderLayout(10, 10));
+        content.setBackground(COLOR_FONDO);
+        
+        JLabel titleLabel = new JLabel("Sunny Agencia", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        titleLabel.setForeground(COLOR_PRINCIPAL);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
-        animationLabel = new JLabel();
-        animationLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        statusLabel = new JLabel("Inicializando servicios...", SwingConstants.CENTER);
+        statusLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        statusLabel.setForeground(COLOR_PRINCIPAL.darker());
+        statusLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 30, 0));
+        
+        content.add(titleLabel, BorderLayout.NORTH);
+        content.add(statusLabel, BorderLayout.SOUTH);
 
+        // Cargamos el GIF usando ClassLoader para que funcione dentro de un JAR
         try {
-            URL imageUrl = getClass().getResource("/resources/images/avion_animado.gif");
-            if (imageUrl != null) {
-                ImageIcon icon = new ImageIcon(imageUrl);
-                animationLabel.setIcon(icon);
-            } else {
-                animationLabel.setText("Animación de avión no encontrada.");
+            // NOTA: Asegúrate de que "avion_animado.gif" esté en la raíz de tu classpath
+            java.net.URL imageUrl = getClass().getResource("resources/images/avion_animado.gif");
+            if (imageUrl == null) {
+                throw new Exception("Recurso GIF no encontrado. Usando espacio vacío.");
             }
+            ImageIcon loadingIcon = new ImageIcon(imageUrl);
+            JLabel logo = new JLabel(loadingIcon, SwingConstants.CENTER);
+            content.add(logo, BorderLayout.CENTER);
         } catch (Exception e) {
-            animationLabel.setText("Error al cargar la animación.");
+            // Si hay un error al cargar el GIF, se añade un mensaje de error o un espacio
+            JLabel errorLabel = new JLabel("Animación no disponible", SwingConstants.CENTER);
+            errorLabel.setForeground(Color.RED);
+            content.add(errorLabel, BorderLayout.CENTER);
         }
 
-        JLabel messageLabel = new JLabel("Inicializando servicios de la agencia...", SwingConstants.CENTER);
-        messageLabel.setFont(new Font("Arial", Font.BOLD, 12));
-
-        progressBar = new JProgressBar(0, 100);
-        progressBar.setStringPainted(true);
-        progressBar.setIndeterminate(false);
-
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBackground(Color.WHITE);
-        topPanel.add(animationLabel, BorderLayout.CENTER);
-        topPanel.add(messageLabel, BorderLayout.SOUTH);
-
-        mainPanel.add(topPanel, BorderLayout.CENTER);
-        mainPanel.add(progressBar, BorderLayout.SOUTH);
-
-        getContentPane().add(mainPanel);
+        content.setBorder(BorderFactory.createLineBorder(COLOR_PRINCIPAL, 5));
+        
+        this.setContentPane(content);
+        this.setSize(450, 300);
+        this.setLocationRelativeTo(null);
+        
+        startLoadingProcess();
+        startAnimationThread();
     }
 
-    public void startLoading(Runnable onFinish) {
-        SwingWorker<Void, Integer> worker = new SwingWorker<Void, Integer>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                int totalSteps = 40;
-                int sleepTime = 75;
-
-                for (int i = 0; i <= totalSteps; i++) {
-                    int percent = (int) (((double) i / totalSteps) * 100);
-                    publish(percent);
-                    Thread.sleep(sleepTime);
-                }
-                return null;
+    private void startLoadingProcess() {
+        // HILO DE TRABAJO PESADO (EL HILO PROFESIONAL COMPLEJO)
+        new Thread(() -> {
+            try {
+                Thread.sleep(TIEMPO_CARGA_SIMULADA_MS / 3);
+                updateStatus("Conectando con base de datos...");
+                
+                Thread.sleep(TIEMPO_CARGA_SIMULADA_MS / 3);
+                updateStatus("Cargando datos de ofertas...");
+                
+                Thread.sleep(TIEMPO_CARGA_SIMULADA_MS / 3);
+                updateStatus("Inicialización completada.");
+                
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } finally {
+                closeSplashAndStartApp();
             }
+        }).start();
+    }
 
-            @Override
-            protected void process(List<Integer> chunks) {
-                if (!chunks.isEmpty()) {
-                    int latestPercent = chunks.get(chunks.size() - 1);
-                    progressBar.setValue(latestPercent);
+    private void startAnimationThread() {
+        // HILO DE ANIMACIÓN
+        new Thread(() -> {
+            String baseText = "Inicializando servicios";
+            int dotCount = 0;
+            
+            while (keepAnimating) {
+                final int currentDotCount = dotCount;
+                
+                SwingUtilities.invokeLater(() -> {
+                    String dots = ".".repeat(currentDotCount % 4);
+                    statusLabel.setText(baseText + dots);
+                });
+                
+                dotCount++;
+                try {
+                    Thread.sleep(300); 
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
+        }).start();
+    }
 
-            @Override
-            protected void done() {
-                progressBar.setValue(100);
-                dispose();
-                if (onFinish != null) {
-                    onFinish.run();
-                }
-            }
-        };
+    private void updateStatus(String status) {
+        SwingUtilities.invokeLater(() -> {
+            statusLabel.setText(status);
+        });
+    }
 
-        worker.execute();
-        setVisible(true);
+    private void closeSplashAndStartApp() {
+        keepAnimating = false;
+        SwingUtilities.invokeLater(() -> {
+            this.dispose();
+            
+            // Aquí iría la llamada a la ventana principal de tu aplicación (VentanaInicio/CuadriculaOfertas)
+            JOptionPane.showMessageDialog(null, "Aplicación lista para iniciar.", 
+                                          "Carga Exitosa", JOptionPane.INFORMATION_MESSAGE);
+        });
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            VentanaCarga splash = new VentanaCarga();
+            splash.setVisible(true);
+        });
     }
 }

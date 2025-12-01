@@ -23,6 +23,7 @@ import javax.swing.border.LineBorder;
 
 import agencia_prog_3_thread.VentanaBuscandoExcursion;
 import agencia_prog_3_thread.VentanaBuscandoVuelo;
+import agencia_prog_3_thread.VentanaCarga;
 
 public class VentanaInicio extends JFrame{
 	private static final long serialVersionUID = 1L;
@@ -182,5 +183,7 @@ public class VentanaInicio extends JFrame{
 	public static void main(String[] args) {
 		VentanaInicio VentanaInicial = new VentanaInicio();
 		VentanaInicial.setVisible(true);
+		VentanaCarga splash = new VentanaCarga();
+        splash.setVisible(true);
 	}
 }
