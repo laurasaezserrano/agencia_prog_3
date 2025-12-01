@@ -106,7 +106,7 @@ public class VentanaBuscandoVuelo extends JDialog {
             new ImageIcon("resources/images/oferta6.png"),
             new ImageIcon("resources/images/oferta7.png"),
             new ImageIcon("resources/images/oferta8.png"),
-            new ImageIcon("resources/images/oferta.9png")
+            new ImageIcon("resources/images/oferta9.png")
         };
         int ancho = 420;
         int alto = 220;
