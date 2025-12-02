@@ -202,6 +202,9 @@ public class Ventana1Login extends JFrame {
         }
     
     public static void main(String[] args) {
+    	/**
+    	 * IAG - Claude (nueva forma de organziar el main)
+    	 */
         SwingUtilities.invokeLater(() -> new Ventana1Login().setVisible(true));
     }
 }

@@ -1,4 +1,5 @@
 package agencia_prog_3_GUI;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,6 +16,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
@@ -47,24 +49,20 @@ public class VentanaInicio extends JFrame{
 			try {
 				 BufferedImage originalImage = ImageIO.read(new File("resources/images/"+nombresboton[i]+".png"));
 
-		            int anchoDeseado = 110; 
-		            int altoDeseado = 80;  
+				 int anchoDeseado = 110;
+				 int altoDeseado = 80;
 
-		            Image scaledImage = originalImage.getScaledInstance(anchoDeseado, altoDeseado, Image.SCALE_SMOOTH);
-		            ImageIcon iconoOriginal = new ImageIcon(scaledImage);
+				 Image scaledImage = originalImage.getScaledInstance(anchoDeseado, altoDeseado, Image.SCALE_SMOOTH);
+				 ImageIcon iconoOriginal = new ImageIcon(scaledImage);
 
 				if (originalImage != null) {
 					ImageIcon originalIcon = new ImageIcon(originalImage);
-					// Redimensionar la imagen a un tamaño apropiado (e.g., 90x90)
-					// Esto es crucial para que quepan en el botón.
 					ImageIcon resizedIcon = new ImageIcon(originalIcon.getImage().getScaledInstance(90, 90, java.awt.Image.SCALE_SMOOTH));
 					boton.setIcon(resizedIcon);
 
-					// Ajustar el texto para que esté debajo del icono
 					boton.setHorizontalTextPosition(SwingConstants.CENTER);
 					boton.setVerticalTextPosition(SwingConstants.BOTTOM);
 
-					// Aumentamos la fuente para que el texto sea visible
 					boton.setFont(new Font("SansSerif", Font.BOLD, 14));
 
 				} else {
@@ -83,25 +81,30 @@ public class VentanaInicio extends JFrame{
 				public void actionPerformed(ActionEvent e) {
 					String user = AlmacenajeSesion.getNombreUsuario();
 					String pass = AlmacenajeSesion.getPassword();
+					
+					VentanaInicio.this.setVisible(false);
 
-					if (nombresboton[numero-1].equals("Ofertas")) {
-						CuadriculaOfertas vOfertas = new CuadriculaOfertas();
-						vOfertas.setVisible(true);
-						//ventanaoferta.dispose(); para que no se vea de fondo la de ofertas 
+					if (nombresboton[numero-1].equals("Perfil")) {
+						VentanaUser userInfo = new VentanaUser(user, pass, VentanaInicio.this);
+						userInfo.setVisible(true);
 
-					} else if (nombresboton[numero-1].equals("Vuelos")) {
-					    abrirVueloHotelhilo();
-					} else if (nombresboton[numero-1].equals("Contacto")) {
-						VentanaContacto ventanaContacto = new VentanaContacto(VentanaInicio.this);
-						ventanaContacto.setVisible(true);
 					} else if (nombresboton[numero-1].equals("Reservas")) {
 						VentanaReservas vReservas = new VentanaReservas();
 						vReservas.setVisible(true);
+						
+					} else if (nombresboton[numero-1].equals("Ofertas")) {
+						CuadriculaOfertas vOfertas = new CuadriculaOfertas();
+						vOfertas.setVisible(true);
+						
+					} else if (nombresboton[numero-1].equals("Contacto")) {
+						VentanaContacto ventanaContacto = new VentanaContacto(VentanaInicio.this);
+						ventanaContacto.setVisible(true);
+					
+					} else if (nombresboton[numero-1].equals("Vuelos")) {
+					    abrirVueloHotelhilo();
+						
 					} else if (nombresboton[numero-1].equals("Excursiones")) {
 						abrirExcursioneshilo();
-					}else if (nombresboton[numero-1].equals("Perfil")) {
-						VentanaUser userInfo = new VentanaUser(user, pass );
-						userInfo.setVisible(true);
 					}
 
 				}
@@ -114,7 +117,6 @@ public class VentanaInicio extends JFrame{
 		mainpanel.add(panel1);
 		add(mainpanel);
 		
-		// Panel inferior con botón de menú
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setBackground(new Color(50, 150, 200));
 		JButton menuButton = new JButton();
@@ -131,17 +133,16 @@ public class VentanaInicio extends JFrame{
 		menuButton.setBackground(new Color(255, 255, 255));
 		menuButton.setBorder(new LineBorder(Color.BLACK, 2));
 		
-		// Crear menú desplegable
 		JPopupMenu popupMenu = new JPopupMenu();
 		
 		JMenuItem cerrarSesion = new JMenuItem("Cerrar sesión");
 		cerrarSesion.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AlmacenajeSesion.limpiarSesion(); // Limpia la sesión
-				Ventana1Login ventanaLogin = new Ventana1Login(); // Abre la ventana de login
+				AlmacenajeSesion.limpiarSesion();
+				Ventana1Login ventanaLogin = new Ventana1Login();
 				ventanaLogin.setVisible(true);
-				VentanaInicio.this.dispose(); // Cierra la ventana actual
+				VentanaInicio.this.dispose();
 			}
 		});
 		
@@ -149,7 +150,7 @@ public class VentanaInicio extends JFrame{
 		cerrarApp.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0); // Cierra la aplicación
+				System.exit(0);
 			}
 		});
 		
@@ -157,7 +158,6 @@ public class VentanaInicio extends JFrame{
 		popupMenu.addSeparator();
 		popupMenu.add(cerrarApp);
 		
-		// Acción del botón menú
 		menuButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -188,42 +188,40 @@ public class VentanaInicio extends JFrame{
 	}
 
 
-
 	private void abrirVueloHotelhilo() {
-	    // Ventana buscando vuelos
-		VentanaBuscandoVuelo dialog = new VentanaBuscandoVuelo(this);
+		VentanaInicio.this.setVisible(false);
+		
+		VentanaBuscandoVuelo dialog = new VentanaBuscandoVuelo(this); 
 	    Thread hilo = new Thread(() -> {
 	        try {
-	            // Aquí búsqueda de lla BD
-	            Thread.sleep(10000); //tarda 10 segundos
+	            Thread.sleep(10000);
 	        } catch (InterruptedException ex) {
 	            ex.printStackTrace();
 	        }
 	        SwingUtilities.invokeLater(() -> {
-	            dialog.cerrarVentana(); // cierra la ventana buscando vuelos
+	            dialog.cerrarVentana();
 	            VentanaVueloYHotel v = new VentanaVueloYHotel();
-	            v.setVisible(true); // abre la ventana de vuelos
-	            VentanaInicio.this.dispose();
+	            v.setVisible(true);
 	        });
 
 	    });
 
 	    hilo.start();
-	    dialog.setVisible(true); // muestra el diálogo mientras el hilo trabaja
+	    dialog.setVisible(true);
 	}
 
 	private void abrirExcursioneshilo() {
+		VentanaInicio.this.setVisible(false);
+		
 	    VentanaBuscandoExcursion dialog = new VentanaBuscandoExcursion(this);
 	    Thread hilo = new Thread(() -> {
 	        try {
-	            // Tiempo real de la carga simulada
 	            Thread.sleep(6000);
 	        } catch (InterruptedException e) {}
 
 	        SwingUtilities.invokeLater(() -> {
 	            dialog.cerrar();
 	            new VentanaExcursiones().setVisible(true);
-	            VentanaInicio.this.dispose();
 	        });
 
 	    });
@@ -231,14 +229,11 @@ public class VentanaInicio extends JFrame{
 	    hilo.start();
 	    pack();
 	    dialog.setVisible(true);
-
 	}
 
 
 	public static void main(String[] args) {
 		VentanaInicio VentanaInicial = new VentanaInicio();
 		VentanaInicial.setVisible(true);
-
-
 	}
 }

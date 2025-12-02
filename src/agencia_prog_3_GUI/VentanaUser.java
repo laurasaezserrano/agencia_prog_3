@@ -189,7 +189,10 @@ public class VentanaUser extends JFrame {
         });
         
         botonAtras.addActionListener(e -> {
-            dispose();
+        	VentanaInicio inicio = new VentanaInicio();
+            inicio.setVisible(true);
+        	dispose();
+            
         });
         
         botonGuardar.addActionListener(e -> {
