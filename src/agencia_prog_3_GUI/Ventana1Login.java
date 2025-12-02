@@ -128,17 +128,16 @@ public class Ventana1Login extends JFrame {
             statusLabel.setText("Bienvenido, " + user + "!");
             JOptionPane.showMessageDialog(this, "Inicio de sesión correcto.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             
-            // Ocultamos la ventana de Login
+            AlmacenajeSesion.iniciarSesion(user, pass); 
+
             this.setVisible(false);
             
-            // Definimos el Runnable (callback) para abrir la ventana principal y cerrar el login
             Runnable abrirVentanaInicio = () -> {
                 VentanaInicio inicio = new VentanaInicio();
                 inicio.setVisible(true);
                 dispose(); 
             };
             
-            // Creamos y mostramos la VentanaCarga, que ejecutará el Runnable al terminar
             VentanaCarga carga = new VentanaCarga(abrirVentanaInicio);
             carga.setVisible(true);
             
@@ -147,8 +146,18 @@ public class Ventana1Login extends JFrame {
                     "Usuario no encontrado", JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 registerUser();
-                AlmacenajeSesion.iniciarSesion(user,pass);
-                dispose();
+                // La llamada a iniciarSesion se hace dentro de registerUser para evitar duplicados.
+                
+                // Si el registro es exitoso y quieres abrir VentanaInicio después:
+                this.setVisible(false);
+                Runnable abrirVentanaInicio = () -> {
+                    VentanaInicio inicio = new VentanaInicio();
+                    inicio.setVisible(true);
+                    dispose(); 
+                };
+                
+                VentanaCarga carga = new VentanaCarga(abrirVentanaInicio);
+                carga.setVisible(true);
             }
         } else {
            statusLabel.setText("Contraseña incorrecta. Vuelva a intentarlo.");
@@ -170,8 +179,8 @@ public class Ventana1Login extends JFrame {
             return;
         } else {
             validUsers.put(user, pass);
-            validUsers.put(user, pass);
             saveUsers(user, pass); 
+            AlmacenajeSesion.iniciarSesion(user, pass);
             JOptionPane.showMessageDialog(this, "Usuario registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             statusLabel.setText("Usuario: " + user + " registrado");
         }

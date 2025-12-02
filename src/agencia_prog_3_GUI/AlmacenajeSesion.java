@@ -33,8 +33,8 @@ public class AlmacenajeSesion {
         return nombreUsuario != null && password != null;
     }
     
-     public static void iniciarSesion(String usuario, String nombreCompleto) {
+     public static void iniciarSesion(String usuario, String pass) {
      	AlmacenajeSesion.nombreUsuario = usuario;
-     	AlmacenajeSesion.password = nombreCompleto;
+     	AlmacenajeSesion.password = pass;
      }
 }

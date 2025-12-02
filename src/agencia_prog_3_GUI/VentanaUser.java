@@ -190,12 +190,6 @@ public class VentanaUser extends JFrame {
         
         botonAtras.addActionListener(e -> {
             dispose();
-            if (this.ventanaAnterior != null) {
-                this.ventanaAnterior.setVisible(true);
-            } else {
-                JOptionPane.showMessageDialog(this, "No hay ventana de inicio registrada para volver.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
         });
         
         botonGuardar.addActionListener(e -> {
@@ -318,14 +312,4 @@ public class VentanaUser extends JFrame {
         }
         return true;
     }
-
-
-    public static void main(String[] args) {
-    	// Asumiendo que AlmacenajeSesion tiene estos métodos:
-           String usuarioLogeado = AlmacenajeSesion.getNombreUsuario();
-           String pass = AlmacenajeSesion.getPassword();
-
-            // LLAMADA DE PRUEBA
-            //VentanaUser usuario = new VentanaUser("lorena", "123421");
-        }
-    }
+}
