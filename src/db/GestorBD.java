@@ -28,8 +28,8 @@ public class GestorBD {
 	private final String CSV_AEROLINEAS = "resources/data/aerolineas.csv"; 
 	
 	private String driverName = "org.sqlite.JDBC";
-	private String databaseFile = "data/agencia.db"; // Asumiendo este es el valor de "file"
-	private String connectionString = "jdbc:sqlite:data/agencia.db"; // Asumiendo este es el valor de "connection"
+	private String databaseFile = "resources/data/agencia.db"; // Asumiendo este es el valor de "file"
+	private String connectionString = "jdbc:sqlite:resources/data/agencia.db"; // Asumiendo este es el valor de "connection"
 	// ...
 
 	public GestorBD() {
