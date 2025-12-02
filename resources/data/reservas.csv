@@ -10,5 +10,12 @@ toni,N/A,Ruta del cafe,N/A,Excursión,1,0,09/11/2025,09/11/2025,65,00
 carmen,Oslo,Hotel Alhambra,carmen@gmail.com,Doble Estándar,1,0,26/11/2025,27/11/2025,41,08
 carmen,N/A,Visita a Florencia,N/A,Excursión,1,0,26/11/2025,26/11/2025,59,00
 Zaira,Ciudad de México,Resort Atlántico,zai,Familiar,2,0,29/11/2025,01/12/2025,257,82
+<<<<<<< HEAD
 zaira,Nueva York,Palace Reina,zaira,Doble Estándar,1,0,01/12/2025,09/12/2025,308,84
 zaira,N/A,Subida al Empire State,N/A,Excursión,1,0,01/12/2025,01/12/2025,38,00
+=======
+toni,Oslo,Hotel Alhambra,toni@gmail.com,Doble Estándar,2,1,01/12/2025,03/12/2025,164,32
+toni,París,Suites Luna,toni@gmail.com,Doble Estándar,3,3,01/12/2025,05/12/2025,1058,67
+toni,Tokio,Suites Granada,toni@gmail.com,Doble Estándar,1,0,02/12/2025,03/12/2025,39,18
+toni,Nueva York,Palace Reina,toni@gmail.com,Doble Estándar,1,0,02/12/2025,03/12/2025,44,12
+>>>>>>> branch 'master' of git@github.com:laurasaezserrano/agencia_prog_3.git
