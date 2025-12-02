@@ -551,5 +551,45 @@ public class GestorBD {
 			logger.warning(String.format("Error al insertar Aviones: %s", ex.getMessage()));
 		}			
 	}
+	
+	
+	
+	
+	
+
+	/**
+	 * Obtiene todas las reservas de la BBDD en formato de matriz de objetos.
+	 */
+	public List<Object[]> getListaTodasLasReservas() {
+	    List<Object[]> reservas = new ArrayList<>();
+	    // Ajusta la consulta SQL y los nombres de las columnas a tu esquema de DB real
+	    String sql = "SELECT * FROM Reserva"; 
+	    
+	    try (Connection con = DriverManager.getConnection(connectionString);
+	         Statement stmt = con.createStatement();
+	         ResultSet rs = stmt.executeQuery(sql)) {
+	        
+	        while (rs.next()) {
+	            // **IMPORTANTE**: Ajusta el orden y tipo de datos de Object[] 
+	            // para que coincida con las columnas de tu JTable en VentanaGestionDB
+	            Object[] reserva = new Object[] {
+//	                rs.getInt("id_reserva"),
+//	                rs.getString("usuario"),
+//	                rs.getString("ciudad"),
+//	                rs.getString("nombre_reserva"),
+//	                rs.getString("fecha_salida"),
+//	                rs.getDouble("precio")
+	                // ... otras columnas
+	            };
+	            reservas.add(reserva);
+	        }
+	    } catch (Exception ex) {
+	        logger.warning("Error al obtener todas las reservas: " + ex.getMessage());
+	    }
+	    return reservas;
+	}
+	// ...
+	
+	
     
 }

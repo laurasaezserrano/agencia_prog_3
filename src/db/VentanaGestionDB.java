@@ -141,6 +141,12 @@ public class VentanaGestionDB extends JFrame {
 				cerrarConexionDB();
 			}
 		});
+		
+		if (cmbTablas != null) {
+	        cmbTablas.setSelectedItem("Reserva"); // 1. Selecciona la tabla de Reservas
+	    }
+	    manejarCargarDatos(null);
+	    
 	}
 
     // --- CONEXIÓN Y DESCONEXIÓN DE LA BASE DE DATOS ---
@@ -218,16 +224,21 @@ public class VentanaGestionDB extends JFrame {
 		panelSur.add(btnEliminar);
 		add(panelSur, BorderLayout.SOUTH);
 	}
+	
+	private void manejarCargarDatos(ActionEvent e) {
+	    String tablaSeleccionada = (String) cmbTablas.getSelectedItem();
 
-	// --- MANEJO DE EVENTOS Y LÓGICA DE INTERACCIÓN CON LA DB (CRUD) ---
+	    if (tablaSeleccionada == null) {
+	        // En la carga inicial desde el constructor, cmbTablas podría ser nulo.
+	        // Forzamos la carga de Reservas si es la primera vez que se abre.
+	        tablaSeleccionada = "Reserva"; 
+	    }
 
-	private void manejarCargarDatos(ActionEvent event) {
-		String tablaSeleccionada = (String) cmbTablas.getSelectedItem();
-		
-		if (tablaSeleccionada == null) return;
-		
-		// Limpiar tabla anterior
-		modeloTabla.setRowCount(0);
+	    if (tablaSeleccionada.equals("Reserva")) {
+	        cargarDatosReservas();
+	    } 
+
+	    modeloTabla.setRowCount(0);
 		modeloTabla.setColumnCount(0);
 		
 		try (PreparedStatement pStmt = connection.prepareStatement(
@@ -262,6 +273,23 @@ public class VentanaGestionDB extends JFrame {
 				"Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+
+	private void cargarDatosReservas() {
+	    // 1. Establecer las cabeceras de la tabla
+	    String[] nombresColumna = {"ID", "Usuario", "Ciudad", "Reserva", "Fecha Salida", "Precio"}; 
+	    modeloTabla.setColumnIdentifiers(nombresColumna);
+
+	    // 2. Limpiar la tabla
+	    modeloTabla.setRowCount(0);
+
+	    // 3. Obtener datos y añadir filas
+	    java.util.List<Object[]> reservas = gestorBD.getListaTodasLasReservas(); // Llamada al GestorBD modificado
+	    
+	    for (Object[] reserva : reservas) {
+	        modeloTabla.addRow(reserva);
+	    }
+	}
+	
 	
 	private void manejarInsertar(ActionEvent event) {
 		String tablaSeleccionada = (String) cmbTablas.getSelectedItem();
