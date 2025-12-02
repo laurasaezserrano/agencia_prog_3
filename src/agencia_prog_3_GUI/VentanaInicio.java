@@ -14,7 +14,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -34,7 +36,7 @@ public class VentanaInicio extends JFrame{
 			"Perfil",
 			"Reservas", 
 			"Ofertas",
-			"Vuelo+Hotel",
+			"Vuelos",
 			"Excursiones",
 			"Contacto"
 		};
@@ -87,7 +89,7 @@ public class VentanaInicio extends JFrame{
 						vOfertas.setVisible(true);
 						//ventanaoferta.dispose(); para que no se vea de fondo la de ofertas 
 
-					} else if (nombresboton[numero-1].equals("Vuelo+Hotel")) {
+					} else if (nombresboton[numero-1].equals("Vuelos")) {
 					    abrirVueloHotelhilo();
 					} else if (nombresboton[numero-1].equals("Contacto")) {
 						VentanaContacto ventanaContacto = new VentanaContacto(VentanaInicio.this);
@@ -111,9 +113,64 @@ public class VentanaInicio extends JFrame{
 
 		mainpanel.add(panel1);
 		add(mainpanel);
+		
+		// Panel inferior con botón de menú
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setBackground(new Color(50, 150, 200));
+		JButton menuButton = new JButton();
+		try {
+			BufferedImage imagenCerrar = ImageIO.read(new File("resources/images/cerrar.png"));
+			Image scaledImageCerrar = imagenCerrar.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+			ImageIcon iconoCerrar = new ImageIcon(scaledImageCerrar);
+			menuButton.setIcon(iconoCerrar);
+		} catch (Exception e) {
+			System.err.println("Error al cargar la imagen cerrar.png: " + e.getMessage());
+			menuButton.setText("Menú");
+		}
+		menuButton.setPreferredSize(new Dimension(60, 60));
+		menuButton.setBackground(new Color(255, 255, 255));
+		menuButton.setBorder(new LineBorder(Color.BLACK, 2));
+		
+		// Crear menú desplegable
+		JPopupMenu popupMenu = new JPopupMenu();
+		
+		JMenuItem cerrarSesion = new JMenuItem("Cerrar sesión");
+		cerrarSesion.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AlmacenajeSesion.limpiarSesion(); // Limpia la sesión
+				Ventana1Login ventanaLogin = new Ventana1Login(); // Abre la ventana de login
+				ventanaLogin.setVisible(true);
+				VentanaInicio.this.dispose(); // Cierra la ventana actual
+			}
+		});
+		
+		JMenuItem cerrarApp = new JMenuItem("Cerrar aplicación");
+		cerrarApp.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0); // Cierra la aplicación
+			}
+		});
+		
+		popupMenu.add(cerrarSesion);
+		popupMenu.addSeparator();
+		popupMenu.add(cerrarApp);
+		
+		// Acción del botón menú
+		menuButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				popupMenu.show(menuButton, 0, menuButton.getHeight());
+			}
+		});
+		
+		bottomPanel.add(menuButton);
+		add(bottomPanel, BorderLayout.SOUTH);
+		
 		setTitle("Bienvenid@ a SunnyAgencia");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(800, 500);
+		setSize(850, 550);
 		setMaximumSize(getToolkit().getScreenSize());
 		setResizable(false);
 		setLocationRelativeTo(null);
