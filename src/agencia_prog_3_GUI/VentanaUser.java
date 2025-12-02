@@ -48,7 +48,7 @@ public class VentanaUser extends JFrame {
         setLayout(new BorderLayout(15, 15));
         setResizable(false);
         
-        JLabel titleLabel = new JLabel("MI PERFIL DE USUARIO", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("MI PERFIL", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(COLOR_PRINCIPAL);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
