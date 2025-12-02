@@ -25,20 +25,17 @@ public class MainBD {
         System.out.println("\n--- 2. INSERCIÓN DE DATOS PADRE ---");
         
         List<Aerolinea> aerolineas = initAerolineas();
-        // gestorBD.insertarAerolinea(aerolineas.toArray(new Aerolinea[0]));
+        gestorBD.insertarAerolinea(aerolineas.toArray(new Aerolinea[0]));
         
         List<Aeropuertos> aeropuertos = initAeropuertos();
         gestorBD.insertarAeropuerto(aeropuertos.toArray(new Aeropuertos[0]));
         
         List<Avion> aviones = initAviones();
-        // gestorBD.insertarAvion(aviones.toArray(new Avion[0]));
+        gestorBD.insertarAvion(aviones.toArray(new Avion[0]));
         
         // 3. INSERCIÓN DE VUELOS
         System.out.println("\n--- 3. INSERCIÓN DE VUELOS ---");
         
-        // Ejemplo de inserción de vuelo (comentado porque falta implementar 
-        // getAerolineaIdByNombre y getAvionIdByCodigo)
-        /*
         int idIberia = gestorBD.getAerolineaIdByNombre("Iberia");
         int idBoing747 = gestorBD.getAvionIdByCodigo("B747");
         int idMadrid = gestorBD.getAeropuertoIdByNombre("Aeropuerto de Madrid");
@@ -55,10 +52,9 @@ public class MainBD {
                 150.0,
                 250.50
             );
-        }
-        */
+        }  
         
-        // 4. PRUEBAS CON RESERVAS (NUEVO)
+        // 4. PRUEBAS CON RESERVAS
         System.out.println("\n--- 4. INSERCIÓN DE RESERVAS ---");
         
         // Insertar algunas reservas de prueba
@@ -184,22 +180,4 @@ public class MainBD {
         return aviones;
     }
     
-    private static void printVuelos(List<VueloData> vuelos) {
-        if (vuelos.isEmpty()) {
-            System.out.println("-> No hay vuelos cargados en la base de datos.");
-        } else {
-            vuelos.forEach(v -> {
-                System.out.format(
-                    "\n -> %s: %s (%s) a %s. Precio: %.2f€. Duración: %.0f min.", 
-                    v.getCodigo(), 
-                    v.getAerolinea().getNombre(),
-                    v.getOrigen(),
-                    v.getDestino(),
-                    v.getPrecio(),
-                    v.getDuracionvuelo()
-                );
-            });
-            System.out.println();
-        }
-    }
 }

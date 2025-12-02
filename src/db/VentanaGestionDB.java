@@ -119,7 +119,7 @@ public class VentanaGestionDB extends JFrame {
 	private Connection connection;
 	private GestorBD gestorBD;
 	
-	private static final String CONNECTION_STRING = "jdbc:sqlite:data/agencia.db";
+	private static final String CONNECTION_STRING = "jdbc:sqlite:resources/data/agencia.db";
 	private static final String DRIVER = "org.sqlite.JDBC";
 
 	public VentanaGestionDB() {

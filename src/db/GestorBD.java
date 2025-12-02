@@ -23,13 +23,13 @@ import agencia_prog_3_data.VueloData;
 public class GestorBD {
 
     // 1. Constantes y configuración
-	//private final String PROPERTIES_FILE = "resources/config/app.properties";
+	private final String PROPERTIES_FILE = "resources/config/app.properties";
 	private static Logger logger = Logger.getLogger(GestorBD.class.getName());
 	private final String CSV_AEROLINEAS = "resources/data/aerolineas.csv"; 
 	
 	private String driverName = "org.sqlite.JDBC";
-	private String databaseFile = "resources/data/agencia.db"; // Asumiendo este es el valor de "file"
-	private String connectionString = "jdbc:sqlite:resources/data/agencia.db"; // Asumiendo este es el valor de "connection"
+	private String databaseFile = "resources/data/agencia.db";
+	private String connectionString = "jdbc:sqlite:resources/data/agencia.db";
 	// ...
 
 	public GestorBD() {
@@ -458,4 +458,98 @@ public class GestorBD {
 			logger.warning(String.format("Error recuperar los vuelos: %s", ex.getMessage()));						
 		}		
 	}
+
+	/**
+     * Busca y retorna el ID de un Avion por su código.
+     * Retorna -1 si no lo encuentra o si hay un error.
+     */
+    public int getAvionIdByCodigo(String codigo) {
+        String sql = "SELECT id FROM Avion WHERE codigo = ?;";
+        
+        try (Connection con = DriverManager.getConnection(connectionString);
+             PreparedStatement pStmt = con.prepareStatement(sql)) {
+                
+            pStmt.setString(1, codigo);
+                
+            try (ResultSet rs = pStmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (Exception ex) {
+            logger.warning(String.format("Error al buscar ID de Avion con código %s: %s", codigo, ex.getMessage()));
+        }
+        return -1; // No encontrado
+    }
+
+    /**
+     * Busca y retorna el ID de una Aerolinea por su nombre.
+     * Retorna -1 si no la encuentra o si hay un error.
+     */
+    public int getAerolineaIdByNombre(String nombre) {
+        String sql = "SELECT id FROM Aerolinea WHERE nombre = ?;";
+        
+        try (Connection con = DriverManager.getConnection(connectionString);
+             PreparedStatement pStmt = con.prepareStatement(sql)) {
+                
+            pStmt.setString(1, nombre);
+                
+            try (ResultSet rs = pStmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (Exception ex) {
+            logger.warning(String.format("Error al buscar ID de Aerolínea %s: %s", nombre, ex.getMessage()));
+        }
+        return -1; // No encontrado
+    }
+
+    /**
+	 * Inserta Aerolineas en la BBDD.
+	 */
+	public void insertarAerolinea(Aerolinea... aerolineas) {
+		String sql = "INSERT INTO Aerolinea (nombre) VALUES (?);";
+		
+		try (Connection con = DriverManager.getConnection(connectionString);
+			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
+									
+			for (Aerolinea a : aerolineas) {
+				pStmt.setString(1, a.getNombre());
+				
+				if (pStmt.executeUpdate() != 1) {					
+					logger.warning(String.format("No se ha insertado la Aerolínea: %s", a.getNombre()));
+				}
+			}
+			logger.info(String.format("%d Aerolíneas insertadas en la BBDD", aerolineas.length));
+		} catch (Exception ex) {
+			logger.warning(String.format("Error al insertar Aerolíneas: %s", ex.getMessage()));
+		}			
+	}
+
+
+    /**
+	 * Inserta Aviones en la BBDD.
+	 */
+	public void insertarAvion(Avion... aviones) {
+		String sql = "INSERT INTO Avion (codigo, nombre, numero_asientos) VALUES (?, ?, ?);";
+		
+		try (Connection con = DriverManager.getConnection(connectionString);
+			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
+									
+			for (Avion a : aviones) {
+				pStmt.setString(1, a.getCodigo());
+				pStmt.setString(2, a.getNombre());
+				pStmt.setInt(3, a.getNumeroasientos());
+				
+				if (pStmt.executeUpdate() != 1) {					
+					logger.warning(String.format("No se ha insertado el Avión: %s (%s)", a.getCodigo(), a.getNombre()));
+				}
+			}
+			logger.info(String.format("%d Aviones insertados en la BBDD", aviones.length));
+		} catch (Exception ex) {
+			logger.warning(String.format("Error al insertar Aviones: %s", ex.getMessage()));
+		}			
+	}
+    
 }
