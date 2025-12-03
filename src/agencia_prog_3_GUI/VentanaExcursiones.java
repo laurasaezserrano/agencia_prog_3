@@ -50,6 +50,7 @@ import javax.swing.table.TableRowSorter;
 
 import agencia_prog_3_data.Excursion;
 import agencia_prog_3_data.ExcursionPrecio;
+import db.GestorBD;
 
 public class VentanaExcursiones extends JFrame{
 	private static final long serialVersionUID = 1L;
@@ -476,6 +477,8 @@ public class VentanaExcursiones extends JFrame{
                     regreso_csv, 
                     precioFinal_csv
                 );
+                
+                
 
                 // --- 6. CONFIRMAR AL USUARIO ---
                 // (Esto es de tu código original, está bien)
@@ -669,6 +672,7 @@ public class VentanaExcursiones extends JFrame{
    		}
    	}
        
+    
        
     
 	

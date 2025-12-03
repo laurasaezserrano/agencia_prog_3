@@ -944,4 +944,44 @@ public class GestorBD {
 	    cargarReservasDesdeCSV(csvReservasPath);
 	}
     
+	
+	
+	
+	// En la clase GestorBD.java
+
+	public boolean insertarReservaDirecta(String usuario, String codigoReserva, String tipoReserva, 
+	                                     String ciudad, String servicioNombre, String email, 
+	                                     int adultos, int ninos, String fechaSalida, 
+	                                     String fechaRegreso, double precioFinal) {
+	    
+	    // Consulta SQL para insertar en la tabla Reserva
+	    String sql = "INSERT INTO Reserva (Usuario, CodigoReserva, TipoReserva, CiudadDestino, " +
+	                 "NombreServicio, Email, Adultos, Ninos, FechaSalida, FechaRegreso, PrecioFinal, FechaReserva) " +
+	                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, DATE('now'))";
+	                 
+	    try (Connection con = DriverManager.getConnection(connectionString);
+	         PreparedStatement pstmt = con.prepareStatement(sql)) {
+	        
+	        pstmt.setString(1, usuario);
+	        pstmt.setString(2, codigoReserva);
+	        pstmt.setString(3, tipoReserva.toUpperCase()); 
+	        pstmt.setString(4, ciudad.isEmpty() || ciudad.equalsIgnoreCase("N/A") ? "N/A" : ciudad); 
+	        pstmt.setString(5, servicioNombre);
+	        pstmt.setString(6, email);
+	        pstmt.setInt(7, adultos);
+	        pstmt.setInt(8, ninos);
+	        pstmt.setString(9, formatearFecha(fechaSalida));   // Usar el helper para DD/MM/YYYY -> YYYY-MM-DD
+	        pstmt.setString(10, formatearFecha(fechaRegreso)); // Usar el helper para DD/MM/YYYY -> YYYY-MM-DD
+	        pstmt.setDouble(11, precioFinal);
+	        
+	        return pstmt.executeUpdate() > 0;
+	        
+	    } catch (Exception e) {
+	        logger.severe("Error al insertar reserva directa: " + e.getMessage());
+	        return false;
+	    }
+	}
+	
+	
+	
 }
