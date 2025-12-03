@@ -100,6 +100,7 @@ import agencia_prog_3_GUI.VentanaInicio;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.http.HttpHeaders;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -194,6 +195,9 @@ public class VentanaGestionDB extends JFrame {
 		modeloTabla = new DefaultTableModel();
 		tablaDatos = new JTable(modeloTabla);
 		tablaDatos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tablaDatos.setRowHeight(25);
+		tablaDatos.setAlignmentX(CENTER_ALIGNMENT);
+		
 		
 		// Botones CRUD
 		btnCargar = new JButton("Cargar Datos");
