@@ -93,6 +93,8 @@ package db;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 
 import agencia_prog_3_GUI.Ventana1Login;
 import agencia_prog_3_GUI.VentanaInicio;
@@ -198,7 +200,13 @@ public class VentanaGestionDB extends JFrame {
 		tablaDatos.setRowHeight(25);
 		tablaDatos.setAlignmentX(CENTER_ALIGNMENT);
 		
-		
+		//cabecera
+        JTableHeader cabecera = tablaDatos.getTableHeader();
+        cabecera.setReorderingAllowed(false);
+        cabecera.setAlignmentX(CENTER_ALIGNMENT);
+        cabecera.setFont(cabecera.getFont().deriveFont(Font.BOLD));
+        
+        
 		// Botones CRUD
 		btnCargar = new JButton("Cargar Datos");
 		btnInsertar = new JButton("Insertar");
@@ -212,6 +220,7 @@ public class VentanaGestionDB extends JFrame {
 		btnEliminar.addActionListener(this::manejarEliminar);
 	}
 
+	
 	private void configurarLayout() {
 		setLayout(new BorderLayout(10, 10));
 		
