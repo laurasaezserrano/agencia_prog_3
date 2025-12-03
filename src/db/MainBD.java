@@ -157,7 +157,7 @@ public class MainBD {
         
         
         
-        gestorBD.cargarDatosDesdeCSVs("resources/data/vuelosagencia_completo.csv", "resources/data/reservas.csv");
+        gestorBD.cargarDatosDesdeCSVs("resources/data/reservas.csv", "resources/data/vuelosagencia_completo.csv");
         
         
         

@@ -673,31 +673,34 @@ public class GestorBD {
 	
 
 
+	// En la clase GestorBD.java
+
 	public void cargarDependenciasVueloDesdeCSV(String csvVuelosPath) {
 	    logger.info("Iniciando carga de Aerolíneas y Aeropuertos únicos desde CSV de Vuelos.");
 	    
 	    java.util.Set<String> aerolineasUnicas = new java.util.HashSet<>();
 	    java.util.Set<String> aeropuertosUnicos = new java.util.HashSet<>();
 
-	    try (BufferedReader br = new BufferedReader(new FileReader(csvVuelosPath))) {
+	    try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(csvVuelosPath))) {
 	        String linea;
-	        // Omitir la cabecera (Origen, Destino, Fecha Salida,...)
-	        if ((linea = br.readLine()) != null) { 
-	            logger.info("Cabecera de vuelos omitida: " + linea);
-	        }
-
+	        br.readLine(); // Omitir la cabecera del CSV de Vuelos
+	        
 	        while ((linea = br.readLine()) != null) {
 	            String[] partes = linea.split(",");
 	            if (partes.length >= 5) {
-	                // Columna 0: Origen (Aeropuerto)
-	                String origen = partes[0].trim();
-	                // Columna 1: Destino (Aeropuerto)
-	                String destino = partes[1].trim();
-	                // Columna 4: Aerolinea
-	                String aerolinea = partes[4].trim();
+	                // Leer y normalizar (MAYÚSCULAS y trim) la ciudad
+	                String origenCiudad = partes[0].trim().toUpperCase(); 
+	                String destinoCiudad = partes[1].trim().toUpperCase();
+	                String aerolinea = partes[4].trim().toUpperCase();
 	                
-	                if (!origen.isEmpty() && !origen.equals("N/A")) aeropuertosUnicos.add(origen);
-	                if (!destino.isEmpty() && !destino.equals("N/A")) aeropuertosUnicos.add(destino);
+	                // Insertamos el nombre descriptivo del aeropuerto en el Set
+	                if (!origenCiudad.isEmpty() && !origenCiudad.equals("N/A")) {
+	                    aeropuertosUnicos.add("AEROPUERTO DE " + origenCiudad); // <-- CORRECCIÓN: Nombre descriptivo
+	                }
+	                if (!destinoCiudad.isEmpty() && !destinoCiudad.equals("N/A")) {
+	                    aeropuertosUnicos.add("AEROPUERTO DE " + destinoCiudad); // <-- CORRECCIÓN: Nombre descriptivo
+	                }
+	                
 	                if (!aerolinea.isEmpty() && !aerolinea.equals("N/A")) aerolineasUnicas.add(aerolinea); 
 	            }
 	        }
@@ -706,16 +709,11 @@ public class GestorBD {
 	        return;
 	    }
 
-	    // Insertar Aeropuertos únicos
-	    Aeropuertos[] arrayAeropuertos = aeropuertosUnicos.stream()
-	        .map(Aeropuertos::new)
-	        .toArray(Aeropuertos[]::new);
+	    // El resto del método permanece igual, insertando los nombres descriptivos
+	    agencia_prog_3_data.Aeropuertos[] arrayAeropuertos = aeropuertosUnicos.stream().map(agencia_prog_3_data.Aeropuertos::new).toArray(agencia_prog_3_data.Aeropuertos[]::new);
 	    insertarAeropuerto(arrayAeropuertos); 
 	    
-	    // Insertar Aerolíneas únicas
-	    Aerolinea[] arrayAerolineas = aerolineasUnicas.stream()
-	        .map(Aerolinea::new)
-	        .toArray(Aerolinea[]::new);
+	    agencia_prog_3_data.Aerolinea[] arrayAerolineas = aerolineasUnicas.stream().map(agencia_prog_3_data.Aerolinea::new).toArray(agencia_prog_3_data.Aerolinea[]::new);
 	    insertarAerolinea(arrayAerolineas); 
 	    
 	    logger.info(String.format("Carga de dependencias finalizada. %d Aerolíneas y %d Aeropuertos procesados.", 
@@ -724,51 +722,51 @@ public class GestorBD {
 	
 	
 
+	// En la clase GestorBD.java
+
 	public void cargarVuelosDesdeCSV(String csvVuelosPath) {
 	    logger.info("Iniciando carga de Vuelos desde CSV.");
 	    
 	    final String CODIGO_AVION_DEFECTO = "DEF001";
 	    int avionesID = getAvionIdByCodigo(CODIGO_AVION_DEFECTO);
-
-	    if (avionesID == -1) {
-	        insertarAvion(new Avion(CODIGO_AVION_DEFECTO, "Avion Default para CSV", 200)); 
-	        avionesID = getAvionIdByCodigo(CODIGO_AVION_DEFECTO);
-	        if (avionesID == -1) {
-	            logger.severe("CRÍTICO: No se pudo obtener/crear un ID de Avión válido. Abortando carga de Vuelos.");
-	            return;
-	        }
-	    }
+	    // ... (Inserción de Avión si es necesario) ...
 
 	    int vuelosCargados = 0;
-	    try (BufferedReader br = new BufferedReader(new FileReader(csvVuelosPath))) {
+	    try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(csvVuelosPath))) {
 	        String linea;
-	        br.readLine(); // Omitir la cabecera del CSV de Vuelos
+	        br.readLine(); // Omitir la cabecera
 
 	        while ((linea = br.readLine()) != null) {
 	            String[] partes = linea.split(",");
 	            if (partes.length < 8) continue; 
 
 	            try {
-	                String origenNombre = partes[0].trim();
-	                String destinoNombre = partes[1].trim();
-	                String fechaSalida = partes[2].trim(); // Formato YYYY-MM-DD en este CSV.
+	                String origenNombre = partes[0].trim(); // e.g., "Madrid"
+	                String destinoNombre = partes[1].trim(); // e.g., "Barcelona"
+	                String fechaSalida = partes[2].trim(); 
 	                String aerolineaNombre = partes[4].trim();
+	                
+	                // Normalizar la ciudad para crear el nombre descriptivo de BÚSQUEDA
+	                String origenBusqueda = "AEROPUERTO DE " + origenNombre.toUpperCase(); // <-- CORRECCIÓN CLAVE
+	                String destinoBusqueda = "AEROPUERTO DE " + destinoNombre.toUpperCase(); // <-- CORRECCIÓN CLAVE
+	                String aerolineaBusqueda = aerolineaNombre.toUpperCase();
 	                
 	                String precioStr = partes[5].trim().replace(" EUR", "").replace(".", "").replace(",", ".");
 	                double precioEconomy = Double.parseDouble(precioStr);
 	                
 	                double duracion = 2.0; 
-
-	                int idOrigen = getAeropuertoIdByNombre(origenNombre);
-	                int idDestino = getAeropuertoIdByNombre(destinoNombre);
-	                int idAerolinea = getAerolineaIdByNombre(aerolineaNombre);
 	                
-	                // Genera un código de vuelo único usando un contador
-	                String codigoVuelo = aerolineaNombre.substring(0, Math.min(aerolineaNombre.length(), 3)).toUpperCase() 
+	                // Búsqueda de IDs usando el nombre descriptivo completo
+	                int idOrigen = getAeropuertoIdByNombre(origenBusqueda);
+	                int idDestino = getAeropuertoIdByNombre(destinoBusqueda);
+	                int idAerolinea = getAerolineaIdByNombre(aerolineaBusqueda);
+	                
+	                // Genera un código de vuelo (usando la ciudad, no el nombre completo)
+	                String codigoVuelo = aerolineaBusqueda.substring(0, Math.min(aerolineaBusqueda.length(), 3))
 	                                   + origenNombre.substring(0, Math.min(origenNombre.length(), 3)).toUpperCase() 
 	                                   + destinoNombre.substring(0, Math.min(destinoNombre.length(), 3)).toUpperCase()
 	                                   + fechaSalida.replace("-", "")
-	                                   + "-" + (vuelosCargados + 1); // <--- ID INCREMENTAL
+	                                   + "-" + (vuelosCargados + 1); 
 
 	                if (idOrigen != -1 && idDestino != -1 && idAerolinea != -1) {
 	                    insertarVuelo(
@@ -777,8 +775,9 @@ public class GestorBD {
 	                    );
 	                    vuelosCargados++;
 	                } else {
-	                    logger.warning(String.format("Fallo: IDs de FK no encontrados para Vuelo con Aerolínea '%s', Origen '%s', Destino '%s'.",
-	                        aerolineaNombre, origenNombre, destinoNombre));
+	                    // Mantener el log de advertencia claro
+	                    logger.warning(String.format("Fallo (Vuelo): FK no encontrado para Aerolínea='%s', Origen='%s', Destino='%s'. (Buscado: Origen='%s', Destino='%s')",
+	                        aerolineaNombre, origenNombre, destinoNombre, origenBusqueda, destinoBusqueda));
 	                }
 
 	            } catch (NumberFormatException e) {
@@ -794,6 +793,60 @@ public class GestorBD {
 	}
 	
 	
+	/**
+	 * Carga modelos de Avión únicos basándose en la aerolínea y las plazas disponibles del CSV de vuelos.
+	 * Utiliza Aerolinea-Capacidad para generar un código único de avión.
+	 */
+	public void cargarAvionesDesdeCSV(String csvVuelosPath) {
+	    logger.info("Iniciando carga de Aviones únicos desde CSV de Vuelos.");
+
+	    // Set para almacenar la clave única "AEROLINEA-CAPACIDAD" y evitar duplicados
+	    java.util.Set<String> avionesUnicos = new java.util.HashSet<>();
+	    int contador = 1;
+
+	    try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(csvVuelosPath))) {
+	        String linea;
+	        br.readLine(); // Omitir la cabecera del CSV de Vuelos
+
+	        while ((linea = br.readLine()) != null) {
+	            String[] partes = linea.split(",");
+	            if (partes.length < 8) continue; // Mínimo 8 columnas
+
+	            try {
+	                String aerolinea = partes[4].trim().toUpperCase();
+	                String plazasDisponiblesStr = partes[7].trim(); // Plazas Disponibles
+
+	                if (aerolinea.isEmpty() || aerolinea.equals("N/A") || plazasDisponiblesStr.isEmpty() || plazasDisponiblesStr.equals("N/A")) {
+	                    continue; // Saltar si faltan datos clave
+	                }
+
+	                int numAsientos = Integer.parseInt(plazasDisponiblesStr);
+	                String clave = aerolinea + "-" + numAsientos;
+	                
+	                if (avionesUnicos.add(clave)) {
+	                    // Generar un código único basado en el patrón AEROLINEA+CAPACIDAD
+	                    String codigoAvion = aerolinea.substring(0, Math.min(aerolinea.length(), 2)) + numAsientos;
+	                    String nombreAvion = aerolinea + " Modelo " + contador;
+	                    
+	                    agencia_prog_3_data.Avion nuevoAvion = new agencia_prog_3_data.Avion(
+	                        codigoAvion, 
+	                        nombreAvion, 
+	                        numAsientos
+	                    );
+	                    
+	                    insertarAvion(nuevoAvion); // Asegúrate de que este método exista
+	                    contador++;
+	                }
+	            } catch (NumberFormatException e) {
+	                logger.warning("Error de formato numérico (Plazas Disponibles) en línea de vuelo: " + linea + " | " + e.getMessage());
+	            }
+	        }
+	    } catch (Exception e) {
+	        logger.severe("Error de I/O al cargar aviones: " + e.getMessage());
+	    }
+
+	    logger.info(String.format("Carga de Aviones finalizada. %d modelos de avión únicos procesados.", avionesUnicos.size()));
+	}
 	
 
 	public void cargarReservasDesdeCSV(String csvReservasPath) {
@@ -886,6 +939,7 @@ public class GestorBD {
 
 	public void cargarDatosDesdeCSVs(String csvReservasPath, String csvVuelosPath) {
 	    cargarDependenciasVueloDesdeCSV(csvVuelosPath);
+	    cargarAvionesDesdeCSV(csvVuelosPath);
 	    cargarVuelosDesdeCSV(csvVuelosPath);
 	    cargarReservasDesdeCSV(csvReservasPath);
 	}

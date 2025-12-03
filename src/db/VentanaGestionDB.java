@@ -656,6 +656,8 @@ public class VentanaGestionDB extends JFrame {
     
 	public static void main(String[] args) {
 		GestorBD gestorBD = new GestorBD();
+		gestorBD.borrarBBDD();
+        gestorBD.crearBBDD();
 		
 		if (new File("resources/data/vuelosagencia_completo.csv").exists() && new File("resources/data/reservas.csv").exists()) {
             System.out.println("Iniciando carga de datos desde CSV...");
