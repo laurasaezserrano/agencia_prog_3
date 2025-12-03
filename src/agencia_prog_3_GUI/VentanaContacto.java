@@ -61,7 +61,7 @@ public class VentanaContacto extends JFrame {
         row = addContactRow(infoPanel, gbc, labelFont, valueFont, "Teléfono:", "+34 555 123 456", row);
         row = addContactRow(infoPanel, gbc, labelFont, valueFont, "Email de Soporte:", "soporte@agenciaprog3.com", row);
         row = addContactRow(infoPanel, gbc, labelFont, valueFont, "Email Comercial:", "comercial@agenciaprog3.com", row);
-        row = addContactRow(infoPanel, gbc, labelFont, valueFont, "Horario (CET):", "Lunes a Viernes, 9:00 - 18:00", row);
+        row = addContactRow(infoPanel, gbc, labelFont, valueFont, "Horario (CET):", "Lunes a Viernes, 10:00 - 14:00 y 16:00 - 20:00", row);
 
         mainPanel.add(infoPanel, BorderLayout.CENTER);
 
