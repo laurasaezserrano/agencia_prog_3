@@ -132,7 +132,6 @@ public class GestorBD {
             String sql5 = "DROP TABLE IF EXISTS Aeropuerto;";
             resetearAutoincrement("Aeropuerto");
 
-
 	        try (Connection con = DriverManager.getConnection(connectionString);
 			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
 				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
@@ -625,7 +624,7 @@ public class GestorBD {
 	    }
 	}
 
-	// Opcional, por nombre (por si algún día te resulta útil)
+	// Opcional, por nombre 
 	public boolean eliminarAeropuertoPorNombre(String nombre) {
 	    String sql = "DELETE FROM Aeropuerto WHERE nombre = ?;";
 	    try (Connection con = getConnectionWithFK();
