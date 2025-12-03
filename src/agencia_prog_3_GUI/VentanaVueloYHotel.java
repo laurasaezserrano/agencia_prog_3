@@ -56,16 +56,16 @@ public class VentanaVueloYHotel extends JFrame {
     private static final long serialVersionUID = 1L;
     private static final String CSV_PATH = "resources/data/vuelosagencia_completo.csv";
     
-    private final String[] codigos = {"IB1234", "AF2201", "LX3902", "AZ1010", "JL0080", "TG0909", "DL4501", "DY3107", "AZ2102"};
-    private final String[] aerolineas = {"Iberia", "Air France", "Swiss Air", "Alitalia", "JAL", "Thai Airways", "Delta", "Norwegian", "Alitalia"};
-    private final int[] duracionMinutos = {155, 120, 140, 135, 720, 780, 480, 210, 155};
-    private final int[] asientosLibres = {180, 180, 160, 150, 280, 300, 240, 180, 180};
+    private final String[] codigos = {"IB1234", "AF2201", "LX3902", "AZ1010", "JL0080", "TG0909", "DL4501", "DY3107", "AZ2102", "IB1234", "IB1234", "IB1234", "IB1234", "IB1234", "IB1234", "IB1234", "IB1234"};
+    private final String[] aerolineas = {"Iberia", "Air France", "Swiss Air", "Alitalia", "JAL", "Thai Airways", "Delta", "Norwegian", "Alitalia", "Iberia", "Iberia", "Iberia", "Iberia", "Iberia", "Iberia", "Iberia", "Iberia"};
+    private final int[] duracionMinutos = {155, 120, 140, 135, 720, 780, 480, 210, 155, 155, 120, 140, 135, 135, 720, 780, 480};
+    private final int[] asientosLibres = {180, 180, 160, 150, 280, 300, 240, 180, 180, 180, 180, 160, 150, 280, 300, 240, 180};
     
-    String[] origen = {"Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid"};
-    String[] destino = {"Toronto", "París", "Zurich", "Roma", "Japon", "Bangkok", "Nueva York", "Oslo", "Florencia"};
-    String[] fecha = {"12/12/2025", "15/12/2025", "18/12/2025", "20/12/2025", "21/12/2025", "26/12/2025", "27/12/2025", "28/12/2025", "30/12/2025"};
-    String[] hora = {"09:35", "14:10", "08:20", "07:10", "06:30", "16:45", "13:05", "10:25", "11:50"};
-    double[] precio = {489, 65, 79, 49, 399, 200, 678, 97, 59};
+    String[] origen = {"Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid"};
+    String[] destino = {"Toronto", "París", "Zurich", "Roma", "Tokio", "Bangkok", "Nueva York", "Oslo", "Florencia", "Bristol", "Bogota", "Cracovia", "Londres", "Zurich", "Roma", "Tokio", "Bangkok"};
+    String[] fecha = {"12/12/2025", "15/12/2025", "18/12/2025", "20/12/2025", "21/12/2025", "26/12/2025", "27/12/2025", "28/12/2025", "30/12/2025", "12/12/2025", "15/12/2025", "18/12/2025", "20/12/2025", "21/12/2025", "26/12/2025", "27/12/2025", "28/12/2025", "30/12/2025"};
+    String[] hora = {"09:35", "14:10", "08:20", "07:10", "06:30", "16:45", "13:05", "10:25", "11:50", "09:35", "14:10", "08:20", "07:10", "06:30", "16:45", "13:05", "10:25"};
+    double[] precio = {489, 65, 79, 49, 399, 200, 678, 97, 59, 489, 65, 79, 49, 49, 399, 200, 678};
     String[] descripcion = {
         "Vuelo a Toronto. Conexión directa y llegada por la mañana.",
         "Vuelo a París. Ideal para escapada de fin de semana.",
@@ -75,7 +75,16 @@ public class VentanaVueloYHotel extends JFrame {
         "Vuelo a Bangkok. Playas y arrozales.",
         "Vuelo a Nueva York. Rascacielos y Broadway.",
         "Vuelo a Oslo. Fiordos y arquitectura nórdica.",
-        "Vuelo a Florencia. Renacimiento italiano."
+        "Vuelo a Florencia. Renacimiento italiano.",
+        "Vuelo a Bristol.",
+        "Vuelo a Bogota. Grandes paisajes y buen cafe.",
+        "Vuelo a Cracovia.",
+        "Vuelo a Londres.",
+        "Vuelo a Zúrich. Paisajes alpinos.",
+        "Vuelo a Roma. Arte y cultura.",
+        "Vuelo a Tokio. Tradición y templos.",
+        "Vuelo a Bangkok. Playas y arrozales."
+      
     };
     
     private JTextField campofiltro;
@@ -110,7 +119,7 @@ public class VentanaVueloYHotel extends JFrame {
         vuelos = crearlistavuelos();
         modelo = crearModelo();
         tabla = new StripedTable(modelo);
-        tabla.setRowHeight(28);
+        tabla.setRowHeight(35);
         tabla.setFillsViewportHeight(true);
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabla.setShowGrid(true);
