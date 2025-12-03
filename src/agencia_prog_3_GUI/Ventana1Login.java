@@ -2,6 +2,8 @@ package agencia_prog_3_GUI;
 
 import javax.swing.*;
 import agencia_prog_3_thread.VentanaCarga;
+import db.VentanaGestionDB;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -123,7 +125,17 @@ public class Ventana1Login extends JFrame {
             JOptionPane.showMessageDialog(this, "Por favor, completa ambos campos.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
+        if (user.equals("admin") && pass.equals("admin")) {
+            statusLabel.setText("Bienvenido, Administrador!");
+            JOptionPane.showMessageDialog(this, "Acceso de Administrador correcto.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            this.setVisible(false);
+            VentanaGestionDB gestorDB = new VentanaGestionDB(); 
+            gestorDB.setVisible(true);
+            
+            dispose(); // Cerrar la ventana de login
+            return;
+        }
+        
         if (validUsers.containsKey(user) && validUsers.get(user).equals(pass)) {
             statusLabel.setText("Bienvenido, " + user + "!");
             JOptionPane.showMessageDialog(this, "Inicio de sesión correcto.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
