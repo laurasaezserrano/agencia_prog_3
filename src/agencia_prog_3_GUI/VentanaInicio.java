@@ -4,15 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FlowLayout; 
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.Frame; 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -26,24 +23,20 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
-import javax.swing.JDialog; 
-import javax.swing.JProgressBar; 
 
 import agencia_prog_3_thread.VentanaBuscandoExcursion;
 import agencia_prog_3_thread.VentanaBuscandoVuelo;
-import agencia_prog_3_thread.VentanaRuletaDeLaSuerte;
 
 public class VentanaInicio extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private JTextField titulo;
-	private static final String MENSAJE_GANADOR = "¡Felicidades! Has ganado un 15% de descuento en tu próximo viaje.";
 
 	public VentanaInicio(){
 		JPanel mainpanel = new JPanel();
 		JPanel panel1 = new JPanel(new GridLayout(2, 6, 40, 40));
 		String [] nombresboton = {
 			"Perfil",
-			"Reservas",
+			"Reservas", 
 			"Ofertas",
 			"Vuelos",
 			"Excursiones",
@@ -108,7 +101,7 @@ public class VentanaInicio extends JFrame{
 						ventanaContacto.setVisible(true);
 					
 					} else if (nombresboton[numero-1].equals("Vuelos")) {
-					 	abrirVueloHotelhilo();
+					    abrirVueloHotelhilo();
 						
 					} else if (nombresboton[numero-1].equals("Excursiones")) {
 						abrirExcursioneshilo();
@@ -126,30 +119,6 @@ public class VentanaInicio extends JFrame{
 		
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setBackground(new Color(50, 150, 200));
-		
-		JButton ruletaButton = new JButton();
-		try {
-			BufferedImage imagenRuleta = ImageIO.read(new File("resources/images/ruleta.png")); 
-			Image scaledImageRuleta = imagenRuleta.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-			ImageIcon iconoRuleta = new ImageIcon(scaledImageRuleta);
-			ruletaButton.setIcon(iconoRuleta);
-		} catch (Exception e) {
-			System.err.println("Error al cargar la imagen ruleta.png: " + e.getMessage());
-			ruletaButton.setText("Dados"); 
-		}
-		ruletaButton.setPreferredSize(new Dimension(60, 60));
-		ruletaButton.setBackground(new Color(255, 255, 255));
-		ruletaButton.setBorder(new LineBorder(Color.BLACK, 2));
-		
-		ruletaButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				iniciarRuleta();
-			}
-		});
-		
-		bottomPanel.add(ruletaButton); 
-
 		JButton menuButton = new JButton();
 		try {
 			BufferedImage imagenCerrar = ImageIO.read(new File("resources/images/cerrar.png"));
@@ -215,55 +184,51 @@ public class VentanaInicio extends JFrame{
 		titulo.setFont(new Font("Times new Roman", Font.BOLD, 30));
 		titulo.setBackground(new Color(255, 255, 255));
 		add(titulo, BorderLayout.NORTH);
-	}
 
-	private void iniciarRuleta() { 
-		VentanaRuletaDeLaSuerte dadosDialog = new VentanaRuletaDeLaSuerte(this);	
-	 	dadosDialog.setVisible(true); 
 	}
 
 
 	private void abrirVueloHotelhilo() {
 		VentanaInicio.this.setVisible(false);
 		
-		VentanaBuscandoVuelo dialog = new VentanaBuscandoVuelo(this);
-	 	Thread hilo = new Thread(() -> {
-	 	 	try {
-	 	 		Thread.sleep(10000);
-	 	 	} catch (InterruptedException ex) {
-	 	 		ex.printStackTrace();
-	 	 	}
-	 	 	SwingUtilities.invokeLater(() -> {
-	 	 		dialog.cerrarVentana();
-	 	 		VentanaVueloYHotel v = new VentanaVueloYHotel();
-	 	 		v.setVisible(true);
-	 	 	});
+		VentanaBuscandoVuelo dialog = new VentanaBuscandoVuelo(this); 
+	    Thread hilo = new Thread(() -> {
+	        try {
+	            Thread.sleep(10000);
+	        } catch (InterruptedException ex) {
+	            ex.printStackTrace();
+	        }
+	        SwingUtilities.invokeLater(() -> {
+	            dialog.cerrarVentana();
+	            VentanaVueloYHotel v = new VentanaVueloYHotel();
+	            v.setVisible(true);
+	        });
 
-	 	});
+	    });
 
-	 	hilo.start();
-	 	dialog.setVisible(true);
+	    hilo.start();
+	    dialog.setVisible(true);
 	}
 
 	private void abrirExcursioneshilo() {
 		VentanaInicio.this.setVisible(false);
 		
-	 	VentanaBuscandoExcursion dialog = new VentanaBuscandoExcursion(this);
-	 	Thread hilo = new Thread(() -> {
-	 	 	try {
-	 	 		Thread.sleep(6000);
-	 	 	} catch (InterruptedException e) {}
+	    VentanaBuscandoExcursion dialog = new VentanaBuscandoExcursion(this);
+	    Thread hilo = new Thread(() -> {
+	        try {
+	            Thread.sleep(6000);
+	        } catch (InterruptedException e) {}
 
-	 	 	SwingUtilities.invokeLater(() -> {
-	 	 		dialog.cerrar();
-	 	 		new VentanaExcursiones().setVisible(true);
-	 	 	});
+	        SwingUtilities.invokeLater(() -> {
+	            dialog.cerrar();
+	            new VentanaExcursiones().setVisible(true);
+	        });
 
-	 	});
+	    });
 
-	 	hilo.start();
-	 	pack();
-	 	dialog.setVisible(true);
+	    hilo.start();
+	    pack();
+	    dialog.setVisible(true);
 	}
 
 
