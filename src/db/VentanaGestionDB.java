@@ -102,6 +102,7 @@ import agencia_prog_3_data.Avion;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -654,6 +655,19 @@ public class VentanaGestionDB extends JFrame {
 	// --- MÉTODO PRINCIPAL ---
     
 	public static void main(String[] args) {
+		GestorBD gestorBD = new GestorBD();
+		
+		if (new File("resources/data/vuelosagencia_completo.csv").exists() && new File("resources/data/reservas.csv").exists()) {
+            System.out.println("Iniciando carga de datos desde CSV...");
+            
+            gestorBD.cargarDatosDesdeCSVs("resources/data/reservas.csv", "resources/data/vuelosagencia_completo.csv");
+            
+            System.out.println("Carga de datos CSV finalizada.");
+        } else {
+            System.err.println("Advertencia: No se encontraron los archivos CSV en las rutas especificadas. La base de datos estará vacía.");
+        }
+		
+		
 		SwingUtilities.invokeLater(() -> {
 			VentanaGestionDB ventana = new VentanaGestionDB();
 			ventana.setVisible(true);

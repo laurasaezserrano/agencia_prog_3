@@ -155,6 +155,12 @@ public class MainBD {
         System.out.println("Para borrar todos los datos, descomenta la siguiente línea:");
         gestorBD.borrarDatos();
         
+        
+        
+        gestorBD.cargarDatosDesdeCSVs("resources/data/vuelosagencia_completo.csv", "resources/data/reservas.csv");
+        
+        
+        
         System.out.println("\n=== FIN DE PRUEBAS ===");
     }
     

@@ -1,5 +1,6 @@
 package db; 
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.nio.file.Files;
@@ -9,7 +10,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.LogManager;
@@ -659,5 +662,232 @@ public class GestorBD {
 	    }
 	}
 
+	
+	
+	
+	
+	
+	/**
+	 * ================ CARGA DE DATOS DESDE LOS CSV ================
+	 */
+	
+
+
+	public void cargarDependenciasVueloDesdeCSV(String csvVuelosPath) {
+	    logger.info("Iniciando carga de Aerolíneas y Aeropuertos únicos desde CSV de Vuelos.");
+	    
+	    java.util.Set<String> aerolineasUnicas = new java.util.HashSet<>();
+	    java.util.Set<String> aeropuertosUnicos = new java.util.HashSet<>();
+
+	    try (BufferedReader br = new BufferedReader(new FileReader(csvVuelosPath))) {
+	        String linea;
+	        // Omitir la cabecera (Origen, Destino, Fecha Salida,...)
+	        if ((linea = br.readLine()) != null) { 
+	            logger.info("Cabecera de vuelos omitida: " + linea);
+	        }
+
+	        while ((linea = br.readLine()) != null) {
+	            String[] partes = linea.split(",");
+	            if (partes.length >= 5) {
+	                // Columna 0: Origen (Aeropuerto)
+	                String origen = partes[0].trim();
+	                // Columna 1: Destino (Aeropuerto)
+	                String destino = partes[1].trim();
+	                // Columna 4: Aerolinea
+	                String aerolinea = partes[4].trim();
+	                
+	                if (!origen.isEmpty() && !origen.equals("N/A")) aeropuertosUnicos.add(origen);
+	                if (!destino.isEmpty() && !destino.equals("N/A")) aeropuertosUnicos.add(destino);
+	                if (!aerolinea.isEmpty() && !aerolinea.equals("N/A")) aerolineasUnicas.add(aerolinea); 
+	            }
+	        }
+	    } catch (Exception e) {
+	        logger.warning("Error leyendo el CSV de vuelos para dependencias: " + e.getMessage());
+	        return;
+	    }
+
+	    // Insertar Aeropuertos únicos
+	    Aeropuertos[] arrayAeropuertos = aeropuertosUnicos.stream()
+	        .map(Aeropuertos::new)
+	        .toArray(Aeropuertos[]::new);
+	    insertarAeropuerto(arrayAeropuertos); 
+	    
+	    // Insertar Aerolíneas únicas
+	    Aerolinea[] arrayAerolineas = aerolineasUnicas.stream()
+	        .map(Aerolinea::new)
+	        .toArray(Aerolinea[]::new);
+	    insertarAerolinea(arrayAerolineas); 
+	    
+	    logger.info(String.format("Carga de dependencias finalizada. %d Aerolíneas y %d Aeropuertos procesados.", 
+	        aerolineasUnicas.size(), aeropuertosUnicos.size()));
+	}
+	
+	
+
+	public void cargarVuelosDesdeCSV(String csvVuelosPath) {
+	    logger.info("Iniciando carga de Vuelos desde CSV.");
+	    
+	    final String CODIGO_AVION_DEFECTO = "DEF001";
+	    int avionesID = getAvionIdByCodigo(CODIGO_AVION_DEFECTO);
+
+	    if (avionesID == -1) {
+	        insertarAvion(new Avion(CODIGO_AVION_DEFECTO, "Avion Default para CSV", 200)); 
+	        avionesID = getAvionIdByCodigo(CODIGO_AVION_DEFECTO);
+	        if (avionesID == -1) {
+	            logger.severe("CRÍTICO: No se pudo obtener/crear un ID de Avión válido. Abortando carga de Vuelos.");
+	            return;
+	        }
+	    }
+
+	    int vuelosCargados = 0;
+	    try (BufferedReader br = new BufferedReader(new FileReader(csvVuelosPath))) {
+	        String linea;
+	        br.readLine(); // Omitir la cabecera del CSV de Vuelos
+
+	        while ((linea = br.readLine()) != null) {
+	            String[] partes = linea.split(",");
+	            if (partes.length < 8) continue; 
+
+	            try {
+	                String origenNombre = partes[0].trim();
+	                String destinoNombre = partes[1].trim();
+	                String fechaSalida = partes[2].trim(); // Formato YYYY-MM-DD en este CSV.
+	                String aerolineaNombre = partes[4].trim();
+	                
+	                String precioStr = partes[5].trim().replace(" EUR", "").replace(".", "").replace(",", ".");
+	                double precioEconomy = Double.parseDouble(precioStr);
+	                
+	                double duracion = 2.0; 
+
+	                int idOrigen = getAeropuertoIdByNombre(origenNombre);
+	                int idDestino = getAeropuertoIdByNombre(destinoNombre);
+	                int idAerolinea = getAerolineaIdByNombre(aerolineaNombre);
+	                
+	                // Genera un código de vuelo único usando un contador
+	                String codigoVuelo = aerolineaNombre.substring(0, Math.min(aerolineaNombre.length(), 3)).toUpperCase() 
+	                                   + origenNombre.substring(0, Math.min(origenNombre.length(), 3)).toUpperCase() 
+	                                   + destinoNombre.substring(0, Math.min(destinoNombre.length(), 3)).toUpperCase()
+	                                   + fechaSalida.replace("-", "")
+	                                   + "-" + (vuelosCargados + 1); // <--- ID INCREMENTAL
+
+	                if (idOrigen != -1 && idDestino != -1 && idAerolinea != -1) {
+	                    insertarVuelo(
+	                        idAerolinea, avionesID, idOrigen, idDestino,
+	                        codigoVuelo, fechaSalida, duracion, precioEconomy
+	                    );
+	                    vuelosCargados++;
+	                } else {
+	                    logger.warning(String.format("Fallo: IDs de FK no encontrados para Vuelo con Aerolínea '%s', Origen '%s', Destino '%s'.",
+	                        aerolineaNombre, origenNombre, destinoNombre));
+	                }
+
+	            } catch (NumberFormatException e) {
+	                logger.warning("Error de formato numérico (Precio) en línea de vuelo: " + linea + " | " + e.getMessage());
+	            } catch (Exception e) {
+	                logger.warning("Error SQL al insertar vuelo: " + linea + " | " + e.getMessage());
+	            }
+	        }
+	    } catch (Exception e) {
+	        logger.severe("Error de I/O al cargar vuelos: " + e.getMessage());
+	    }
+	    logger.info(String.format("Carga de Vuelos finalizada. %d vuelos cargados.", vuelosCargados));
+	}
+	
+	
+	
+
+	public void cargarReservasDesdeCSV(String csvReservasPath) {
+	    logger.info("Iniciando carga de Reservas desde CSV.");
+	    int reservasCargadas = 0;
+	    
+	    try (BufferedReader br = new BufferedReader(new FileReader(csvReservasPath))) {
+	        String linea;
+	        br.readLine(); // Omitir la cabecera del CSV de Reservas
+
+	        while ((linea = br.readLine()) != null) {
+	            String[] partes = linea.split(",");
+	            // El CSV de reservas tiene 11 campos de datos útiles (0 a 10)
+	            if (partes.length < 11) continue; 
+
+	            try {
+	                String usuario = partes[0].trim();
+	                String ciudad = partes[1].trim();
+	                String reservaNombre = partes[2].trim();
+	                String email = partes[3].trim();
+	                String tipoHabitacion = partes[4].trim();
+	                
+	                int adultos = 0;
+	                if (!partes[5].trim().isEmpty() && !partes[5].trim().equals("N/A")) {
+	                    adultos = Integer.parseInt(partes[5].trim());
+	                }
+
+	                int ninos = 0;
+	                if (!partes[6].trim().isEmpty() && !partes[6].trim().equals("N/A")) {
+	                    ninos = Integer.parseInt(partes[6].trim());
+	                }
+
+	                // ¡CORRECCIÓN CRÍTICA DE FECHA! Se usa el formateador
+	                String fechaSalida = formatearFecha(partes[7]);
+	                String fechaRegreso = formatearFecha(partes[8]);
+	                
+	                if (fechaSalida == null || fechaRegreso == null) {
+	                    logger.warning("Reserva omitida: Error al formatear una o ambas fechas. Línea: " + linea);
+	                    continue;
+	                }
+	                
+	                // Unificación del precio (Entero, Decimal)
+	                double precioEntero = Double.parseDouble(partes[9].trim());
+	                double precioDecimal = Double.parseDouble(partes[10].trim()); 
+	                double precioFinal = precioEntero + (precioDecimal / 100.0);
+	                
+	                
+	                insertarReserva(
+	                    usuario, ciudad, reservaNombre, email, tipoHabitacion,
+	                    adultos, ninos, fechaSalida, fechaRegreso, precioFinal
+	                );
+	                reservasCargadas++;
+
+	            } catch (NumberFormatException e) {
+	                logger.warning(String.format("Error de formato numérico en línea de reserva: %s | %s", 
+	                    linea, e.getMessage()));
+	            } catch (Exception e) {
+	                logger.warning(String.format("Error SQL al insertar reserva: %s | %s", 
+	                    linea, e.getMessage()));
+	            }
+	        }
+	    } catch (Exception e) {
+	        logger.severe("Error de I/O al cargar reservas: " + e.getMessage());
+	    }
+	    logger.info(String.format("Carga de Reservas finalizada. %d reservas cargadas.", reservasCargadas));
+	}
+	
+	
+	
+	/**
+	 * Convierte el formato de fecha DD/MM/YYYY a YYYY-MM-DD para SQLite.
+	 */
+	private String formatearFecha(String fechaDDMMYYYY) {
+	    if (fechaDDMMYYYY == null || fechaDDMMYYYY.isEmpty() || fechaDDMMYYYY.toUpperCase().equals("N/A")) {
+	        return null;
+	    }
+	    try {
+	        // Formato de entrada: 07/11/2025
+	        SimpleDateFormat formatoEntrada = new SimpleDateFormat("dd/MM/yyyy");
+	        // Formato de salida: 2025-11-07
+	        SimpleDateFormat formatoSalida = new SimpleDateFormat("yyyy-MM-dd");
+	        
+	        Date fecha = formatoEntrada.parse(fechaDDMMYYYY.trim());
+	        return formatoSalida.format(fecha);
+	    } catch (Exception e) {
+	        return null; 
+	    }
+	}
+	
+
+	public void cargarDatosDesdeCSVs(String csvReservasPath, String csvVuelosPath) {
+	    cargarDependenciasVueloDesdeCSV(csvVuelosPath);
+	    cargarVuelosDesdeCSV(csvVuelosPath);
+	    cargarReservasDesdeCSV(csvReservasPath);
+	}
     
 }
