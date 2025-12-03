@@ -41,6 +41,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import java.util.List;
 import agencia_prog_3_thread.VentanaConfirmacionReserva;
+import db.GestorBD;
 
 //FALTA
 //Añadir boton de reserva para que acabe de confirmar la reserva con los datos necesarios y añadirla a su perfil

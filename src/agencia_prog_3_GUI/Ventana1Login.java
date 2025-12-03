@@ -135,8 +135,8 @@ public class Ventana1Login extends JFrame {
             dispose(); // Cerrar la ventana de login
             return;
         }
-        
-        if (validUsers.containsKey(user) && validUsers.get(user).equals(pass)) {
+	        																																																							
+	        if (validUsers.containsKey(user) && validUsers.get(user).equals(pass)) {
             statusLabel.setText("Bienvenido, " + user + "!");
             JOptionPane.showMessageDialog(this, "Inicio de sesión correcto.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             
