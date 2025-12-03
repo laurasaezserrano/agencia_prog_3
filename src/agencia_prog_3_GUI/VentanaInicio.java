@@ -1,4 +1,5 @@
 package agencia_prog_3_GUI;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,12 +28,15 @@ import javax.swing.border.LineBorder;
 import javax.swing.JDialog;
 import javax.swing.JProgressBar;
 import agencia_prog_3_thread.VentanaBuscandoExcursion;
+import agencia_prog_3_thread.VentanaBuscandoReservas;
 import agencia_prog_3_thread.VentanaBuscandoVuelo;
 import agencia_prog_3_thread.VentanaRuletaDeLaSuerte;
+
 public class VentanaInicio extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private JTextField titulo;
 	private static final String MENSAJE_GANADOR = "¡Felicidades! Has ganado un 15% de descuento en tu próximo viaje.";
+	
 	public VentanaInicio(){
 		JPanel mainpanel = new JPanel();
 		JPanel panel1 = new JPanel(new GridLayout(2, 6, 40, 40));
@@ -80,8 +84,7 @@ public class VentanaInicio extends JFrame{
 						VentanaUser userInfo = new VentanaUser(user, pass, VentanaInicio.this);
 						userInfo.setVisible(true);
 					} else if (nombresboton[numero-1].equals("Reservas")) {
-						VentanaReservas vReservas = new VentanaReservas();
-						vReservas.setVisible(true);
+						abrirReservasHilo();
 						
 					} else if (nombresboton[numero-1].equals("Ofertas")) {
 						CuadriculaOfertas vOfertas = new CuadriculaOfertas();
@@ -234,6 +237,42 @@ public class VentanaInicio extends JFrame{
 	 	pack();
 	 	dialog.setVisible(true);
 	}
+	
+	
+	private void abrirReservasHilo() {
+
+	    VentanaBuscandoReservas dialog = new VentanaBuscandoReservas(this);
+
+	    Thread hilo = new Thread(() -> {
+
+	        try {
+	            SwingUtilities.invokeLater(() -> dialog.cambiarTexto("Comprobando reservas..."));
+	            Thread.sleep(1200);
+
+	            SwingUtilities.invokeLater(() -> dialog.cambiarTexto("Cargando historial..."));
+	            Thread.sleep(1200);
+
+	            SwingUtilities.invokeLater(() -> dialog.cambiarTexto("Verificando disponibilidad..."));
+	            Thread.sleep(1200);
+
+	            SwingUtilities.invokeLater(() -> dialog.cambiarTexto("Preparando vista..."));
+	            Thread.sleep(1200);
+
+	        } catch (InterruptedException e) {}
+
+	        SwingUtilities.invokeLater(() -> {
+	            dialog.cerrar();
+	            new VentanaReservas().setVisible(true);
+	            VentanaInicio.this.dispose();
+	        });
+	    });
+
+	    hilo.start();
+	    dialog.setVisible(true);
+	}
+
+	
+	
 	public static void main(String[] args) {
 		VentanaInicio VentanaInicial = new VentanaInicio();
 		VentanaInicial.setVisible(true);
