@@ -27,6 +27,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -147,12 +148,17 @@ public class VentanaReservas extends JFrame {
         
          modeloTablaExcursiones = new DefaultTableModel(columnasExcursiones, 0) {
             private static final long serialVersionUID = 1L;
+            
             @Override
             public boolean isCellEditable(int row, int column) {
                 // Solo la columna "Cancelar" (índice 9) es editable
                 return column == 9;
             }
         };
+        
+        
+        
+        
         JTable tablaExcursiones = new JTable(modeloTablaExcursiones);
         TableRowSorter sorterExcursiones = new TableRowSorter<>(modeloTablaExcursiones);
         tablaExcursiones.setRowSorter(sorterExcursiones);
@@ -217,8 +223,6 @@ public class VentanaReservas extends JFrame {
         
 		cargarReservasDesdeCSV(usuarioLogueado);
 		
-		
-		
 	}
 	
 	private void configurarTabla(JTable tabla, DefaultTableModel model) {
@@ -226,8 +230,18 @@ public class VentanaReservas extends JFrame {
         tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
         tabla.setFillsViewportHeight(true);
         
+        // ----- CENTRAR TEXTO EN LAS COLUMNAS -----
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+        int columnas = tabla.getColumnCount();
+
+        // Aplica el centrado a todas menos la última (botón)
+        for (int i = 0; i < columnas - 1; i++) {
+            tabla.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
         // --- NUEVO: Añadimos el ButtonRenderer y ButtonEditor a la última columna ---
-        int columnaCancelar = 9; 
+        int columnaCancelar = columnas - 1; 
         tabla.getColumnModel().getColumn(columnaCancelar).setCellRenderer(new ButtonRenderer("Cancelar"));
         tabla.getColumnModel().getColumn(columnaCancelar).setCellEditor(
                 new ButtonEditor(tabla, this::cancelarReserva) // Llama al método cancelarReserva
