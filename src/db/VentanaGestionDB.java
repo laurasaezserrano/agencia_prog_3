@@ -449,6 +449,8 @@ public class VentanaGestionDB extends JFrame {
 		if (confirm == JOptionPane.YES_OPTION) {
 			if (tablaSeleccionada.equals("Reserva")) {
 				eliminarReserva(filaSeleccionada);
+			} else if (tablaSeleccionada.equals("Aeropuerto")) {
+	            eliminarAeropuerto(filaSeleccionada);
 			} else {
 				JOptionPane.showMessageDialog(this,
 					"Eliminación para " + tablaSeleccionada + " no implementada aún");
@@ -456,6 +458,32 @@ public class VentanaGestionDB extends JFrame {
 		}
 	}
 	
+	private void eliminarAeropuerto(int filaSeleccionada) {
+		try {
+	        Object idObj = modeloTabla.getValueAt(filaSeleccionada, 0);
+	        if (idObj == null) throw new IllegalArgumentException("ID de aeropuerto no encontrado");
+
+	        int id = Integer.parseInt(idObj.toString());
+	        String nombre = String.valueOf(modeloTabla.getValueAt(filaSeleccionada, 1));
+
+	        boolean eliminado = gestorBD.eliminarAeropuertoPorId(id); // llama al nuevo método
+
+	        if (eliminado) {
+	            JOptionPane.showMessageDialog(this,
+	                "Aeropuerto eliminado correctamente" + (nombre != null ? ": " + nombre : ""));
+	            manejarCargarDatos(null); // Recargar la tabla actual
+	        } else {
+	            JOptionPane.showMessageDialog(this,
+	                "No se pudo eliminar el aeropuerto (puede que no exista).",
+	                "Aviso", JOptionPane.WARNING_MESSAGE);
+	        }
+	    } catch (Exception ex) {
+	        JOptionPane.showMessageDialog(this,
+	            "Error al eliminar aeropuerto: " + ex.getMessage(),
+	            "Error", JOptionPane.ERROR_MESSAGE);
+	    }
+	}
+
 	private void eliminarReserva(int fila) {
 		try {
 			// Obtener datos de la fila (asumiendo que columna 1 es usuario, 2 ciudad, etc.)
