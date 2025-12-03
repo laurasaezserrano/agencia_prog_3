@@ -215,7 +215,6 @@ public class VentanaInicio extends JFrame{
 		titulo.setFont(new Font("Times new Roman", Font.BOLD, 30));
 		titulo.setBackground(new Color(255, 255, 255));
 		add(titulo, BorderLayout.NORTH);
-
 	}
 
 	private void iniciarRuleta() { 
