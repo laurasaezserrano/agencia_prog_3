@@ -130,7 +130,8 @@ public class GestorBD {
 			String sql3 = "DROP TABLE IF EXISTS Aerolinea;";
 			String sql4 = "DROP TABLE IF EXISTS Avion;";
             String sql5 = "DROP TABLE IF EXISTS Aeropuerto;";
-			
+            resetearAutoincrement("Aeropuerto");
+
 
 	        try (Connection con = DriverManager.getConnection(connectionString);
 			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
@@ -164,6 +165,13 @@ public class GestorBD {
 			String sql3 = "DELETE FROM Aerolinea;";
 			String sql4 = "DELETE FROM Avion;";
             String sql5 = "DELETE FROM Aeropuerto;";
+            // Reiniciar los autoincrementos
+            resetearAutoincrement("Aeropuerto");
+            resetearAutoincrement("Aerolinea");
+	        resetearAutoincrement("Avion");
+	        resetearAutoincrement("Vuelo");
+	        resetearAutoincrement("Reserva");
+
 			
 	        // ... (lógica para ejecutar DELETE) ...
 			try (Connection con = DriverManager.getConnection(connectionString);
@@ -554,7 +562,14 @@ public class GestorBD {
 	
 	
 	
-	
+	private Connection getConnectionWithFK() throws Exception {
+	    Connection con = DriverManager.getConnection(connectionString);
+	    try (Statement st = con.createStatement()) {
+	        st.execute("PRAGMA foreign_keys = ON"); 
+	    }
+	    return con;
+	}
+
 	
 
 	/**
@@ -589,7 +604,61 @@ public class GestorBD {
 	    return reservas;
 	}
 	// ...
+
+	public boolean eliminarAeropuertoPorId(int id) {
+		String sql = "DELETE FROM Aeropuerto WHERE id = ?;";
+	    try (Connection con = getConnectionWithFK();
+	         PreparedStatement pStmt = con.prepareStatement(sql)) {
+
+	        pStmt.setInt(1, id);
+	        int filas = pStmt.executeUpdate();
+	        if (filas > 0) {
+	            logger.info(String.format("Aeropuerto (id=%d) eliminado.", id));
+	            return true;
+	        } else {
+	            logger.warning(String.format("No se encontró Aeropuerto con id=%d para eliminar.", id));
+	            return false;
+	        }
+	    } catch (Exception ex) {
+	        logger.warning(String.format("Error al eliminar Aeropuerto id=%d: %s", id, ex.getMessage()));
+	        return false;
+	    }
+	}
+
+	// Opcional, por nombre (por si algún día te resulta útil)
+	public boolean eliminarAeropuertoPorNombre(String nombre) {
+	    String sql = "DELETE FROM Aeropuerto WHERE nombre = ?;";
+	    try (Connection con = getConnectionWithFK();
+	         PreparedStatement pStmt = con.prepareStatement(sql)) {
+
+	        pStmt.setString(1, nombre);
+	        int filas = pStmt.executeUpdate();
+	        if (filas > 0) {
+	            logger.info(String.format("Aeropuerto '%s' eliminado.", nombre));
+	            return true;
+	        } else {
+	            logger.warning(String.format("No se encontró Aeropuerto '%s' para eliminar.", nombre));
+	            return false;
+	        }
+	    } catch (Exception ex) {
+	        logger.warning(String.format("Error al eliminar Aeropuerto '%s': %s", nombre, ex.getMessage()));
+	        return false;
+	    }
+	}
 	
+
 	
+	public void resetearAutoincrement(String tabla) {
+	    String sql = "DELETE FROM sqlite_sequence WHERE name = ?;";
+	    try (Connection con = DriverManager.getConnection(connectionString);
+	         PreparedStatement ps = con.prepareStatement(sql)) {
+	        ps.setString(1, tabla);
+	        ps.executeUpdate();
+	        logger.info("Secuencia AUTOINCREMENT reseteada para tabla: " + tabla);
+	    } catch (Exception ex) {
+	        logger.warning("Error al resetear AUTOINCREMENT de " + tabla + ": " + ex.getMessage());
+	    }
+	}
+
     
 }
