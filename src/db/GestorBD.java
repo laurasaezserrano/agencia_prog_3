@@ -38,7 +38,7 @@ public class GestorBD {
 	        LogManager.getLogManager().readConfiguration(fis);
 	    } catch (Exception ex) {
 	        // Ignorar si no se encuentra el logger, pero reportarlo
-	        logger.warning(String.format("Error al cargar logger.properties: %s", ex.getMessage()));
+	        //logger.warning(String.format("Error al cargar logger.properties: %s", ex.getMessage()));
 	    }
 	    
 	    // El resto de inicialización, sin usar properties:

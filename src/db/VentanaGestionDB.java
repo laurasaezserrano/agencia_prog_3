@@ -94,15 +94,14 @@ package db;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
 
 import agencia_prog_3_GUI.Ventana1Login;
-import agencia_prog_3_GUI.VentanaInicio;
+import agencia_prog_3_data.Aerolinea;
+import agencia_prog_3_data.Avion;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.http.HttpHeaders;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -338,6 +337,12 @@ public class VentanaGestionDB extends JFrame {
 			mostrarDialogoInsertarReserva();
 		} else if (tablaSeleccionada.equals("Aeropuerto")) {
 			mostrarDialogoInsertarAeropuerto();
+		} else if (tablaSeleccionada.equals("Vuelo")) { // <-- NUEVO
+			mostrarDialogoInsertarVuelo();
+		} else if (tablaSeleccionada.equals("Aerolinea")) { // <-- NUEVO
+			mostrarDialogoInsertarAerolinea();
+		} else if (tablaSeleccionada.equals("Avion")) { // <-- NUEVO
+			mostrarDialogoInsertarAvion();
 		} else {
 			JOptionPane.showMessageDialog(this,
 				"Inserción para la tabla " + tablaSeleccionada + " no implementada aún",
@@ -422,6 +427,129 @@ public class VentanaGestionDB extends JFrame {
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(this, 
 					"Error al insertar: " + ex.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+	
+	private void mostrarDialogoInsertarVuelo() {
+		JPanel panel = new JPanel(new GridLayout(8, 2, 5, 5));
+		
+		JTextField txtCodigo = new JTextField();
+		JTextField txtFecha = new JTextField("YYYY-MM-DD");
+		JTextField txtDuracion = new JTextField("3.5"); // Horas
+		JTextField txtPrecio = new JTextField("350.00");
+		JTextField txtIdAerolinea = new JTextField();
+		JTextField txtIdAvion = new JTextField();
+		JTextField txtIdOrigen = new JTextField();
+		JTextField txtIdDestino = new JTextField();
+		
+		panel.add(new JLabel("Código Vuelo:"));
+		panel.add(txtCodigo);
+		panel.add(new JLabel("Fecha (YYYY-MM-DD):"));
+		panel.add(txtFecha);
+		panel.add(new JLabel("Duración (h):"));
+		panel.add(txtDuracion);
+		panel.add(new JLabel("Precio:"));
+		panel.add(txtPrecio);
+		panel.add(new JLabel("ID Aerolínea (FK):"));
+		panel.add(txtIdAerolinea);
+		panel.add(new JLabel("ID Avión (FK):"));
+		panel.add(txtIdAvion);
+		panel.add(new JLabel("ID Aeropuerto Origen (FK):"));
+		panel.add(txtIdOrigen);
+		panel.add(new JLabel("ID Aeropuerto Destino (FK):"));
+		panel.add(txtIdDestino);
+		
+		int resultado = JOptionPane.showConfirmDialog(this, panel, 
+			"Insertar Nuevo Vuelo", JOptionPane.OK_CANCEL_OPTION);
+		
+		if (resultado == JOptionPane.OK_OPTION) {
+			try {
+				gestorBD.insertarVuelo(
+					Integer.parseInt(txtIdAerolinea.getText()),
+					Integer.parseInt(txtIdAvion.getText()),
+					Integer.parseInt(txtIdOrigen.getText()),
+					Integer.parseInt(txtIdDestino.getText()),
+					txtCodigo.getText(),
+					txtFecha.getText(),
+					Double.parseDouble(txtDuracion.getText()),
+					Double.parseDouble(txtPrecio.getText())
+				);
+				
+				JOptionPane.showMessageDialog(this, "Vuelo insertado correctamente");
+				manejarCargarDatos(null); // Recargar datos
+				
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(this, 
+					"Error: Formato de ID, Duración o Precio incorrecto. " + ex.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, 
+					"Error al insertar Vuelo: " + ex.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+	
+	private void mostrarDialogoInsertarAerolinea() {
+		String nombre = JOptionPane.showInputDialog(this, 
+			"Nombre de la Aerolínea:", "Insertar Aerolínea", 
+			JOptionPane.PLAIN_MESSAGE);
+		
+		if (nombre != null && !nombre.trim().isEmpty()) {
+			try {
+				// El GestorBD espera objetos Aerolinea
+				Aerolinea nuevaAerolinea = new Aerolinea(nombre); 
+				gestorBD.insertarAerolinea(nuevaAerolinea);
+				
+				JOptionPane.showMessageDialog(this, "Aerolínea insertada correctamente");
+				manejarCargarDatos(null);
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, 
+					"Error al insertar Aerolínea: " + ex.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+	
+	private void mostrarDialogoInsertarAvion() {
+		JPanel panel = new JPanel(new GridLayout(4, 2, 5, 5));
+		
+		JTextField txtCodigo = new JTextField();
+		JTextField txtNombre = new JTextField();
+		JTextField txtNumeroAsientos = new JTextField();
+		
+		panel.add(new JLabel("Código Avión (ej: B737):"));
+		panel.add(txtCodigo);
+		panel.add(new JLabel("Nombre (ej: Boeing 737):"));
+		panel.add(txtNombre);
+		panel.add(new JLabel("Nº Asientos:"));
+		panel.add(txtNumeroAsientos);
+		
+		int resultado = JOptionPane.showConfirmDialog(this, panel, 
+			"Insertar Nuevo Avión", JOptionPane.OK_CANCEL_OPTION);
+		
+		if (resultado == JOptionPane.OK_OPTION) {
+			try {
+				// El GestorBD espera objetos Avion
+				Avion nuevoAvion = new Avion(
+					txtCodigo.getText(),
+					txtNombre.getText(),
+					Integer.parseInt(txtNumeroAsientos.getText())
+				);
+				gestorBD.insertarAvion(nuevoAvion);
+				
+				JOptionPane.showMessageDialog(this, "Avión insertado correctamente");
+				manejarCargarDatos(null); // Recargar datos
+				
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(this, 
+					"Error: Nº Asientos debe ser un número entero.",
+					"Error", JOptionPane.ERROR_MESSAGE);
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, 
+					"Error al insertar Avión: " + ex.getMessage(),
 					"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
