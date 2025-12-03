@@ -23,13 +23,13 @@ import agencia_prog_3_data.VueloData;
 public class GestorBD {
 
     // 1. Constantes y configuración
-	//private final String PROPERTIES_FILE = "resources/config/app.properties";
+	private final String PROPERTIES_FILE = "resources/config/app.properties";
 	private static Logger logger = Logger.getLogger(GestorBD.class.getName());
 	private final String CSV_AEROLINEAS = "resources/data/aerolineas.csv"; 
 	
 	private String driverName = "org.sqlite.JDBC";
-	private String databaseFile = "data/agencia.db"; // Asumiendo este es el valor de "file"
-	private String connectionString = "jdbc:sqlite:data/agencia.db"; // Asumiendo este es el valor de "connection"
+	private String databaseFile = "resources/data/agencia.db";
+	private String connectionString = "jdbc:sqlite:resources/data/agencia.db";
 	// ...
 
 	public GestorBD() {
@@ -89,16 +89,30 @@ public class GestorBD {
                     + " FOREIGN KEY(id_aeropuerto_origen) REFERENCES Aeropuerto(id) ON DELETE CASCADE,\n"
                     + " FOREIGN KEY(id_aeropuerto_destino) REFERENCES Aeropuerto(id) ON DELETE CASCADE\n"
                     + ");";
+            
+            String sql5 = "CREATE TABLE IF NOT EXISTS Reserva (\n"
+                    + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+                    + " usuario TEXT NOT NULL,\n"
+                    + " ciudad TEXT NOT NULL,\n"
+                    + " reserva_nombre TEXT NOT NULL,\n"
+                    + " email TEXT NOT NULL,\n"
+                    + " tipo_habitacion TEXT NOT NULL,\n"
+                    + " adultos INTEGER NOT NULL,\n"
+                    + " ninos INTEGER NOT NULL,\n"
+                    + " fecha_salida TEXT NOT NULL,\n"
+                    + " fecha_regreso TEXT NOT NULL,\n"
+                    + " precio REAL NOT NULL);";
 			
 			try (Connection con = DriverManager.getConnection(connectionString);
 			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
 				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
 				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
-                 PreparedStatement pStmt4 = con.prepareStatement(sql4)) {
+                 PreparedStatement pStmt4 = con.prepareStatement(sql4);
+				 PreparedStatement pStmt5 = con.prepareStatement(sql5)) {
 				
 				// Ejecutar las sentencias de creación
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute()) {
-		        	logger.info("Se han creado las 4 tablas de la Agencia de Viajes");
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()) {
+		        	logger.info("Se han creado las 5 tablas de la Agencia de Viajes");
 		        }
 			} catch (Exception ex) {
 				logger.warning(String.format("Error al crear las tablas: %s", ex.getMessage()));
@@ -111,19 +125,21 @@ public class GestorBD {
 	 */
 	public void borrarBBDD() {
 
-            String sql1 = "DROP TABLE IF EXISTS Vuelo;"; 
-			String sql2 = "DROP TABLE IF EXISTS Aerolinea;";
-			String sql3 = "DROP TABLE IF EXISTS Avion;";
-            String sql4 = "DROP TABLE IF EXISTS Aeropuerto;";
+			String sql1 = "DROP TABLE IF EXISTS Reserva;";
+            String sql2 = "DROP TABLE IF EXISTS Vuelo;"; 
+			String sql3 = "DROP TABLE IF EXISTS Aerolinea;";
+			String sql4 = "DROP TABLE IF EXISTS Avion;";
+            String sql5 = "DROP TABLE IF EXISTS Aeropuerto;";
 			
 
 	        try (Connection con = DriverManager.getConnection(connectionString);
 			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
 				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
 				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
-                 PreparedStatement pStmt4 = con.prepareStatement(sql4)) {
+                 PreparedStatement pStmt4 = con.prepareStatement(sql4);
+	        	 PreparedStatement pStmt5 = con.prepareStatement(sql5)) {
 				
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute()) {
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()) {
 		        	logger.info("Se han borrado las tablas de la Agencia de Viajes");
 		        }
 			} catch (Exception ex) {
@@ -143,19 +159,21 @@ public class GestorBD {
 	 * Borra los datos de las 4 tablas (mantiene la estructura de tablas).
 	 */
 	public void borrarDatos() {
-			String sql1 = "DELETE FROM Vuelo;"; 
-			String sql2 = "DELETE FROM Aerolinea;";
-			String sql3 = "DELETE FROM Avion;";
-            String sql4 = "DELETE FROM Aeropuerto;";
+			String sql1 = "DELETE FROM Reserva;";
+			String sql2 = "DELETE FROM Vuelo;"; 
+			String sql3 = "DELETE FROM Aerolinea;";
+			String sql4 = "DELETE FROM Avion;";
+            String sql5 = "DELETE FROM Aeropuerto;";
 			
 	        // ... (lógica para ejecutar DELETE) ...
 			try (Connection con = DriverManager.getConnection(connectionString);
 			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
 				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
 				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
-                 PreparedStatement pStmt4 = con.prepareStatement(sql4)) {
+                 PreparedStatement pStmt4 = con.prepareStatement(sql4);
+				 PreparedStatement pStmt5 = con.prepareStatement(sql5)) {
 				
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute()) {
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()) {
 		        	logger.info("Se han borrado los datos de la Agencia de Viajes");
 		        }
 			} catch (Exception ex) {
@@ -246,6 +264,158 @@ public class GestorBD {
 		}			
 	}
 
+	
+	/**
+	 * Inserta una reserva en la BBDD.
+	 */
+	public void insertarReserva(String usuario, String ciudad, String reservaNombre, 
+			String email, String tipoHabitacion, int adultos, int ninos, 
+			String fechaSalida, String fechaRegreso, double precio) {
+		
+		String sql = "INSERT INTO Reserva (usuario, ciudad, reserva_nombre, email, " +
+				"tipo_habitacion, adultos, ninos, fecha_salida, fecha_regreso, precio) " +
+				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		
+		try (Connection con = DriverManager.getConnection(connectionString);
+			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            
+            pStmt.setString(1, usuario);
+            pStmt.setString(2, ciudad);
+            pStmt.setString(3, reservaNombre);
+            pStmt.setString(4, email);
+            pStmt.setString(5, tipoHabitacion);
+            pStmt.setInt(6, adultos);
+            pStmt.setInt(7, ninos);
+            pStmt.setString(8, fechaSalida);
+            pStmt.setString(9, fechaRegreso);
+            pStmt.setDouble(10, precio);
+				
+			if (pStmt.executeUpdate() != 1) {					
+				logger.warning(String.format("No se ha insertado la Reserva para: %s", usuario));
+			} else {
+                try (ResultSet rs = pStmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        logger.info(String.format("Se ha insertado la Reserva con ID %d para %s", 
+                        		rs.getInt(1), usuario));
+                    }
+                }
+			}
+		} catch (Exception ex) {
+			logger.warning(String.format("Error al insertar reserva: %s", ex.getMessage()));
+		}			
+	}
+	
+	/**
+	 * Recupera todas las reservas de un usuario específico.
+	 * @return Lista de Object[] donde cada array contiene los datos de una reserva
+	 */
+	public List<Object[]> getReservasPorUsuario(String usuario) {
+		List<Object[]> reservas = new ArrayList<>();
+		String sql = "SELECT ciudad, reserva_nombre, email, tipo_habitacion, adultos, ninos, " +
+				"fecha_salida, fecha_regreso, precio FROM Reserva WHERE usuario = ?;";
+		
+		try (Connection con = DriverManager.getConnection(connectionString);
+		     PreparedStatement pStmt = con.prepareStatement(sql)) {
+			
+			pStmt.setString(1, usuario);
+			ResultSet rs = pStmt.executeQuery();
+			
+			while (rs.next()) {
+				Object[] fila = {
+					rs.getString("ciudad"),
+					rs.getString("reserva_nombre"),
+					rs.getString("email"),
+					rs.getString("tipo_habitacion"),
+					rs.getInt("adultos"),
+					rs.getInt("ninos"),
+					rs.getString("fecha_salida"),
+					rs.getString("fecha_regreso"),
+					rs.getDouble("precio"),
+					"Cancelar" // Para el botón
+				};
+				reservas.add(fila);
+			}
+			
+			rs.close();
+			logger.info(String.format("Se han recuperado %d reservas para %s", reservas.size(), usuario));
+			
+		} catch (Exception ex) {
+			logger.warning(String.format("Error al recuperar reservas: %s", ex.getMessage()));
+		}
+		
+		return reservas;
+	}
+	
+	/**
+	 * Elimina una reserva específica de la BBDD.
+	 */
+	public boolean eliminarReserva(String usuario, String ciudad, String reservaNombre, 
+			String fechaSalida, double precio) {
+		
+		String sql = "DELETE FROM Reserva WHERE usuario = ? AND ciudad = ? " +
+				"AND reserva_nombre = ? AND fecha_salida = ? AND precio = ?;";
+		
+		try (Connection con = DriverManager.getConnection(connectionString);
+			 PreparedStatement pStmt = con.prepareStatement(sql)) {
+            
+            pStmt.setString(1, usuario);
+            pStmt.setString(2, ciudad);
+            pStmt.setString(3, reservaNombre);
+            pStmt.setString(4, fechaSalida);
+            pStmt.setDouble(5, precio);
+			
+			int filasAfectadas = pStmt.executeUpdate();
+			
+			if (filasAfectadas > 0) {
+				logger.info(String.format("Reserva eliminada: %s en %s", reservaNombre, ciudad));
+				return true;
+			} else {
+				logger.warning("No se encontró la reserva para eliminar");
+				return false;
+			}
+			
+		} catch (Exception ex) {
+			logger.warning(String.format("Error al eliminar reserva: %s", ex.getMessage()));
+			return false;
+		}
+	}
+	
+	/**
+	 * Recupera todas las reservas (para testing o admin).
+	 */
+	public void getTodasLasReservas() {
+		String sql = "SELECT * FROM Reserva;";
+
+		try (Connection con = DriverManager.getConnection(connectionString);
+		     PreparedStatement pStmt = con.prepareStatement(sql)) {			
+			
+			ResultSet rs = pStmt.executeQuery();			
+			int count = 0;
+
+			while (rs.next()) {
+                String info = String.format("Reserva ID %d: %s - %s en %s (Salida: %s, Precio: %.2f€)",
+                        rs.getInt("id"),
+                        rs.getString("usuario"),
+                        rs.getString("reserva_nombre"),
+                        rs.getString("ciudad"),
+                        rs.getString("fecha_salida"),
+                        rs.getDouble("precio"));
+                
+                logger.info(info);
+				count++;
+			}
+			
+			rs.close();
+			logger.info(String.format("Se han recuperado %d reservas en total.", count));			
+		} catch (Exception ex) {
+			logger.warning(String.format("Error al recuperar las reservas: %s", ex.getMessage()));						
+		}		
+	}
+	
+	
+	
+	
+	
     /**
 	 * Recupera todos los vuelos con la información completa de las entidades relacionadas.
 	 */
@@ -288,4 +458,138 @@ public class GestorBD {
 			logger.warning(String.format("Error recuperar los vuelos: %s", ex.getMessage()));						
 		}		
 	}
+
+	/**
+     * Busca y retorna el ID de un Avion por su código.
+     * Retorna -1 si no lo encuentra o si hay un error.
+     */
+    public int getAvionIdByCodigo(String codigo) {
+        String sql = "SELECT id FROM Avion WHERE codigo = ?;";
+        
+        try (Connection con = DriverManager.getConnection(connectionString);
+             PreparedStatement pStmt = con.prepareStatement(sql)) {
+                
+            pStmt.setString(1, codigo);
+                
+            try (ResultSet rs = pStmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (Exception ex) {
+            logger.warning(String.format("Error al buscar ID de Avion con código %s: %s", codigo, ex.getMessage()));
+        }
+        return -1; // No encontrado
+    }
+
+    /**
+     * Busca y retorna el ID de una Aerolinea por su nombre.
+     * Retorna -1 si no la encuentra o si hay un error.
+     */
+    public int getAerolineaIdByNombre(String nombre) {
+        String sql = "SELECT id FROM Aerolinea WHERE nombre = ?;";
+        
+        try (Connection con = DriverManager.getConnection(connectionString);
+             PreparedStatement pStmt = con.prepareStatement(sql)) {
+                
+            pStmt.setString(1, nombre);
+                
+            try (ResultSet rs = pStmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (Exception ex) {
+            logger.warning(String.format("Error al buscar ID de Aerolínea %s: %s", nombre, ex.getMessage()));
+        }
+        return -1; // No encontrado
+    }
+
+    /**
+	 * Inserta Aerolineas en la BBDD.
+	 */
+	public void insertarAerolinea(Aerolinea... aerolineas) {
+		String sql = "INSERT INTO Aerolinea (nombre) VALUES (?);";
+		
+		try (Connection con = DriverManager.getConnection(connectionString);
+			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
+									
+			for (Aerolinea a : aerolineas) {
+				pStmt.setString(1, a.getNombre());
+				
+				if (pStmt.executeUpdate() != 1) {					
+					logger.warning(String.format("No se ha insertado la Aerolínea: %s", a.getNombre()));
+				}
+			}
+			logger.info(String.format("%d Aerolíneas insertadas en la BBDD", aerolineas.length));
+		} catch (Exception ex) {
+			logger.warning(String.format("Error al insertar Aerolíneas: %s", ex.getMessage()));
+		}			
+	}
+
+
+    /**
+	 * Inserta Aviones en la BBDD.
+	 */
+	public void insertarAvion(Avion... aviones) {
+		String sql = "INSERT INTO Avion (codigo, nombre, numero_asientos) VALUES (?, ?, ?);";
+		
+		try (Connection con = DriverManager.getConnection(connectionString);
+			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
+									
+			for (Avion a : aviones) {
+				pStmt.setString(1, a.getCodigo());
+				pStmt.setString(2, a.getNombre());
+				pStmt.setInt(3, a.getNumeroasientos());
+				
+				if (pStmt.executeUpdate() != 1) {					
+					logger.warning(String.format("No se ha insertado el Avión: %s (%s)", a.getCodigo(), a.getNombre()));
+				}
+			}
+			logger.info(String.format("%d Aviones insertados en la BBDD", aviones.length));
+		} catch (Exception ex) {
+			logger.warning(String.format("Error al insertar Aviones: %s", ex.getMessage()));
+		}			
+	}
+	
+	
+	
+	
+	
+
+	/**
+	 * Obtiene todas las reservas de la BBDD en formato de matriz de objetos.
+	 */
+	public List<Object[]> getListaTodasLasReservas() {
+	    List<Object[]> reservas = new ArrayList<>();
+	    // Ajusta la consulta SQL y los nombres de las columnas a tu esquema de DB real
+	    String sql = "SELECT * FROM Reserva"; 
+	    
+	    try (Connection con = DriverManager.getConnection(connectionString);
+	         Statement stmt = con.createStatement();
+	         ResultSet rs = stmt.executeQuery(sql)) {
+	        
+	        while (rs.next()) {
+	            // **IMPORTANTE**: Ajusta el orden y tipo de datos de Object[] 
+	            // para que coincida con las columnas de tu JTable en VentanaGestionDB
+	            Object[] reserva = new Object[] {
+//	                rs.getInt("id_reserva"),
+//	                rs.getString("usuario"),
+//	                rs.getString("ciudad"),
+//	                rs.getString("nombre_reserva"),
+//	                rs.getString("fecha_salida"),
+//	                rs.getDouble("precio")
+	                // ... otras columnas
+	            };
+	            reservas.add(reserva);
+	        }
+	    } catch (Exception ex) {
+	        logger.warning("Error al obtener todas las reservas: " + ex.getMessage());
+	    }
+	    return reservas;
+	}
+	// ...
+	
+	
+    
 }
