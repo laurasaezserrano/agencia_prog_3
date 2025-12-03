@@ -93,8 +93,13 @@ package db;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import agencia_prog_3_GUI.Ventana1Login;
+import agencia_prog_3_GUI.VentanaInicio;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -146,6 +151,7 @@ public class VentanaGestionDB extends JFrame {
 	        cmbTablas.setSelectedItem("Reserva"); // 1. Selecciona la tabla de Reservas
 	    }
 	    manejarCargarDatos(null);
+	    
 	    
 	}
 
@@ -223,6 +229,24 @@ public class VentanaGestionDB extends JFrame {
 		panelSur.add(btnActualizar);
 		panelSur.add(btnEliminar);
 		add(panelSur, BorderLayout.SOUTH);
+		
+		
+		JButton botonInicio = new JButton("Inicio"); //luego cambiarlo a un icono
+        
+        panelSur.add(botonInicio, BorderLayout.WEST); // Botón a la izquierda
+        
+	    botonInicio.addActionListener(new ActionListener() {
+		    
+			@Override
+		    public void actionPerformed(ActionEvent e) {
+		        // Cierra la ventana actual
+		        dispose(); 
+		        
+		        // Abre una nueva instancia de la ventana de inicio
+		        Ventana1Login vInicio = new Ventana1Login();
+		        vInicio.setVisible(true);
+		    }
+		});
 	}
 	
 	private void manejarCargarDatos(ActionEvent e) {

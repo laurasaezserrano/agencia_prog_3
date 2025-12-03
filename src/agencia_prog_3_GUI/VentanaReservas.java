@@ -194,25 +194,25 @@ public class VentanaReservas extends JFrame {
         });
         
         
-        JButton btnGestionDB = new JButton("Gestión DB Reservas");
-        btnGestionDB.setFont(new Font("Arial", Font.BOLD, 14));
-        btnGestionDB.setBackground(new Color(60, 150, 220)); // Un color distintivo
-        btnGestionDB.setForeground(Color.WHITE);
-
-        btnGestionDB.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // 1. Instanciar GestorBD (Asumiendo que usa el constructor por defecto)
-                db.GestorBD gestorBD = new db.GestorBD(); // Asegúrate de importar o usar el paquete 'db'
-                
-                // 2. Abrir VentanaGestionDB
-                // Le pasamos la instancia de gestorBD en el constructor
-                VentanaGestionDB vGestion = new VentanaGestionDB(); 
-                vGestion.setVisible(true);
-            }
-        });
-        
-        panelFiltro.add(btnGestionDB);
+//        JButton btnGestionDB = new JButton("Gestión DB Reservas");
+//        btnGestionDB.setFont(new Font("Arial", Font.BOLD, 14));
+//        btnGestionDB.setBackground(new Color(60, 150, 220)); // Un color distintivo
+//        btnGestionDB.setForeground(Color.WHITE);
+//
+//        btnGestionDB.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                // 1. Instanciar GestorBD (Asumiendo que usa el constructor por defecto)
+//                db.GestorBD gestorBD = new db.GestorBD(); // Asegúrate de importar o usar el paquete 'db'
+//                
+//                // 2. Abrir VentanaGestionDB
+//                // Le pasamos la instancia de gestorBD en el constructor
+//                VentanaGestionDB vGestion = new VentanaGestionDB(); 
+//                vGestion.setVisible(true);
+//            }
+//        });
+//        
+//        panelFiltro.add(btnGestionDB);
         
         
 		cargarReservasDesdeCSV(usuarioLogueado);
