@@ -28,6 +28,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.JDialog;
 import javax.swing.JProgressBar;
 import agencia_prog_3_thread.VentanaBuscandoExcursion;
+import agencia_prog_3_thread.VentanaBuscandoPerfil;
 import agencia_prog_3_thread.VentanaBuscandoReservas;
 import agencia_prog_3_thread.VentanaBuscandoVuelo;
 import agencia_prog_3_thread.VentanaRuletaDeLaSuerte;
@@ -81,8 +82,8 @@ public class VentanaInicio extends JFrame{
 					
 					VentanaInicio.this.setVisible(false);
 					if (nombresboton[numero-1].equals("Perfil")) {
-						VentanaUser userInfo = new VentanaUser(user, pass, VentanaInicio.this);
-						userInfo.setVisible(true);
+						abrirPerfilHilo();
+						
 					} else if (nombresboton[numero-1].equals("Reservas")) {
 						abrirReservasHilo();
 						
@@ -271,7 +272,39 @@ public class VentanaInicio extends JFrame{
 	    dialog.setVisible(true);
 	}
 
-	
+	private void abrirPerfilHilo() {
+	    String user = AlmacenajeSesion.getNombreUsuario();
+	    String pass = AlmacenajeSesion.getPassword();
+	    VentanaBuscandoPerfil dialog = new VentanaBuscandoPerfil(this);
+	    Thread hilo = new Thread(() -> {
+	        try {
+	            for (int i = 0; i < 10; i++) { 
+	                int puntos = i % 4; 
+	                StringBuilder sb = new StringBuilder("Cargando tu perfil");
+	                for (int j = 0; j < puntos; j++) {
+	                    sb.append(".");
+	                }
+	                String texto = sb.toString();
+	                SwingUtilities.invokeLater(() -> dialog.actualizarTexto(texto));
+	                Thread.sleep(400);
+	            }
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        }
+
+	        SwingUtilities.invokeLater(() -> {
+	            dialog.cerrar();
+	            // Abrimos la ventana de perfil con user y pass
+	            VentanaUser v = new VentanaUser(user, pass);
+	            v.setVisible(true);
+	            VentanaInicio.this.dispose();
+	        });
+	    });
+
+	    hilo.start();
+	    dialog.setVisible(true);
+	}
+
 	
 	public static void main(String[] args) {
 		VentanaInicio VentanaInicial = new VentanaInicio();
