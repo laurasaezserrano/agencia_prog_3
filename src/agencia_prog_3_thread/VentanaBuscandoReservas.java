@@ -4,8 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class VentanaBuscandoReservas extends JDialog {
-
-    private JLabel lblTexto;
+	private static final long serialVersionUID = 1L;
+	private JLabel lblTexto;
 
     public VentanaBuscandoReservas(Frame owner) {
         super(owner, "Buscando reservas...", true);
@@ -21,7 +21,7 @@ public class VentanaBuscandoReservas extends JDialog {
         panel.add(lblTexto, BorderLayout.CENTER);
         setContentPane(panel);
 
-        setSize(400, 150);
+        setSize(400, 250);
         setLocationRelativeTo(owner);
         setResizable(false);
     }
