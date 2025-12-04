@@ -37,6 +37,7 @@ public class Ventana1Login extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(4, 2, 3, 4));
 
+
         JLabel userLabel = new JLabel("Usuario:");
         JLabel passLabel = new JLabel("Contraseña:");
         userField = new JTextField();
