@@ -92,6 +92,7 @@
 package db;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
@@ -200,6 +201,7 @@ public class VentanaGestionDB extends JFrame {
 		tablaDatos.setRowHeight(25);
 		tablaDatos.setAlignmentX(CENTER_ALIGNMENT);
 		
+	
 		//cabecera
         JTableHeader cabecera = tablaDatos.getTableHeader();
         cabecera.setReorderingAllowed(false);
@@ -309,6 +311,7 @@ public class VentanaGestionDB extends JFrame {
 				"Error al cargar datos: " + ex.getMessage(),
 				"Error", JOptionPane.ERROR_MESSAGE);
 		}
+		centrarColumnas();
 	}
 
 	private void cargarDatosReservas() {
@@ -652,6 +655,18 @@ public class VentanaGestionDB extends JFrame {
 		}
 	}
 
+	
+	private void centrarColumnas() {
+	    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+	    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+	    int columnas = tablaDatos.getColumnCount();
+	    for (int i = 0; i < columnas; i++) {
+	        tablaDatos.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+	    }
+	}
+
+	
 	// --- MÉTODO PRINCIPAL ---
     
 	public static void main(String[] args) {
