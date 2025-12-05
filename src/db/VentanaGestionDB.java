@@ -118,7 +118,6 @@ public class VentanaGestionDB extends JFrame {
 	private JComboBox<String> cmbTablas;
 	private JTable tablaDatos;
 	private DefaultTableModel modeloTabla;
-	private JButton btnCargar;
 	private JButton btnInsertar;
 	private JButton btnActualizar;
 	private JButton btnEliminar;
@@ -194,6 +193,8 @@ public class VentanaGestionDB extends JFrame {
 			"Reserva", "Vuelo", "Aeropuerto", "Aerolinea", "Avion"
 		});
 		
+		cmbTablas.addActionListener(this::manejarCargarDatos);
+		
 		// Tabla de datos
 		modeloTabla = new DefaultTableModel();
 		tablaDatos = new JTable(modeloTabla);
@@ -210,13 +211,11 @@ public class VentanaGestionDB extends JFrame {
         
         
 		// Botones CRUD
-		btnCargar = new JButton("Cargar Datos");
 		btnInsertar = new JButton("Insertar");
 		btnActualizar = new JButton("Actualizar");
 		btnEliminar = new JButton("Eliminar");
 		
 		// ActionListeners
-		btnCargar.addActionListener(this::manejarCargarDatos);
 		btnInsertar.addActionListener(this::manejarInsertar);
 		btnActualizar.addActionListener(this::manejarActualizar);
 		btnEliminar.addActionListener(this::manejarEliminar);
@@ -230,7 +229,6 @@ public class VentanaGestionDB extends JFrame {
 		JPanel panelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		panelNorte.add(new JLabel("Seleccionar Tabla:"));
 		panelNorte.add(cmbTablas);
-		panelNorte.add(btnCargar);
 		panelNorte.add(lblEstadoDB);
 		add(panelNorte, BorderLayout.NORTH);
 		
