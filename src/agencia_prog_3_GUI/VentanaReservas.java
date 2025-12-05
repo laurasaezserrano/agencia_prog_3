@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.Locale;
 
 import javax.swing.AbstractCellEditor;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -64,9 +65,6 @@ public class VentanaReservas extends JFrame {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(new Color(0, 102, 204));
  
-        //Panel Central para las dos columnas (reservas anteriores y siguientes)
-//        centerPanel.setLayout(new GridLayout(1, 2, 10, 0)); // 1 fila, 2 columnas, 10px de espacio horizontal
-//        centerPanel.setBackground(Color.LIGHT_GRAY);
         
         JPanel panelSuperior = new JPanel(new BorderLayout());
         
@@ -90,9 +88,7 @@ public class VentanaReservas extends JFrame {
 		// Añadimos el panel de filtro debajo del título
 		panelSuperior.add(panelFiltro, BorderLayout.SOUTH);
         
-        
-//        centerPanel.add(panelSuperior, BorderLayout.NORTH); // <-- MIRA AQUÍ (El panel completo va arriba)
-		
+       		
         add(panelSuperior, BorderLayout.NORTH);
         
         tabbedPane = new JTabbedPane();
@@ -225,33 +221,55 @@ public class VentanaReservas extends JFrame {
 		
 	}
 	
+			
 	private void configurarTabla(JTable tabla, DefaultTableModel model) {
-        tabla.setRowHeight(28);
-        tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-        tabla.setFillsViewportHeight(true);
-        
-        // ----- CENTRAR TEXTO EN LAS COLUMNAS -----
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+	    tabla.setRowHeight(28);
+	    tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+	    tabla.setFillsViewportHeight(true);
 
-        int columnas = tabla.getColumnCount();
+	    // ----- CENTRAR TEXTO -----
+	    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+	    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Aplica el centrado a todas menos la última (botón)
-        for (int i = 0; i < columnas - 1; i++) {
-            tabla.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
-        // --- NUEVO: Añadimos el ButtonRenderer y ButtonEditor a la última columna ---
-        int columnaCancelar = columnas - 1; 
-        tabla.getColumnModel().getColumn(columnaCancelar).setCellRenderer(new ButtonRenderer("Cancelar"));
-        tabla.getColumnModel().getColumn(columnaCancelar).setCellEditor(
-                new ButtonEditor(tabla, this::cancelarReserva) // Llama al método cancelarReserva
-        );
-        
-        // (Opcional) Damos un ancho fijo a la columna del botón
-        tabla.getColumnModel().getColumn(columnaCancelar).setPreferredWidth(100);
-        tabla.getColumnModel().getColumn(columnaCancelar).setMaxWidth(100);
-        tabla.getColumnModel().getColumn(columnaCancelar).setMinWidth(100);
-    }
+	    // ----- COLORES ALTERNADOS -----
+	    TableCellRenderer colorRenderer = (table1, value, isSelected, hasFocus, row, column) -> {
+	        JLabel result = new JLabel(value != null ? value.toString() : "");
+	        
+	        if (!isSelected) {
+	            if (row % 2 == 0) {
+	                result.setBackground(new Color(250, 249, 249)); 
+	            } else {
+	                result.setBackground(new Color(235, 235, 235)); 
+	            }
+	        }
+	        
+	        result.setOpaque(true);
+	        return result;
+	    };
+
+	    int columnas = tabla.getColumnCount();
+
+	    // Aplicamos tanto el centrado como el color alternado a todas menos la última
+	    for (int i = 0; i < columnas - 1; i++) {
+	        tabla.getColumnModel().getColumn(i).setCellRenderer((table2, value, isSelected, hasFocus, row, col) -> {
+	            JLabel lbl = (JLabel) colorRenderer.getTableCellRendererComponent(table2, value, isSelected, hasFocus, row, col);
+	            lbl.setHorizontalAlignment(SwingConstants.CENTER);
+	            return lbl;
+	        });
+	    }
+
+	    // Botón cancelar
+	    int columnaCancelar = columnas - 1;
+	    tabla.getColumnModel().getColumn(columnaCancelar).setCellRenderer(new ButtonRenderer("Cancelar"));
+	    tabla.getColumnModel().getColumn(columnaCancelar).setCellEditor(
+	            new ButtonEditor(tabla, this::cancelarReserva)
+	    );
+
+	    tabla.getColumnModel().getColumn(columnaCancelar).setPreferredWidth(100);
+	    tabla.getColumnModel().getColumn(columnaCancelar).setMaxWidth(100);
+	    tabla.getColumnModel().getColumn(columnaCancelar).setMinWidth(100);
+	}
+
 	
 	
 //	private void cargarReservas(String usuarioFiltrar) {
