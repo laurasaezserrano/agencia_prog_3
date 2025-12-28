@@ -480,7 +480,7 @@ public class CuadriculaOfertas extends JFrame{
 		ventanaoferta.setSize(800, 500);
 		ventanaoferta.setLocationRelativeTo(this);
 		ventanaoferta.setLayout(new BorderLayout(10, 10));
-
+		ventanaoferta.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		/**IAG - Descripciones generadas por Gemini
 		 * 
 		 */
