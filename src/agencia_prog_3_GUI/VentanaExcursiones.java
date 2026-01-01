@@ -324,6 +324,21 @@ public class VentanaExcursiones extends JFrame{
             return out;
         }
         
+        
+        private List<Excursion> busquedarecursiva(List<Excursion> lista, String texto, int i){
+        	//caso base --> fin de la lista
+        	if (i >= lista.size()) {
+        		return new ArrayList<>();
+        	}
+        	//llamada recursiva
+        	List<Excursion> resultado = busquedarecursiva(lista, texto, i+1);
+        	//si coincide lo añadinos
+        	if (lista.get(i).getNombre().contains(texto)) {
+        		resultado.add(0, lista.get(i));
+        	}
+        	return resultado;        
+        }
+        
         //panel de eleccion de numero de personas + filtro de busqueda
         public JPanel configurarBusquedaExcursion() {
             JPanel panel1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
