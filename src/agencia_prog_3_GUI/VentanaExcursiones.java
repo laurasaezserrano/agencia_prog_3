@@ -324,7 +324,18 @@ public class VentanaExcursiones extends JFrame{
             return out;
         }
         
+        //CASO RECURSIVO 2 version simple 
+        private boolean existeexcrecursiva(List<Excursion> lista, String texto, int i) {
+        	if (i >= lista.size()) {
+        		return false;
+        	}
+        	if (lista.get(i).getNombre().contains(texto)) {
+        		return true;
+        	}
+        	return existeexcrecursiva(lista, texto, i+1);
+        }
         
+        //CASO RECURSIVO 1 (no implementada porque nose)
         private List<Excursion> busquedarecursiva(List<Excursion> lista, String texto, int i){
         	//caso base --> fin de la lista
         	if (i >= lista.size()) {
@@ -368,6 +379,7 @@ public class VentanaExcursiones extends JFrame{
             return panel1;
         }
         
+        //el del caso recursivo 1 (NO IMPLEMENTADO FALTA DE ESCRIBIR)
         private void aplicabusqueda() {
             String txt = campoFiltro.getText().trim(); //obtiene el texto que estamos escribiendo
             if (txt.isEmpty()) { //si esta vacio enseña todas las excursiones
@@ -375,6 +387,17 @@ public class VentanaExcursiones extends JFrame{
             } else { //sino, muestra las coincidencias del buscador con las que tenemos
             	ordena.setRowFilter(RowFilter.regexFilter("(?i)" + Pattern.quote(txt), 1)); 
             }}
+        
+        //el del caso recursivo 2 sencillo 
+        private void aplicabusqueda2() {
+        	String txt = campoFiltro.getText().trim();
+        	//se llama al metodo recursivo que recorre la lista y devuelve true o false
+        	boolean existe = existeexcrecursiva(crearListaExcursiones(), txt, 0); 
+        	if (!existe && !txt.isEmpty()) {//comprueba que no haya ninguna coincidencia o que el texto este vacio
+        		System.out.println("No se han encontrado excursiones");
+        	}
+        }
+
         
         
         //Resumen de la excursion seleccionada
