@@ -1,20 +1,23 @@
 package agencia_prog_3_data;
+
+import java.sql.Date;
+
 public class Vuelo {
 
     private String origen;
     private String destino;
-    private String fechaSalida;
-    private String fechaRegreso;
+    private Date fechaSalida;
+    private Date fechaRegreso;
     private String aerolinea;
-    private String precioEconomy;
-    private String precioBusiness;
+    private Double precioEconomy;
+    private Double precioBusiness;
     private Integer plazasDisponibles;
 
     public Vuelo() {}
 
-    public Vuelo(String origen, String destino, String fechaSalida,
-                 String fechaRegreso, String aerolinea,
-                 String precioEconomy, String precioBusiness,
+    public Vuelo(String origen, String destino, Date fechaSalida,
+                 Date fechaRegreso, String aerolinea,
+                 Double precioEconomy, Double precioBusiness,
                  Integer plazasDisponibles) {
         this.origen = origen;
         this.destino = destino;
@@ -33,20 +36,20 @@ public class Vuelo {
     public String getDestino() { return destino; }
     public void setDestino(String destino) { this.destino = destino; }
 
-    public String getFechaSalida() { return fechaSalida; }
-    public void setFechaSalida(String fechaSalida) { this.fechaSalida = fechaSalida; }
+    public Date getFechaSalida() { return fechaSalida; }
+    public void setFechaSalida(Date fechaSalida) { this.fechaSalida = fechaSalida; }
 
-    public String getFechaRegreso() { return fechaRegreso; }
-    public void setFechaRegreso(String fechaRegreso) { this.fechaRegreso = fechaRegreso; }
+    public Date getFechaRegreso() { return fechaRegreso; }
+    public void setFechaRegreso(Date fechaRegreso) { this.fechaRegreso = fechaRegreso; }
 
     public String getAerolinea() { return aerolinea; }
     public void setAerolinea(String aerolinea) { this.aerolinea = aerolinea; }
 
-    public String getPrecioEconomy() { return precioEconomy; }
-    public void setPrecioEconomy(String precioEconomy) { this.precioEconomy = precioEconomy; }
+    public double getPrecioEconomy() { return precioEconomy; }
+    public void setPrecioEconomy(double precioEconomy) { this.precioEconomy = precioEconomy; }
 
-    public String getPrecioBusiness() { return precioBusiness; }
-    public void setPrecioBusiness(String precioBusiness) { this.precioBusiness = precioBusiness; }
+    public double getPrecioBusiness() { return precioBusiness; }
+    public void setPrecioBusiness(double precioBusiness) { this.precioBusiness = precioBusiness; }
 
     public Integer getPlazasDisponibles() { return plazasDisponibles; }
     public void setPlazasDisponibles(Integer plazasDisponibles) {

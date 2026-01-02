@@ -1,5 +1,7 @@
 package agencia_prog_3_data;
 
+import java.sql.Date;
+
 public class Reserva {
 
     private String usuario;
@@ -9,8 +11,8 @@ public class Reserva {
     private String tipoHabitacion;
     private Integer numAdultos;
     private Integer numNiños;
-    private String fechaEntrada;
-    private String fechaSalida;
+    private Date fechaEntrada;
+    private Date fechaSalida;
     private Double precioNoche;
 
     public Reserva() {}
@@ -18,7 +20,7 @@ public class Reserva {
     public Reserva(String usuario, String ciudad, String nombreHotel,
                    String email, String tipoHabitacion,
                    Integer numAdultos, Integer numNiños,
-                   String fechaEntrada, String fechaSalida,
+                   Date fechaEntrada, Date fechaSalida,
                    Double precioNoche) {
         this.usuario = usuario;
         this.ciudad = ciudad;
@@ -56,13 +58,13 @@ public class Reserva {
     public Integer getNumNiños() { return numNiños; }
     public void setNumNiños(Integer numNiños) { this.numNiños = numNiños; }
 
-    public String getFechaEntrada() { return fechaEntrada; }
-    public void setFechaEntrada(String fechaEntrada) {
+    public Date getFechaEntrada() { return fechaEntrada; }
+    public void setFechaEntrada(Date fechaEntrada) {
         this.fechaEntrada = fechaEntrada;
     }
 
-    public String getFechaSalida() { return fechaSalida; }
-    public void setFechaSalida(String fechaSalida) {
+    public Date getFechaSalida() { return fechaSalida; }
+    public void setFechaSalida(Date fechaSalida) {
         this.fechaSalida = fechaSalida;
     }
 
