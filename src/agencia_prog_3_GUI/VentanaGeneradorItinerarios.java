@@ -107,18 +107,18 @@ public class VentanaGeneradorItinerarios extends JFrame {
         
         // Presupuesto máximo
         panelParams.add(new JLabel("Presupuesto máximo (€):"));
-        JTextField campoPresupuesto = new JTextField("500", 8);
+        campoPresupuesto = new JTextField("500", 8);
         panelParams.add(campoPresupuesto);
         
         // Origen (para rutas conectadas)
         panelParams.add(new JLabel("Ciudad origen:"));
-        JTextField campoOrigen = new JTextField("Madrid", 10);
+        campoOrigen = new JTextField("Madrid", 10);
         campoOrigen.setEnabled(false);
         panelParams.add(campoOrigen);
         
         // Destino (para rutas conectadas)
         panelParams.add(new JLabel("Ciudad destino:"));
-        JTextField campoDestino = new JTextField("Londres", 10);
+        campoDestino = new JTextField("Londres", 10);
         campoDestino.setEnabled(false);
         panelParams.add(campoDestino);
         
@@ -142,7 +142,7 @@ public class VentanaGeneradorItinerarios extends JFrame {
         panel.setBackground(new Color(50, 150, 200));
         
         // Label de resultados
-        JLabel labelResultados = new JLabel("Resultados: 0 itinerarios encontrados");
+        labelResultados = new JLabel("Resultados: 0 itinerarios encontrados");
         labelResultados.setFont(new Font("Segoe UI", Font.BOLD, 14));
         labelResultados.setHorizontalAlignment(JLabel.CENTER);
         labelResultados.setForeground(Color.WHITE);
@@ -150,7 +150,7 @@ public class VentanaGeneradorItinerarios extends JFrame {
         
         // Crear modelo de tabla
         String[] columnas = {"#", "Itinerario", "Vuelos", "Precio Total", "Detalles", "Ver"};
-        DefaultTableModel modeloTabla = new DefaultTableModel(columnas, 0) {
+        modeloTabla = new DefaultTableModel(columnas, 0) {
             private static final long serialVersionUID = 1L;
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -159,7 +159,7 @@ public class VentanaGeneradorItinerarios extends JFrame {
         };
         
         // Crear tabla
-        JTable tablaResultados = new JTable(modeloTabla);
+        tablaResultados = new JTable(modeloTabla);
         tablaResultados.setRowHeight(40);
         tablaResultados.setFillsViewportHeight(true);
         tablaResultados.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
