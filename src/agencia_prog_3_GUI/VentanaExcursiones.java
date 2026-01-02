@@ -415,8 +415,8 @@ public class VentanaExcursiones extends JFrame{
             //total
             int per = (Integer) numpersonas.getSelectedItem();
             JLabel textototal = new JLabel("Total: " + String.format("%.2f €", ex.getPrecio() * per));
-            textototal.setFont(new Font("Segoe UI", Font.BOLD, 12));		
-            textototal.setAlignmentX(Component.LEFT_ALIGNMENT);
+            textototal.setFont(new Font("Segoe UI", Font.BOLD, 18));		
+            textototal.setAlignmentX(Component.CENTER_ALIGNMENT);
             resumen.add(textototal);
             
           //actualiza el precio total
