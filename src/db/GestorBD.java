@@ -25,132 +25,133 @@ import agencia_prog_3_data.VueloData;
 
 public class GestorBD {
 
-    // 1. Constantes y configuración
-	private final String PROPERTIES_FILE = "resources/config/app.properties";
+    //Configuración
+	private final String PROPERTIES_FILE = "resources/conf/app.properties";
 	private static Logger logger = Logger.getLogger(GestorBD.class.getName());
-	private final String CSV_AEROLINEAS = "resources/data/aerolineas.csv"; 
 	
-	private String driverName = "org.sqlite.JDBC";
-	private String databaseFile = "resources/data/agencia.db";
-	private String connectionString = "jdbc:sqlite:resources/data/agencia.db";
-	// ...
-
+	//Constantes (rutas csv)
+	private final String CSV_HOTELES = "resources/data/hoteles.csv";
+	private final String CSV_USER = "resources/data/user.csv"; 
+	private final String CSV_RESERVAS = "resources/data/reservas.csv"; 
+	private final String CSV_VUELOS = "resources/data/vuelos.csv"; 
+	
+	private String driverName;
+	private String db;
+	private String connection ;
+	private Properties properties;
+	
 	public GestorBD() {
-	    // Si la carga de logger.properties también da problemas, puedes envolver solo esa parte en un try/catch
 	    try (FileInputStream fis = new FileInputStream("resources/config/logger.properties")) {
 	        LogManager.getLogManager().readConfiguration(fis);
-	    } catch (Exception ex) {
-	        // Ignorar si no se encuentra el logger, pero reportarlo
-	        //logger.warning(String.format("Error al cargar logger.properties: %s", ex.getMessage()));
-	    }
-	    
-	    // El resto de inicialización, sin usar properties:
-	    try {
+	        properties = new Properties();
+	        driverName = properties.getProperty("driver");
+	        db = properties.getProperty("database");
+	        connection = properties.getProperty("connection");
+	        
 	        Class.forName(driverName);
 	    } catch (Exception ex) {
 	        logger.warning(String.format("Error al cargar el driver de BBDD: %s", ex.getMessage()));
 	    }
 	}
 	
-	/**
-	 * Crear las 4 tablas.
-	 */
+	//Creacion de las tablas (Reservas, hoteles, user(usuarios), vuelos) 
+	//Las utilizadas en la app
+	
 	public void crearBBDD() {
-			
-            // Tabla 1: AEROLINEA
-			String sql1 = "CREATE TABLE IF NOT EXISTS Aerolinea (\n"
-	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-	                + " nombre TEXT UNIQUE NOT NULL);";
-	
-            // Tabla 2: AVION
-			String sql2 = "CREATE TABLE IF NOT EXISTS Avion (\n"
-	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-                    + " codigo TEXT UNIQUE NOT NULL,\n"
-	                + " nombre TEXT NOT NULL,\n"
-	                + " numero_asientos INTEGER NOT NULL);";
-	
-            // Tabla 3: AEROPUERTO
-			String sql3 = "CREATE TABLE IF NOT EXISTS Aeropuerto (\n"
-	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-	                + " nombre TEXT UNIQUE NOT NULL);"; 
-            
-            // Tabla 4: VUELO
-            String sql4 = "CREATE TABLE IF NOT EXISTS Vuelo (\n"
-                    + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-                    + " codigo TEXT UNIQUE NOT NULL,\n"
-                    + " fecha TEXT NOT NULL,\n"
-                    + " duracion REAL,\n"
-                    + " precio REAL NOT NULL,\n"
+		//USER
+		String sqlUser =
+			    "CREATE TABLE IF NOT EXISTS USER (\n" +
+			    "    usuario TEXT,\n" +
+			    "    password TEXT,\n" +
+			    "    nombre TEXT,\n" +
+			    "    dni TEXT,\n" +
+			    "    email TEXT,\n" +
+			    "    telefono INTEGER,\n" +
+			    "    direccion TEXT,\n" +
+			    "    idioma TEXT,\n" +
+			    "    moneda TEXT,\n" +
+			    "    PRIMARY KEY (usuario)\n" +
+			    ");";
+		
+		//HOTEL
+		String sqlHotel =
+			    "CREATE TABLE IF NOT EXISTS HOTEL (\n" +
+			    "    nombre TEXT,\n" +
+			    "    ciudad TEXT,\n" +
+			    "    pais TEXT,\n" +
+			    "    estrellas INTEGER,\n" +
+			    "    capacidad INTEGER,\n" +
+			    "    precio_noche REAL,\n" +
+			    "    moneda TEXT\n" +
+			    ");";
 
-                    + " id_aerolinea INTEGER NOT NULL,\n"
-                    + " id_avion INTEGER NOT NULL,\n"
-                    + " id_aeropuerto_origen INTEGER NOT NULL,\n"
-                    + " id_aeropuerto_destino INTEGER NOT NULL,\n"
-
-                    + " FOREIGN KEY(id_aerolinea) REFERENCES Aerolinea(id) ON DELETE CASCADE,\n"
-                    + " FOREIGN KEY(id_avion) REFERENCES Avion(id) ON DELETE CASCADE,\n"
-                    + " FOREIGN KEY(id_aeropuerto_origen) REFERENCES Aeropuerto(id) ON DELETE CASCADE,\n"
-                    + " FOREIGN KEY(id_aeropuerto_destino) REFERENCES Aeropuerto(id) ON DELETE CASCADE\n"
-                    + ");";
+		//VUELO
+		String sqlVuelo =
+			    "CREATE TABLE IF NOT EXISTS VUELO (\n" +
+			    "    origen TEXT,\n" +
+			    "    destino TEXT,\n" +
+			    "    fecha_salida TEXT,\n" +
+			    "    fecha_regreso TEXT,\n" +
+			    "    aerolinea TEXT,\n" +
+			    "    precio_economy TEXT,\n" +
+			    "    precio_business TEXT,\n" +
+			    "    plazas_disponibles INTEGER\n" +
+			    ");";
+			 
+		//RESERVA
+		String sqlReserva =
+			    "CREATE TABLE IF NOT EXISTS RESERVA (\n" +
+			    "    usuario TEXT,\n" +
+			    "    ciudad TEXT,\n" +
+			    "    nombre_Hotel TEXT,\n" +
+			    "    email TEXT,\n" +
+			    "    tipo_Habitacion TEXT,\n" +
+			    "    num_adultos INTEGER,\n" +
+			    "    num_niños INTEGER,\n" +
+			    "    fecha_Entrada TEXT,\n" +
+			    "    fecha_Salida TEXT,\n" +
+			    "    precio_Noche REAL\n" +
+			    ");";
             
-            String sql5 = "CREATE TABLE IF NOT EXISTS Reserva (\n"
-                    + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-                    + " usuario TEXT NOT NULL,\n"
-                    + " ciudad TEXT NOT NULL,\n"
-                    + " reserva_nombre TEXT NOT NULL,\n"
-                    + " email TEXT NOT NULL,\n"
-                    + " tipo_habitacion TEXT NOT NULL,\n"
-                    + " adultos INTEGER NOT NULL,\n"
-                    + " ninos INTEGER NOT NULL,\n"
-                    + " fecha_salida TEXT NOT NULL,\n"
-                    + " fecha_regreso TEXT NOT NULL,\n"
-                    + " precio REAL NOT NULL);";
 			
-			try (Connection con = DriverManager.getConnection(connectionString);
-			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
-				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
-				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
-                 PreparedStatement pStmt4 = con.prepareStatement(sql4);
-				 PreparedStatement pStmt5 = con.prepareStatement(sql5)) {
+			try (Connection con = DriverManager.getConnection(connection);
+			     PreparedStatement pStmt1 = con.prepareStatement(sqlUser);
+				 PreparedStatement pStmt2 = con.prepareStatement(sqlHotel);
+				 PreparedStatement pStmt3 = con.prepareStatement(sqlVuelo);
+                 PreparedStatement pStmt4 = con.prepareStatement(sqlReserva)){
 				
 				// Ejecutar las sentencias de creación
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()) {
-		        	logger.info("Se han creado las 5 tablas de la Agencia de Viajes");
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute()) {
+		        	logger.info("Se han creado las 4 tablas");
 		        }
 			} catch (Exception ex) {
 				logger.warning(String.format("Error al crear las tablas: %s", ex.getMessage()));
-			}
-		
+			}	
 	}
 	
-	/**
-	 * Borra las tablas y el fichero de la BBDD.
-	 */
+	//Eliminar tablas y base
 	public void borrarBBDD() {
 
-			String sql1 = "DROP TABLE IF EXISTS Reserva;";
-            String sql2 = "DROP TABLE IF EXISTS Vuelo;"; 
-			String sql3 = "DROP TABLE IF EXISTS Aerolinea;";
-			String sql4 = "DROP TABLE IF EXISTS Avion;";
-            String sql5 = "DROP TABLE IF EXISTS Aeropuerto;";
-            resetearAutoincrement("Aeropuerto");
+			String sql1 = "DROP TABLE IF EXISTS USER;";
+            String sql2 = "DROP TABLE IF EXISTS VUELO;"; 
+			String sql3 = "DROP TABLE IF EXISTS HOTEL;";
+			String sql4 = "DROP TABLE IF EXISTS RESERVA;";
 
 	        try (Connection con = DriverManager.getConnection(connectionString);
 			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
 				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
 				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
-                 PreparedStatement pStmt4 = con.prepareStatement(sql4);
-	        	 PreparedStatement pStmt5 = con.prepareStatement(sql5)) {
+                 PreparedStatement pStmt4 = con.prepareStatement(sql4)) {
 				
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()) {
-		        	logger.info("Se han borrado las tablas de la Agencia de Viajes");
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute()) {
+		        	logger.info("Se han borrado las tablas");
 		        }
 			} catch (Exception ex) {
 				logger.warning(String.format("Error al borrar las tablas: %s", ex.getMessage()));
 			}
 			
 			try {
-				Files.delete(Paths.get(databaseFile));
+				Files.delete(Paths.get(db));
 				logger.info("Se ha borrado el fichero de la BBDD");
 			} catch (Exception ex) {
 				logger.warning(String.format("Error al borrar el fichero de la BBDD: %s", ex.getMessage()));
@@ -161,29 +162,20 @@ public class GestorBD {
 	/**
 	 * Borra los datos de las 4 tablas (mantiene la estructura de tablas).
 	 */
+	
 	public void borrarDatos() {
-			String sql1 = "DELETE FROM Reserva;";
-			String sql2 = "DELETE FROM Vuelo;"; 
-			String sql3 = "DELETE FROM Aerolinea;";
-			String sql4 = "DELETE FROM Avion;";
-            String sql5 = "DELETE FROM Aeropuerto;";
-            // Reiniciar los autoincrementos
-            resetearAutoincrement("Aeropuerto");
-            resetearAutoincrement("Aerolinea");
-	        resetearAutoincrement("Avion");
-	        resetearAutoincrement("Vuelo");
-	        resetearAutoincrement("Reserva");
+			String sql1 = "DELETE FROM USER;";
+			String sql2 = "DELETE FROM VUELO;"; 
+			String sql3 = "DELETE FROM RESERVA;";
+			String sql4 = "DELETE FROM HOTEL;";
 
-			
-	        // ... (lógica para ejecutar DELETE) ...
-			try (Connection con = DriverManager.getConnection(connectionString);
+			try (Connection con = DriverManager.getConnection(connection);
 			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
 				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
 				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
-                 PreparedStatement pStmt4 = con.prepareStatement(sql4);
-				 PreparedStatement pStmt5 = con.prepareStatement(sql5)) {
-				
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()) {
+                 PreparedStatement pStmt4 = con.prepareStatement(sql4))
+			{
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute()) {
 		        	logger.info("Se han borrado los datos de la Agencia de Viajes");
 		        }
 			} catch (Exception ex) {
@@ -192,10 +184,12 @@ public class GestorBD {
 		
 	}
 
+	
     /**
 	 * Inserta Aeropuertos en la BBDD.
 	 */
-	public void insertarAeropuerto(Aeropuertos... aeropuertos) {
+	
+	public void insertarUsuarios (Aeropuertos... aeropuertos) {
 		String sql = "INSERT INTO Aeropuerto (nombre) VALUES (?);";
 		
 		try (Connection con = DriverManager.getConnection(connectionString);
@@ -222,24 +216,6 @@ public class GestorBD {
 		}			
 	}
     
-	public int getAeropuertoIdByNombre(String nombre) {
-	    String sql = "SELECT id FROM Aeropuerto WHERE nombre = ?;";
-	    
-	    try (Connection con = DriverManager.getConnection(connectionString);
-	         PreparedStatement pStmt = con.prepareStatement(sql)) {
-	        
-	        pStmt.setString(1, nombre);
-	        
-	        try (ResultSet rs = pStmt.executeQuery()) {
-	            if (rs.next()) {
-	                return rs.getInt("id"); // Retorna el ID encontrado
-	            }
-	        }
-	    } catch (Exception ex) {
-	        logger.warning(String.format("Error al buscar ID de Aeropuerto %s: %s", nombre, ex.getMessage()));
-	    }
-	    return -1;
-	}
 	
     /**
 	 * Inserta Vuelos en la BBDD.

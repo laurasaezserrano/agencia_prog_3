@@ -21,7 +21,7 @@ public class Ventana1Login extends JFrame {
     protected static JPasswordField passField;
     private JButton loginButton;
     private JLabel statusLabel;
-    private String userCSV = "resources/data/userCSV.csv";
+    private String userCSV = "resources/data/user.csv";
     
     private HashMap<String, String> validUsers;
 
