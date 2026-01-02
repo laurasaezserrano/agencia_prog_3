@@ -249,6 +249,17 @@ public class VentanaVueloYHotel extends JFrame {
         JButton buscar = new JButton("Buscar");
         buscar.addActionListener(e -> aplicarbusqueda());
         panel1.add(buscar);
+        
+        JButton buscarItinerario = new JButton("Buscar itinerario");
+        buscarItinerario.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//TODO abrir ventana generar itinerario
+				
+			}
+		});
+        panel1.add(buscarItinerario);
 
         campofiltro.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             private void go() { aplicarbusqueda(); }
@@ -259,7 +270,13 @@ public class VentanaVueloYHotel extends JFrame {
         return panel1;
     }
         
-    private void aplicarbusqueda() {
+    private void accionGenerarItinerario() {
+		// TODO Auto-generated method stub
+		VentanaGeneradorItinerarios ventana = new VentanaGeneradorItinerarios(vuelos);
+		ventana.setVisible(true);
+	}
+
+	private void aplicarbusqueda() {
         String txt = campofiltro.getText().trim();
         if (txt.isEmpty()) {
             ordenado.setRowFilter(null);
