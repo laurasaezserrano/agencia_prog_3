@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -221,9 +222,16 @@ public class VentanaGeneradorItinerarios extends JFrame {
         btnLimpiar.addActionListener(e -> limpiarTabla());
         panel.add(btnLimpiar);
         
-        JButton btnCerrar = new JButton("Cerrar");
-        btnCerrar.addActionListener(e -> dispose());
-        panel.add(btnCerrar);
+        JButton btnVolver = new JButton("Atrás");
+        btnVolver.addActionListener(e -> {
+            // Reemplaza 'VentanaMenu' por el nombre real de tu clase de destino
+            VentanaVueloYHotel ventana = new VentanaVueloYHotel(); 
+            ventana.setVisible(true);
+            
+            // Cerramos la ventana actual
+            this.dispose(); 
+        });
+        panel.add(btnVolver);
         
         return panel;
     }
