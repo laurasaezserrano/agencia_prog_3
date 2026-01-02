@@ -46,8 +46,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import agencia_prog_3_thread.VentanaBuscandoVuelo;
-import db.GestorBD;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -60,6 +58,7 @@ public class VentanaVueloYHotel extends JFrame {
     private final String[] aerolineas = {"Iberia", "Air France", "Swiss Air", "Alitalia", "JAL", "Thai Airways", "Delta", "Norwegian", "Alitalia", "Iberia", "Iberia", "Iberia", "Iberia", "Iberia", "Iberia", "Iberia", "Iberia"};
     private final int[] duracionMinutos = {155, 120, 140, 135, 720, 780, 480, 210, 155, 155, 120, 140, 135, 135, 720, 780, 480};
     private final int[] asientosLibres = {180, 180, 160, 150, 280, 300, 240, 180, 180, 180, 180, 160, 150, 280, 300, 240, 180};
+    
     
     String[] origen = {"Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid", "Madrid"};
     String[] destino = {"Toronto", "París", "Zurich", "Roma", "Tokio", "Bangkok", "Nueva York", "Oslo", "Florencia", "Bristol", "Bogota", "Cracovia", "Londres", "Zurich", "Roma", "Tokio", "Bangkok"};
@@ -96,7 +95,7 @@ public class VentanaVueloYHotel extends JFrame {
     public VentanaVueloYHotel() {
         setTitle("Búsqueda de vuelos");
         setSize(1300, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
         
@@ -249,6 +248,18 @@ public class VentanaVueloYHotel extends JFrame {
         JButton buscar = new JButton("Buscar");
         buscar.addActionListener(e -> aplicarbusqueda());
         panel1.add(buscar);
+        
+        JButton buscarItinerario = new JButton("Buscar itinerario");
+        buscarItinerario.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				accionGenerarItinerario();
+				
+			}
+		});
+        panel1.add(buscarItinerario);
 
         campofiltro.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             private void go() { aplicarbusqueda(); }
@@ -259,7 +270,14 @@ public class VentanaVueloYHotel extends JFrame {
         return panel1;
     }
         
-    private void aplicarbusqueda() {
+    private void accionGenerarItinerario() {
+		// TODO Auto-generated method stub
+		VentanaGeneradorItinerarios ventana = new VentanaGeneradorItinerarios(vuelos);
+		ventana.setVisible(true);
+		this.dispose();
+	}
+
+	private void aplicarbusqueda() {
         String txt = campofiltro.getText().trim();
         if (txt.isEmpty()) {
             ordenado.setRowFilter(null);
