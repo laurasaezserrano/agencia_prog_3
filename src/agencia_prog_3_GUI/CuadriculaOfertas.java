@@ -47,7 +47,6 @@ import db.GestorBD;
 
 //FALTA
 //Añadir boton de reserva para que acabe de confirmar la reserva con los datos necesarios y añadirla a su perfil
-//Crear metodo especificado despues de Lectura CSV
 
 public class CuadriculaOfertas extends JFrame{
 	private static final long serialVersionUID = 1L;
@@ -335,21 +334,15 @@ public class CuadriculaOfertas extends JFrame{
 		    spinFechaIda.addKeyListener(listener);
 		    spinFechaVuelta.addKeyListener(listener);
 		    cmbHabitacion.addKeyListener(listener);
-		}
-
-		
-		
+		}		
 }
 	    
 	public CuadriculaOfertas() {
 		this.hotelesPorCiudad = cargarHotelesDesdeCSV();
 		setLayout(new BorderLayout());
-		
-		
 		setTitle("OFERTAS RECIENTES");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(800, 500);
-//		setMaximumSize(getToolkit().getScreenSize());
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout());
@@ -443,7 +436,6 @@ public class CuadriculaOfertas extends JFrame{
 	        }
 			
 			try {
-		        // images/OFerta(num)_sup.jpg
 		        Image originalImageHover = ImageIO.read(new File("resources/images/Oferta" + numero + "_sup.jpg"));
 		        
 		        if (originalImageHover != null) {
@@ -463,10 +455,7 @@ public class CuadriculaOfertas extends JFrame{
 		    }
 			
 			JButton boton = new JButton(ciudadesOferta[i], iconoOriginal);
-			
 			boton.setPreferredSize(new Dimension(200, 120));
-//			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//	        setLayout(new FlowLayout());
 			boton.setHorizontalTextPosition(SwingConstants.CENTER); // Centra horizontalmente el texto
 			boton.setVerticalTextPosition(SwingConstants.BOTTOM);
 			boton.addActionListener(new ActionListener() {
