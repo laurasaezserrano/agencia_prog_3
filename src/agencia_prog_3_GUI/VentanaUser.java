@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.URL;
 
@@ -217,8 +219,37 @@ public class VentanaUser extends JFrame {
             JOptionPane.showMessageDialog(this, info, "Datos guardados", JOptionPane.INFORMATION_MESSAGE);
         });
         
+        
+        cerrarventana();
+        
         setVisible(true);
     }
+    
+    private void cerrarventana() {
+    	KeyAdapter listener = new KeyAdapter() {
+    		@Override
+    		public void keyPressed(KeyEvent e) {
+    			if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_X) {
+    				dispose();
+    			}
+    		}
+		};
+		this.addKeyListener(listener);
+		setFocusable(true);
+		nusuario.addKeyListener(listener);
+		contraseña.addKeyListener(listener);
+	    nombre.addKeyListener(listener);
+	    dni.addKeyListener(listener);
+	    email.addKeyListener(listener);
+	    telefono.addKeyListener(listener);
+	    direccion.addKeyListener(listener);
+	    cbIdioma.addKeyListener(listener);
+	    cbMoneda.addKeyListener(listener);
+	    btnModificarContrasena.addKeyListener(listener);
+	    botonGuardar.addKeyListener(listener);
+	    btnMostrarContrasena.addKeyListener(listener);
+    }
+    
     
     private JLabel createLabel(String text, Font font) {
         JLabel label = new JLabel(text);
