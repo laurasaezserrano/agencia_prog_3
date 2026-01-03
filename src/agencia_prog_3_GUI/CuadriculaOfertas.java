@@ -9,6 +9,8 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -473,15 +475,32 @@ public class CuadriculaOfertas extends JFrame{
 		oferta.setBackground(new Color(255, 255, 255)); //blanco
 		add(oferta, BorderLayout.NORTH);
 		
+		cerrarventana();
+
+		
 	}
 	
 	private void abriroferta(int numero) {
 		JFrame ventanaoferta = new JFrame(ciudadesOferta [numero-1]);
+		ventanaoferta.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_X) {
+					ventanaoferta.dispose();
+				}
+				super.keyPressed(e);
+			}
+		});
+		ventanaoferta.setFocusable(true);
 		ventanaoferta.setSize(800, 500);
 		ventanaoferta.setLocationRelativeTo(this);
 		ventanaoferta.setLayout(new BorderLayout(10, 10));
 		ventanaoferta.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		/**IAG - Descripciones generadas por Gemini
+		
+		
+		
+		
+		/**IAG - Descripciones generadas por Gemini y ChatGPT
 		 * 
 		 */
 		 String[] descripciones = {
@@ -578,7 +597,6 @@ public class CuadriculaOfertas extends JFrame{
 	    
 	    JPanel panelImagen = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    panelImagen.add(imagenLabel);
-//	    ventanaoferta.add(panelImagen,BorderLayout.NORTH);
 	    
 		//Descripcion
 		JTextArea descripcionArea = new JTextArea();
@@ -590,7 +608,6 @@ public class CuadriculaOfertas extends JFrame{
         descripcionArea.setBackground(new Color(250, 250, 250));
         descripcionArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         JScrollPane scrollDescripcion = new JScrollPane(descripcionArea);
-//      ventanaoferta.add(scrollDescripcion, BorderLayout.CENTER);
         
         contenidoPanel.add(scrollDescripcion);
         contenidoPanel.add(panelImagen);
@@ -629,7 +646,7 @@ public class CuadriculaOfertas extends JFrame{
 		        } else {JOptionPane.showMessageDialog(ventanaoferta, "No hay datos de hoteles disponibles para " + ciudadElegida, "Error de Datos", JOptionPane.ERROR_MESSAGE);
 	            return;
 		        }
-		        VentanaReserva vReserva = new VentanaReserva(ciudadElegida, precioBase); // ✨ PASAMOS EL PRECIO BASE
+		        VentanaReserva vReserva = new VentanaReserva(ciudadElegida, precioBase); //PASAMOS EL PRECIO BASE
 		        vReserva.setVisible(true);
 		    }
 			
@@ -812,6 +829,18 @@ public class CuadriculaOfertas extends JFrame{
 	}
 	
 	
+	private void cerrarventana() {
+ 	   KeyAdapter listener = new KeyAdapter() {
+ 		   @Override
+ 		public void keyPressed(KeyEvent e) {
+ 			if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_X) {
+ 				dispose(); //se cierra
+ 			}
+ 		}
+		};
+		this.addKeyListener(listener);
+ 	setFocusable(true);
+    }
 	
 	public static void main(String[] args) {
 		CuadriculaOfertas ofertas = new CuadriculaOfertas();
