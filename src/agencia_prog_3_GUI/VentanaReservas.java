@@ -7,6 +7,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -196,7 +198,7 @@ public class VentanaReservas extends JFrame {
         });
         
 		cargarReservasDesdeCSV(usuarioLogueado);
-		
+		cerrarventana(txtFiltroCiudad, tablaHoteles, tablaExcursiones, tabbedPane, btnFiltrar, btnLimpiarFiltro);
 	}
 	
 			
@@ -454,7 +456,27 @@ public class VentanaReservas extends JFrame {
         }
     }
 	
-	
+	private void cerrarventana(JTextField txtFiltroCiudad, JTable tablaHoteles, JTable tablaExcursiones, JTabbedPane tabbedPane, 
+			JButton btnFiltrar, JButton btnLimpiarFiltro) {
+		KeyAdapter listener = new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_X) {
+					dispose();
+				}
+			}
+		};
+		this.addKeyListener(listener);
+		setFocusable(true);
+		txtFiltroCiudad.addKeyListener(listener);
+	    tablaHoteles.addKeyListener(listener);
+	    tablaExcursiones.addKeyListener(listener);
+	    tabbedPane.addKeyListener(listener);
+	    btnFiltrar.addKeyListener(listener);
+	    btnLimpiarFiltro.addKeyListener(listener);
+	}
+    
+    
 	public static void main(String[] args) {
 		VentanaReservas vReservas = new VentanaReservas();
 		vReservas.setVisible(true);
