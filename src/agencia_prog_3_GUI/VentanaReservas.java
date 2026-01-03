@@ -212,7 +212,7 @@ public class VentanaReservas extends JFrame {
 	    // ----- COLORES ALTERNADOS -----
 	    TableCellRenderer colorRenderer = (table1, value, isSelected, hasFocus, row, column) -> {
 	        JLabel result = new JLabel(value != null ? value.toString() : "");
-	        
+            result.setFont(new Font("Arial", Font.PLAIN, 14));       
 	        if (!isSelected) {
 	            if (row % 2 == 0) {
 	                result.setBackground(new Color(250, 249, 249)); 
@@ -231,6 +231,7 @@ public class VentanaReservas extends JFrame {
 	    for (int i = 0; i < columnas - 1; i++) {
 	        tabla.getColumnModel().getColumn(i).setCellRenderer((table2, value, isSelected, hasFocus, row, col) -> {
 	            JLabel lbl = (JLabel) colorRenderer.getTableCellRendererComponent(table2, value, isSelected, hasFocus, row, col);
+
 	            lbl.setHorizontalAlignment(SwingConstants.CENTER);
 	            return lbl;
 	        });

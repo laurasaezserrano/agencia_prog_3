@@ -13,7 +13,7 @@ public class VentanaUser extends JFrame {
 
     private static final Color COLOR_PRINCIPAL = new Color(51, 102, 153);
     private static final Color COLOR_FONDO = new Color(245, 245, 245);
-    private static final String RUTA_CSV = "usuarios.csv";
+    private static final String RUTA_CSV = "user.csv";
 
     private JTextField nusuario;
     private JPasswordField contraseña; 
