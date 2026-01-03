@@ -87,7 +87,7 @@ public class CuadriculaOfertas extends JFrame{
 	    	
 	    	private double precioFinalCalculado = 0.0;
 	    	    
-	   public VentanaReserva(String ciudadSeleccionada, double precioBaseNoche) { 
+	    public VentanaReserva(String ciudadSeleccionada, double precioBaseNoche) { 
 	                this.ciudadSeleccionada = ciudadSeleccionada;
 	                this.precioBaseNoche = precioBaseNoche;
 	                this.hotelSeleccionado = obtenerHotelMasBaratoDeCiudad(hotelesPorCiudad, ciudadSeleccionada);;
@@ -153,6 +153,7 @@ public class CuadriculaOfertas extends JFrame{
 	        spinFechaIda.setEditor(editorIda);
 	        panelDatos.add(spinFechaIda);
 	        calendario.add(Calendar.DATE, 1); //Calculamos el día de mañana
+	        
 	        //Fecha de Vuelta
 	        panelDatos.add(new JLabel("Fecha de Regreso:"));
 	        SpinnerDateModel modelVuelta = new SpinnerDateModel( calendario.getTime(), null, null, java.util.Calendar.DAY_OF_MONTH);
@@ -251,7 +252,10 @@ public class CuadriculaOfertas extends JFrame{
 	        spinNinos.addChangeListener(e -> actualizarPrecioTotal());
 	        spinFechaIda.addChangeListener(e -> actualizarPrecioTotal());
 	        spinFechaVuelta.addChangeListener(e -> actualizarPrecioTotal());
+	        cerrarventana2();
 	    }
+	    
+	    
 	   private void mostrarHotelSeleccionado() {
 	        if (hotelSeleccionado != null) {
 	            String estrellas = "*".repeat(hotelSeleccionado.getEstrellas());
@@ -311,6 +315,30 @@ public class CuadriculaOfertas extends JFrame{
 	
 	        lblPrecioTotal.setText(String.format("%.2f € (%d días)", precioFinal, duracionViaje));
 	    }
+		
+		
+		private void cerrarventana2() {
+		    KeyAdapter listener = new KeyAdapter() {
+		        @Override
+		        public void keyPressed(KeyEvent e) {
+		            if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_X) {
+		                dispose(); // cierra VentanaReserva
+		            }
+		        }
+		    };
+		    this.addKeyListener(listener);
+		    this.setFocusable(true);
+		    txtNombre.addKeyListener(listener);
+		    txtEmail.addKeyListener(listener);
+		    spinAdultos.addKeyListener(listener);
+		    spinNinos.addKeyListener(listener);
+		    spinFechaIda.addKeyListener(listener);
+		    spinFechaVuelta.addKeyListener(listener);
+		    cmbHabitacion.addKeyListener(listener);
+		}
+
+		
+		
 }
 	    
 	public CuadriculaOfertas() {
@@ -424,7 +452,8 @@ public class CuadriculaOfertas extends JFrame{
 			boton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						abriroferta(numero);	
+						abriroferta(numero);
+						CuadriculaOfertas.this.dispose();
 						}
 					});
 			final ImageIcon iconoInicial = iconoOriginal;
@@ -482,16 +511,6 @@ public class CuadriculaOfertas extends JFrame{
 	
 	private void abriroferta(int numero) {
 		JFrame ventanaoferta = new JFrame(ciudadesOferta [numero-1]);
-		ventanaoferta.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_X) {
-					ventanaoferta.dispose();
-				}
-				super.keyPressed(e);
-			}
-		});
-		ventanaoferta.setFocusable(true);
 		ventanaoferta.setSize(800, 500);
 		ventanaoferta.setLocationRelativeTo(this);
 		ventanaoferta.setLayout(new BorderLayout(10, 10));
@@ -655,7 +674,7 @@ public class CuadriculaOfertas extends JFrame{
 		btnRetorno.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dispose(); 
+				ventanaoferta.dispose(); 
 		        CuadriculaOfertas cuadOfert = new CuadriculaOfertas();
 		        cuadOfert.setVisible(true);
 		    }
