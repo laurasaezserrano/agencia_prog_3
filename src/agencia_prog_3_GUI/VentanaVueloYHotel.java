@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JComboBox;
@@ -34,7 +35,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -91,6 +91,7 @@ public class VentanaVueloYHotel extends JFrame {
     private DefaultTableModel modelo;
     private TableRowSorter<TableModel> ordenado;
     private List<DatosVuelos> vuelos;
+    private String textoBusqueda = "";
      
     public VentanaVueloYHotel() {
         setTitle("Búsqueda de vuelos");
@@ -140,12 +141,19 @@ public class VentanaVueloYHotel extends JFrame {
             col.setMinWidth(Math.min(ancho[i], 50));
         }
         
-        //centrado
-        DefaultTableCellRenderer centro = new DefaultTableCellRenderer();
-        centro.setHorizontalAlignment(SwingConstants.CENTER);
+        HighlightRenderer highlightRenderer = new HighlightRenderer();
         for (int c = 0; c < tabla.getColumnCount(); c++) {
-            tabla.getColumnModel().getColumn(c).setCellRenderer(centro);
+            if (c != 6 && c != 9) { // Excepto precio y botón reservar
+                tabla.getColumnModel().getColumn(c).setCellRenderer(highlightRenderer);
+            }
         }
+        
+//        //centrado
+//        DefaultTableCellRenderer centro = new DefaultTableCellRenderer();
+//        centro.setHorizontalAlignment(SwingConstants.CENTER);
+//        for (int c = 0; c < tabla.getColumnCount(); c++) {
+//            tabla.getColumnModel().getColumn(c).setCellRenderer(centro);
+//        }
 
         //precio (columna 6)
         tabla.getColumnModel().getColumn(6).setCellRenderer(new PrecioRenderer());
@@ -279,6 +287,8 @@ public class VentanaVueloYHotel extends JFrame {
 
 	private void aplicarbusqueda() {
         String txt = campofiltro.getText().trim();
+        this.textoBusqueda = txt;
+        
         if (txt.isEmpty()) {
             ordenado.setRowFilter(null);
         } else {
@@ -291,6 +301,9 @@ public class VentanaVueloYHotel extends JFrame {
             ));
             ordenado.setRowFilter(rf);
         }
+        
+        tabla.repaint();
+        
     }
         
     private void mostrarDescripcion(DatosVuelos vuelo) {
@@ -475,6 +488,62 @@ public class VentanaVueloYHotel extends JFrame {
         mensaje.add(south, BorderLayout.SOUTH);
         mensaje.setVisible(true);
     }
+    
+    
+    
+    class HighlightRenderer extends DefaultTableCellRenderer {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, 
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            
+            if (c instanceof JLabel) {
+                JLabel label = (JLabel) c;
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                
+                String cellText = value == null ? "" : value.toString();
+                
+                // Si hay texto de búsqueda y no está vacío, resaltar
+                if (!textoBusqueda.isEmpty() && cellText != null) {
+                    Pattern pattern = Pattern.compile(Pattern.quote(textoBusqueda), Pattern.CASE_INSENSITIVE);
+                    Matcher matcher = pattern.matcher(cellText);
+                    
+                    if (matcher.find()) {
+                        // Construir HTML con resaltado
+                        StringBuilder html = new StringBuilder("<html>");
+                        int lastEnd = 0;
+                        
+                        matcher.reset();
+                        while (matcher.find()) {
+                            // Añadir texto antes de la coincidencia
+                            html.append(cellText.substring(lastEnd, matcher.start()));
+                            // Añadir coincidencia resaltada
+                            html.append("<span style='background-color: yellow; color: black;'>");
+                            html.append(cellText.substring(matcher.start(), matcher.end()));
+                            html.append("</span>");
+                            lastEnd = matcher.end();
+                        }
+                        // Añadir texto restante
+                        html.append(cellText.substring(lastEnd));
+                        html.append("</html>");
+                        
+                        label.setText(html.toString());
+                    } else {
+                        label.setText(cellText);
+                    }
+                } else {
+                    label.setText(cellText);
+                }
+            }
+            
+            return c;
+        }
+    }
+    
+    
         
     static class StripedTable extends JTable {
         private static final long serialVersionUID = 1L;
