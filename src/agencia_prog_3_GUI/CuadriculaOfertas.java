@@ -343,8 +343,31 @@ public class CuadriculaOfertas extends JFrame{
 	    
 	public CuadriculaOfertas() {
 		this.hotelesPorCiudad = cargarHotelesDesdeCSV();
-		JPanel mainpanel = new JPanel();
+		setLayout(new BorderLayout());
+		
+		
+		setTitle("OFERTAS RECIENTES");
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setSize(800, 500);
+//		setMaximumSize(getToolkit().getScreenSize());
+		setResizable(false);
+		setLocationRelativeTo(null);
+		setLayout(new BorderLayout());
+		
+		JPanel mainpanel = new JPanel(new BorderLayout(10, 10));
+		mainpanel.setBackground(new Color(50, 150, 200));
+		add(mainpanel, BorderLayout.CENTER);
+		
+		oferta = new JTextField("OFERTAS RECIENTES");
+		oferta.setEditable(false);
+		oferta.setHorizontalAlignment(JTextField.CENTER);
+		oferta.setFont(new Font("Times New Roman", Font.BOLD, 25));
+		oferta.setBackground(Color.WHITE); //blanco
+	    oferta.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		mainpanel.add(oferta, BorderLayout.NORTH);
+		
 		JPanel panel1 = new JPanel(new GridLayout(3, 3, 20, 20));
+		panel1.setBackground(new Color(50, 150, 200));
 		
 		JButton botonInicio = new JButton();
 		ImageIcon iconoCasa = null;
@@ -357,15 +380,9 @@ public class CuadriculaOfertas extends JFrame{
 		    int altoDeseado = 30;  //30 píxeles de alto
 
 		    Image scaledImage = imageIcon.getScaledInstance(anchoDeseado, altoDeseado, Image.SCALE_SMOOTH);
-		    
 		    iconoCasa = new ImageIcon(scaledImage);
-		    
 		    botonInicio.setIcon(iconoCasa);
-
-		    
 		    botonInicio.setPreferredSize(new Dimension(anchoDeseado, altoDeseado));
-
-
 		} catch (IOException e) {
 		    // Si la imagen no se encuentra o hay un error de lectura
 		    System.err.println("¡ERROR! No se pudo cargar o redimensionar la imagen 'icono_casa.png': " + e.getMessage());
@@ -387,7 +404,6 @@ public class CuadriculaOfertas extends JFrame{
 		}
 				
 				botonInicio.addActionListener(new ActionListener() {
-				    
 					@Override
 				    public void actionPerformed(ActionEvent e) {
 
@@ -398,7 +414,11 @@ public class CuadriculaOfertas extends JFrame{
 				}
 				);
 				
-				mainpanel.add(botonInicio);
+				JPanel panelSur = new JPanel(new FlowLayout(FlowLayout.CENTER));
+				panelSur.setBackground(new Color(50, 150, 200));
+				panelSur.add(botonInicio);
+				mainpanel.add(panelSur, BorderLayout.SOUTH);
+
 		
 		for (int i = 0; i < 9; i++) {
 			int numero = i + 1;
@@ -445,8 +465,8 @@ public class CuadriculaOfertas extends JFrame{
 			JButton boton = new JButton(ciudadesOferta[i], iconoOriginal);
 			
 			boton.setPreferredSize(new Dimension(200, 120));
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	        setLayout(new FlowLayout());
+//			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//	        setLayout(new FlowLayout());
 			boton.setHorizontalTextPosition(SwingConstants.CENTER); // Centra horizontalmente el texto
 			boton.setVerticalTextPosition(SwingConstants.BOTTOM);
 			boton.addActionListener(new ActionListener() {
@@ -483,26 +503,7 @@ public class CuadriculaOfertas extends JFrame{
 			}
 		
 		
-		mainpanel.add(panel1);
-		add(mainpanel);
-		
-		
-		setTitle("OFERTAS RECIENTES");
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(800, 500);
-		setMaximumSize(getToolkit().getScreenSize());
-		setResizable(false);
-		setLocationRelativeTo(null);
-		panel1.setBackground(new Color(50, 150, 200));//azul
-		mainpanel.setBackground(new Color(50, 150, 200));//azul
-		
-		oferta = new JTextField();
-		oferta.setText("OFERTAS RECIENTES");
-		oferta.setEditable(false);
-		oferta.setHorizontalAlignment(JTextField.CENTER);
-		oferta.setFont(new Font("Times new Roman", Font.BOLD, 25));
-		oferta.setBackground(new Color(255, 255, 255)); //blanco
-		add(oferta, BorderLayout.NORTH);
+		mainpanel.add(panel1, BorderLayout.CENTER);
 		
 		cerrarventana();
 
@@ -583,7 +584,7 @@ public class CuadriculaOfertas extends JFrame{
 		    };
 		
 		JLabel titulo = new JLabel("Detalles del viaje a " + ciudadesOferta [numero-1], SwingConstants.CENTER);
-		titulo.setFont(new Font("Times new Roman", Font.PLAIN, 22));
+		titulo.setFont(new Font("Times New Roman", Font.PLAIN, 22));
 		ventanaoferta.add(titulo, BorderLayout.NORTH);
 		
 		JPanel contenidoPanel = new JPanel(new GridLayout(1, 2, 10, 0));
