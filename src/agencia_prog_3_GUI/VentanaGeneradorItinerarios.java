@@ -6,7 +6,8 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,8 @@ public class VentanaGeneradorItinerarios extends JFrame {
     private JTextField campoOrigen;
     private JTextField campoDestino;
     private JLabel labelResultados;
+    private JButton btnGenerar;
+    private JButton btnLimpiar;
     
 	public VentanaGeneradorItinerarios(List<DatosVuelos> vuelos) {
         this.vuelosDisponibles = vuelos;
@@ -69,6 +72,9 @@ public class VentanaGeneradorItinerarios extends JFrame {
         // Panel inferior: botones de acción
         JPanel panelBotones = crearPanelBotones();
         mainPanel.add(panelBotones, BorderLayout.SOUTH);
+        
+        // Configurar listeners de Enter DESPUÉS de crear todos los componentes
+        configurarEnterKeyListeners();
     }
 	
 	
@@ -209,7 +215,7 @@ public class VentanaGeneradorItinerarios extends JFrame {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         panel.setBackground(new Color(230, 240, 255));
         
-        JButton btnGenerar = new JButton("Generar Itinerarios");
+        btnGenerar = new JButton("Generar Itinerarios");
         btnGenerar.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnGenerar.setBackground(new Color(0, 120, 215));
         btnGenerar.setForeground(Color.WHITE);
@@ -218,22 +224,46 @@ public class VentanaGeneradorItinerarios extends JFrame {
         btnGenerar.addActionListener(e -> generarItinerarios());
         panel.add(btnGenerar);
         
-        JButton btnLimpiar = new JButton("Limpiar Resultados");
+        btnLimpiar = new JButton("Limpiar Resultados");
         btnLimpiar.addActionListener(e -> limpiarTabla());
         panel.add(btnLimpiar);
         
         JButton btnVolver = new JButton("Atrás");
         btnVolver.addActionListener(e -> {
-            // Reemplaza 'VentanaMenu' por el nombre real de tu clase de destino
             VentanaVueloYHotel ventana = new VentanaVueloYHotel(); 
             ventana.setVisible(true);
-            
-            // Cerramos la ventana actual
             this.dispose(); 
         });
         panel.add(btnVolver);
         
         return panel;
+    }
+    
+    /**
+     * Configura los listeners para que Enter active el botón de generar
+     */
+    private void configurarEnterKeyListeners() {
+        KeyAdapter enterListener = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    btnGenerar.doClick();
+                } else if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_X) {
+                	btnLimpiar.doClick();
+                }
+            }
+        };
+        
+        campoPresupuesto.addKeyListener(enterListener);
+        campoOrigen.addKeyListener(enterListener);
+        campoDestino.addKeyListener(enterListener);
+        comboNumVuelos.addKeyListener(enterListener);
+        comboTipoBusqueda.addKeyListener(enterListener);
+        tablaResultados.addKeyListener(enterListener);
+        
+        // Al frame principal para que funcione desde cualquier punto
+        this.addKeyListener(enterListener);
+        setFocusable(true);
     }
     
     private void generarItinerarios() {
@@ -368,8 +398,6 @@ public class VentanaGeneradorItinerarios extends JFrame {
             "Detalle del Itinerario", 
             JOptionPane.INFORMATION_MESSAGE);
     }
-
-    
     
     private void limpiarTabla() {
         modeloTabla.setRowCount(0);
@@ -430,9 +458,4 @@ class ButtonRenderer extends JButton implements javax.swing.table.TableCellRende
         setBackground(s ? t.getSelectionBackground() : javax.swing.UIManager.getColor("Button.background"));
         return this;
     }
-
-    
-    
-    
-    
 }
