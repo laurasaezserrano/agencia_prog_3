@@ -150,14 +150,6 @@ public class VentanaVueloYHotel extends JFrame {
             }
         }
         
-//        //centrado
-//        DefaultTableCellRenderer centro = new DefaultTableCellRenderer();
-//        centro.setHorizontalAlignment(SwingConstants.CENTER);
-//        for (int c = 0; c < tabla.getColumnCount(); c++) {
-//            tabla.getColumnModel().getColumn(c).setCellRenderer(centro);
-//        }
-
-        //precio (columna 6)
         tabla.getColumnModel().getColumn(6).setCellRenderer(new PrecioRenderer());
 
         tabla.addMouseListener(new MouseAdapter() {
@@ -528,6 +520,9 @@ public class VentanaVueloYHotel extends JFrame {
                 
                 String cellText = value == null ? "" : value.toString();
                 
+                
+                //ayudado por IAG para el matcher (método más sencillo) 
+                
                 // Si hay texto de búsqueda y no está vacío, resaltar
                 if (!textoBusqueda.isEmpty() && cellText != null) {
                     Pattern pattern = Pattern.compile(Pattern.quote(textoBusqueda), Pattern.CASE_INSENSITIVE);
@@ -578,7 +573,9 @@ public class VentanaVueloYHotel extends JFrame {
         
         @Override 
         public Component prepareRenderer(TableCellRenderer r, int fila, int columna) {
+        	
             Component comp = super.prepareRenderer(r, fila, columna);
+            
             if (comp instanceof JComponent) {
                 ((JComponent) comp).setOpaque(true);
             }
@@ -595,6 +592,7 @@ public class VentanaVueloYHotel extends JFrame {
     }
         
     static class ButtonRenderer extends JButton implements TableCellRenderer {
+    	
         private static final long serialVersionUID = 1L;
         
         public ButtonRenderer(String text) {
@@ -612,10 +610,15 @@ public class VentanaVueloYHotel extends JFrame {
     }
       
     static class ButtonEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+    	
         private static final long serialVersionUID = 1L;
+        
         private final JButton button = new JButton("Reservar");
+        
         private final List<DatosVuelos> vuelos;
+        
         private final JTable table;
+        
         private final java.util.function.Consumer<DatosVuelos> onClick;
         
         ButtonEditor(List<DatosVuelos> vuelos, JTable table, java.util.function.Consumer<DatosVuelos> onClick) {

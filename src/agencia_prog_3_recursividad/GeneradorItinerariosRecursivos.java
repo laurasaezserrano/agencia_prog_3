@@ -22,6 +22,7 @@ public class GeneradorItinerariosRecursivos {
             double presupuestoMax,
             List<DatosVuelos> itinerarioAux,
             List<Double> preciosAux) {
+		
 		// CASO BASE: El itinerario tiene el número correcto de vuelos y cumple el presupuesto
 		if (itinerarioAux.size() == numVuelos && calcularPrecioTotal(preciosAux) <= presupuestoMax) {
 			//Crear nueva lista para evitar que las modificaciones afecten la recursividad
@@ -34,7 +35,9 @@ public class GeneradorItinerariosRecursivos {
 			if (!itinerariosContiene(itinerarios, nuevoItinerario)) {
 				itinerarios.add(nuevoItinerario);
 			}
+			
 		} else if (itinerarioAux.size() < numVuelos) {
+			
 			// CASO RECURSIVO: Seguir construyendo el itinerario
 			for (int i = 0; i < vuelos.size(); i++) {
 				DatosVuelos vueloActual = vuelos.get(i);

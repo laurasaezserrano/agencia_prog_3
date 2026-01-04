@@ -25,6 +25,7 @@ public class GenerarRutasConectadas {
             List<DatosVuelos> rutaAux,
             String ciudadActual,
             int escalaActual) {
+		
 		// CASO BASE: Hemos llegado al destino final con el número correcto de escalas
 		if (escalaActual == numEscalas + 1 && ciudadActual.equals(ciudadDestinoFinal)) {
 			List<DatosVuelos> nuevaRuta = new ArrayList<>(rutaAux);
