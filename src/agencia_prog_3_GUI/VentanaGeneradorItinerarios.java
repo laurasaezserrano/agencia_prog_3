@@ -239,9 +239,7 @@ public class VentanaGeneradorItinerarios extends JFrame {
         return panel;
     }
     
-    /**
-     * Configura los listeners para que Enter active el botón de generar
-     */
+	
     private void configurarEnterKeyListeners() {
         KeyAdapter enterListener = new KeyAdapter() {
             @Override
