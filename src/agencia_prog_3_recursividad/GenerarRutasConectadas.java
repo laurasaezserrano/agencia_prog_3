@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import agencia_prog_3_GUI.DatosVuelos;
+import agencia_prog_3_data.Vuelo;
 
 public class GenerarRutasConectadas {
 	
