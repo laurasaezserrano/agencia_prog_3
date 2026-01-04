@@ -131,7 +131,33 @@ public class VentanaReservas extends JFrame {
                 return column == 9; 
             }
         };
+//        JTable tablaHoteles = new JTable(modeloTablaHoteles) {
+//            @Override
+//            public String getToolTipText(java.awt.event.MouseEvent e) {
+//                int row = rowAtPoint(e.getPoint());
+//                int col = columnAtPoint(e.getPoint());
+//                
+//                
+//                if (col == 0 && row != -1) {
+//                    Object value = getValueAt(row, col);
+//                    if (value != null) {
+//                        String ciudad = value.toString();
+//                        System.out.println(value.toString());
+//                        
+//                        File imgFile = new File("resources/images/ciudades/" + ciudad + ".jpg");
+//                        
+//                        if (imgFile.exists()) {
+//                            // Usamos HTML para mostrar la imagen en el ToolTip
+//                            return "<html><img src='" + imgFile.toURI() + "' width='200' height='150'><br><center>" + ciudad + "</center></html>";
+//                        }
+//                    }
+//                }
+//                return super.getToolTipText(e);
+//            }
+//        };
+        
         JTable tablaHoteles = new JTable(modeloTablaHoteles);
+        
         sorterHoteles = new TableRowSorter<>(modeloTablaHoteles);
         tablaHoteles.setRowSorter(sorterHoteles);
         // Configuramos la tabla de hoteles (incluyendo el botón)
