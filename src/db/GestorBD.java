@@ -643,7 +643,7 @@ public class GestorBD {
 	public void getTodasLasReservas() {
 		String sql = "SELECT * FROM Reserva;";
 
-		try (Connection con = DriverManager.getConnection(connectionString);
+		try (Connection con = DriverManager.getConnection(connection);
 		     PreparedStatement pStmt = con.prepareStatement(sql)) {			
 			
 			ResultSet rs = pStmt.executeQuery();			
@@ -687,7 +687,7 @@ public class GestorBD {
                 + "JOIN Aeropuerto AP_DESTINO ON V.id_aeropuerto_destino = AP_DESTINO.id;";
 
 
-		try (Connection con = DriverManager.getConnection(connectionString);
+		try (Connection con = DriverManager.getConnection(connection);
 		     PreparedStatement pStmt = con.prepareStatement(sql)) {			
 			
 			ResultSet rs = pStmt.executeQuery();			
@@ -713,137 +713,43 @@ public class GestorBD {
 		}		
 	}
 
-	/**
-     * Busca y retorna el ID de un Avion por su código.
-     * Retorna -1 si no lo encuentra o si hay un error.
-     */
-    public int getAvionIdByCodigo(String codigo) {
-        String sql = "SELECT id FROM Avion WHERE codigo = ?;";
-        
-        try (Connection con = DriverManager.getConnection(connectionString);
-             PreparedStatement pStmt = con.prepareStatement(sql)) {
-                
-            pStmt.setString(1, codigo);
-                
-            try (ResultSet rs = pStmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("id");
-                }
-            }
-        } catch (Exception ex) {
-            logger.warning(String.format("Error al buscar ID de Avion con código %s: %s", codigo, ex.getMessage()));
-        }
-        return -1; // No encontrado
-    }
-
-    /**
-     * Busca y retorna el ID de una Aerolinea por su nombre.
-     * Retorna -1 si no la encuentra o si hay un error.
-     */
-    public int getAerolineaIdByNombre(String nombre) {
-        String sql = "SELECT id FROM Aerolinea WHERE nombre = ?;";
-        
-        try (Connection con = DriverManager.getConnection(connectionString);
-             PreparedStatement pStmt = con.prepareStatement(sql)) {
-                
-            pStmt.setString(1, nombre);
-                
-            try (ResultSet rs = pStmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("id");
-                }
-            }
-        } catch (Exception ex) {
-            logger.warning(String.format("Error al buscar ID de Aerolínea %s: %s", nombre, ex.getMessage()));
-        }
-        return -1; // No encontrado
-    }
-
-   
-	
-	
-	
 	private Connection getConnectionWithFK() throws Exception {
-	    Connection con = DriverManager.getConnection(connectionString);
+	    Connection con = DriverManager.getConnection(connection);
 	    try (Statement st = con.createStatement()) {
 	        st.execute("PRAGMA foreign_keys = ON"); 
 	    }
 	    return con;
 	}
 
-	
-
 	/**
-	 * Obtiene todas las reservas de la BBDD en formato de matriz de objetos.
+	 * Obtiene todas las reservas de la BBDD
 	 */
-	public List<Object[]> getListaTodasLasReservas() {
-	    List<Object[]> reservas = new ArrayList<>();
-	    // Ajusta la consulta SQL y los nombres de las columnas a tu esquema de DB real
+	public List<Reserva> getListaTodasLasReservas() {
+	    List<Reserva> reservas = new ArrayList<>();
 	    String sql = "SELECT * FROM Reserva"; 
 	    
-	    try (Connection con = DriverManager.getConnection(connectionString);
+	    try (Connection con = DriverManager.getConnection(connection);
 	         Statement stmt = con.createStatement();
 	         ResultSet rs = stmt.executeQuery(sql)) {
 	        
 	        while (rs.next()) {
-	            // **IMPORTANTE**: Ajusta el orden y tipo de datos de Object[] 
-	            // para que coincida con las columnas de tu JTable en VentanaGestionDB
-	            Object[] reserva = new Object[] {
-//	                rs.getInt("id_reserva"),
-//	                rs.getString("usuario"),
-//	                rs.getString("ciudad"),
-//	                rs.getString("nombre_reserva"),
-//	                rs.getString("fecha_salida"),
-//	                rs.getDouble("precio")
-	                // ... otras columnas
-	            };
+	            // USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NIÑOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE
+	            Reserva reserva = new Reserva() ;
+                reserva.setUsuario(rs.getString("USUARIO"));
+	            reserva.setCiudad(rs.getString("CIUDAD"));
+                reserva.setNombreHotel(rs.getString("NOMBRE_HOTEL"));
+	            reserva.setEmail(rs.getString("EMAIL"));
+	            reserva.setTipoHabitacion(rs.getString("TIPO_HABITACION"));
+	            reserva.setNumAdultos(rs.getInt("NUM_ADULTOS"));
+	            reserva.setNumNiños(rs.getInt("NUM_NIÑOS"));
+	            reserva.setFechaEntrada(rs.getDate("FECHA_ENTRADA"));
+	            reserva.setFechaSalida(rs.getDate("FECHA_SALIDA"));
+	            reserva.setPrecioNoche(rs.getDouble("PRECIO_NOCHE"));
 	            reservas.add(reserva);
 	        }
 	    } catch (Exception ex) {
 	        logger.warning("Error al obtener todas las reservas: " + ex.getMessage());
 	    }
 	    return reservas;
-	}
-	// ...
-
-	public boolean eliminarAeropuertoPorId(int id) {
-		String sql = "DELETE FROM Aeropuerto WHERE id = ?;";
-	    try (Connection con = getConnectionWithFK();
-	         PreparedStatement pStmt = con.prepareStatement(sql)) {
-
-	        pStmt.setInt(1, id);
-	        int filas = pStmt.executeUpdate();
-	        if (filas > 0) {
-	            logger.info(String.format("Aeropuerto (id=%d) eliminado.", id));
-	            return true;
-	        } else {
-	            logger.warning(String.format("No se encontró Aeropuerto con id=%d para eliminar.", id));
-	            return false;
-	        }
-	    } catch (Exception ex) {
-	        logger.warning(String.format("Error al eliminar Aeropuerto id=%d: %s", id, ex.getMessage()));
-	        return false;
-	    }
-	}
-
-	// Opcional, por nombre 
-	public boolean eliminarAeropuertoPorNombre(String nombre) {
-	    String sql = "DELETE FROM Aeropuerto WHERE nombre = ?;";
-	    try (Connection con = getConnectionWithFK();
-	         PreparedStatement pStmt = con.prepareStatement(sql)) {
-
-	        pStmt.setString(1, nombre);
-	        int filas = pStmt.executeUpdate();
-	        if (filas > 0) {
-	            logger.info(String.format("Aeropuerto '%s' eliminado.", nombre));
-	            return true;
-	        } else {
-	            logger.warning(String.format("No se encontró Aeropuerto '%s' para eliminar.", nombre));
-	            return false;
-	        }
-	    } catch (Exception ex) {
-	        logger.warning(String.format("Error al eliminar Aeropuerto '%s': %s", nombre, ex.getMessage()));
-	        return false;
-	    }
 	}
 }
