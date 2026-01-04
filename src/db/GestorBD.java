@@ -19,13 +19,10 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import agencia_prog_3_data.Aerolinea;
-import agencia_prog_3_data.Avion;
 import agencia_prog_3_data.Hotel;
 import agencia_prog_3_data.Reserva;
 import agencia_prog_3_data.User;
 import agencia_prog_3_data.Vuelo;
-import agencia_prog_3_data.Aeropuertos;
-import agencia_prog_3_data.VueloData;
 
 public class GestorBD {
 
@@ -282,9 +279,9 @@ public class GestorBD {
 				pStmt.setInt(8, v.getPlazasDisponibles());
 				
 				if (pStmt.executeUpdate() != 1) {					
-					logger.warning(String.format("No se ha insertado el Vuelo: %s", v.getOrigen(),"+",v.getDestino()));
+					logger.warning(String.format("No se ha insertado el Vuelo: "+ v.getOrigen() + v.getDestino()));
 				} else {
-                            logger.info(String.format("Se ha insertado el Vuelo: %s", v.getOrigen(),"+",v.getDestino()));
+                            logger.info(String.format("Se ha insertado el Vuelo: " + v.getOrigen() + v.getDestino()));
 				}
 			}
 			logger.info(String.format("%d Vuelos insertados en la BBDD", vuelos.length));
@@ -317,9 +314,9 @@ public class GestorBD {
 				pStmt.setDouble(10, r.getPrecioNoche());
 				
 				if (pStmt.executeUpdate() != 1) {					
-				logger.warning(String.format("No se ha insertado la Reserva: %s", r.getUsuario(),"+",r.getCiudad(),"+",r.getNombreHotel()));
+				logger.warning(String.format("No se ha insertado la Reserva:"+ r.getUsuario()+r.getCiudad()+ r.getNombreHotel()));
 				} else {
-                        logger.info(String.format("Se ha insertado la  Reserva: %s", r.getUsuario(),"+",r.getCiudad(),"+",r.getNombreHotel()));
+                        logger.info(String.format("Se ha insertado la  Reserva: %s"+ r.getUsuario() + r.getCiudad()+ r.getNombreHotel()));
 				}
 			}
 			logger.info(String.format("%d Reservas insertados en la BBDD", reservas.length));
@@ -385,11 +382,11 @@ public class GestorBD {
             pStmt.setDouble(10, reserva.getPrecioNoche());
 				
 			if (pStmt.executeUpdate() != 1) {					
-				logger.warning(String.format("No se ha insertado la Reserva para: %s", reserva.getUsuario(), " ->", reserva.getCiudad(),":", reserva.getNombreHotel()));
+				logger.warning(String.format("No se ha insertado la Reserva para:"+ reserva.getUsuario()+" ->"+reserva.getCiudad()+":"+reserva.getNombreHotel()));
 			} else {
                 try (ResultSet rs = pStmt.getGeneratedKeys()) {
                     if (rs.next()) {
-                        logger.info(String.format("Se ha insertado la Reserva",reserva.getUsuario(), " ->", reserva.getCiudad(),":", reserva.getNombreHotel()));
+                        logger.info(String.format("Se ha insertado la Reserva"+reserva.getUsuario()+ reserva.getCiudad()+":"+ reserva.getNombreHotel()));
                     }
                 }
 			}
@@ -471,25 +468,26 @@ public class GestorBD {
 	/**
 	 * Elimina una reserva específica de la BBDD.
 	 */
-	public boolean eliminarReserva(String usuario, String ciudad, String reservaNombre, 
-			String fechaSalida, double precio) {
+	//PRIMARY KEY (usuario, nombre_Hotel, ciudad, fecha_Entrada, fecha_Salida)
+	public boolean eliminarReserva(String usuario, String nombreHotel, String ciudad, 
+			java.sql.Date fechaEntrada, java.sql.Date fechaSalida) {
 		
-		String sql = "DELETE FROM Reserva WHERE usuario = ? AND ciudad = ? " +
-				"AND reserva_nombre = ? AND fecha_salida = ? AND precio = ?;";
+		String sql = "DELETE FROM RESERVA WHERE usuario = ? AND nombre_Hotel = ? " +
+				"AND ciudad = ? AND fecha_Entrada = ? AND fecha_Salida = ?;";
 		
-		try (Connection con = DriverManager.getConnection(connectionString);
+		try (Connection con = DriverManager.getConnection(connection);
 			 PreparedStatement pStmt = con.prepareStatement(sql)) {
             
             pStmt.setString(1, usuario);
-            pStmt.setString(2, ciudad);
-            pStmt.setString(3, reservaNombre);
-            pStmt.setString(4, fechaSalida);
-            pStmt.setDouble(5, precio);
+            pStmt.setString(2, nombreHotel);
+            pStmt.setString(3, ciudad);
+            pStmt.setDate(4, fechaEntrada);
+            pStmt.setDate(5, fechaSalida);
 			
 			int filasAfectadas = pStmt.executeUpdate();
 			
 			if (filasAfectadas > 0) {
-				logger.info(String.format("Reserva eliminada: %s en %s", reservaNombre, ciudad));
+				logger.info(String.format("Reserva eliminada: "+ usuario + ":" + ciudad + "->"+ nombreHotel));
 				return true;
 			} else {
 				logger.warning("No se encontró la reserva para eliminar");
@@ -498,6 +496,100 @@ public class GestorBD {
 			
 		} catch (Exception ex) {
 			logger.warning(String.format("Error al eliminar reserva: %s", ex.getMessage()));
+			return false;
+		}
+	}
+	
+	/**
+	 * Elimina un vuelo específico de la BBDD.
+	 */
+	// PRIMARY KEY (origen, destino, fecha_salida, fecha_regreso, aerolinea)
+	public boolean eliminarVuelo(String origen, String destino,
+			java.sql.Date fechaSalida, java.sql.Date fechaRegreso, String aerolinea) {
+		
+		String sql = "DELETE FROM RESERVA WHERE origen = ? AND destino = ? " +
+				"AND fecha_Salida = ? AND fecha_Regreso = ? AND aerolinea = ? ;";
+		
+		try (Connection con = DriverManager.getConnection(connection);
+			 PreparedStatement pStmt = con.prepareStatement(sql)) {
+            
+            pStmt.setString(1, origen);
+            pStmt.setString(2, destino);
+            pStmt.setDate(3, fechaSalida);
+            pStmt.setDate(4, fechaRegreso);
+            pStmt.setString(5, aerolinea);
+			
+			int filasAfectadas = pStmt.executeUpdate();
+			
+			if (filasAfectadas > 0) {
+				logger.info(String.format("Vuelo eliminado: "+ origen + ":" + destino + "->"+ fechaSalida));
+				return true;
+			} else {
+				logger.warning("No se encontró el vuelo para eliminar");
+				return false;
+			}
+			
+		} catch (Exception ex) {
+			logger.warning(String.format("Error al eliminar vuelo: %s", ex.getMessage()));
+			return false;
+		}
+	}
+	
+	/**
+	 * Elimina un user específico de la BBDD.
+	 */
+	// PRIMARY KEY (usuario)
+	public boolean eliminarUser(String usuario) {
+		
+		String sql = "DELETE FROM RESERVA WHERE usuario = ? ;";
+		
+		try (Connection con = DriverManager.getConnection(connection);
+			 PreparedStatement pStmt = con.prepareStatement(sql)) {
+            
+            pStmt.setString(1, usuario);
+			
+			int filasAfectadas = pStmt.executeUpdate();
+			
+			if (filasAfectadas > 0) {
+				logger.info(String.format("User eliminado: "+ usuario));
+				return true;
+			} else {
+				logger.warning("No se encontró el user para eliminar");
+				return false;
+			}
+			
+		} catch (Exception ex) {
+			logger.warning(String.format("Error al eliminar vuelo: %s", ex.getMessage()));
+			return false;
+		}
+	}
+	
+	/**
+	 * Elimina un hotel específico de la BBDD.
+	 */
+	//  PRIMARY KEY (nombre, ciudad)
+	public boolean eliminarHotel(String nombre, String ciudad) {
+		
+		String sql = "DELETE FROM RESERVA WHERE nombre = ? AND ciudad = ? ;";
+		
+		try (Connection con = DriverManager.getConnection(connection);
+			 PreparedStatement pStmt = con.prepareStatement(sql)) {
+            
+            pStmt.setString(1, nombre);
+            pStmt.setString(2, ciudad);
+			
+			int filasAfectadas = pStmt.executeUpdate();
+			
+			if (filasAfectadas > 0) {
+				logger.info(String.format("Hotel eliminado: "+ nombre + ":" + ciudad));
+				return true;
+			} else {
+				logger.warning("No se encontró el hotel para eliminar");
+				return false;
+			}
+			
+		} catch (Exception ex) {
+			logger.warning(String.format("Error al eliminar hotel: %s", ex.getMessage()));
 			return false;
 		}
 	}
@@ -512,7 +604,7 @@ public class GestorBD {
 		String sql = "SELECT ciudad, reserva_nombre, email, tipo_habitacion, adultos, ninos, " +
 				"fecha_salida, fecha_regreso, precio FROM Reserva WHERE usuario = ?;";
 		
-		try (Connection con = DriverManager.getConnection(connectionString);
+		try (Connection con = DriverManager.getConnection(connection);
 		     PreparedStatement pStmt = con.prepareStatement(sql)) {
 			
 			pStmt.setString(1, usuario);
