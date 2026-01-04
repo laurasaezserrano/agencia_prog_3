@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import agencia_prog_3_data.Aerolinea;
-import agencia_prog_3_data.Aeropuertos;
+import agencia_prog_3_data.Aeropuerto;
 
 public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	private static final long serialVersionUID = 1L;
 	private String codigo;
 	private Aerolinea aerolinea;
-	private Aeropuertos origen;
+	private Aeropuerto origen;
 	private int duracionvuelo;
-	private Aeropuertos destino;
+	private Aeropuerto destino;
 	private String fecha;
     private String hora;
     private int asientos; // El campo se llama 'asientos'
@@ -39,9 +39,9 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
         this.codigo = codigo;
         // CONVERSIÓN ASUMIDA: Crea un objeto Aerolinea/Aeropuertos a partir del nombre String.
         this.aerolinea = new Aerolinea(aerolineaNombre); 
-        this.origen = new Aeropuertos(origenNombre);
+        this.origen = new Aeropuerto(origenNombre);
         this.duracionvuelo = duracionvuelo;
-        this.destino = new Aeropuertos(destinoNombre);
+        this.destino = new Aeropuerto(destinoNombre);
         
         // Campos que estaban sin inicializar:
         this.fecha = fecha; 
@@ -74,11 +74,11 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	}
 
 
-	public Aeropuertos getOrigen() {
+	public Aeropuerto getOrigen() {
 		return origen;
 	}
 	
-	public Aeropuertos getDestino() {
+	public Aeropuerto getDestino() {
 		return destino;
 	}
 
