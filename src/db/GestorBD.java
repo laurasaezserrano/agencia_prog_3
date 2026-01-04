@@ -42,9 +42,12 @@ public class GestorBD {
 	private Properties properties;
 	
 	public GestorBD() {
-	    try (FileInputStream fis = new FileInputStream("resources/config/logger.properties")) {
+	    try (FileInputStream fis = new FileInputStream("resources/conf/logger.properties")) {
 	        LogManager.getLogManager().readConfiguration(fis);
+	        
+	        FileInputStream prop = new FileInputStream(PROPERTIES_FILE);
 	        properties = new Properties();
+	        properties.load(prop);
 	        driverName = properties.getProperty("driver");
 	        db = properties.getProperty("database");
 	        connection = properties.getProperty("connection");
@@ -115,7 +118,7 @@ public class GestorBD {
 			    "    fecha_Salida TEXT,\n" +
 			    "    precio_Noche REAL,\n" +
 			    "    PRIMARY KEY (usuario, nombre_Hotel, ciudad, fecha_Entrada, fecha_Salida),\n" +
-			    "    FOREING KEY (usuario) REFERENCES USER(USUARIO)\n" +
+			    "    FOREIGN KEY (usuario) REFERENCES USER(USUARIO)\n" +
 			    ");";
             
 			

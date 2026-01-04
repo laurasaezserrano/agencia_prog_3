@@ -6,595 +6,231 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import agencia_prog_3_GUI.Ventana1Login;
-import agencia_prog_3_data.Aerolinea;
-import agencia_prog_3_data.Avion;
+import agencia_prog_3_data.Hotel;
+import agencia_prog_3_data.Reserva;
+import agencia_prog_3_data.User;
+import agencia_prog_3_data.Vuelo;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class VentanaGestionDB extends JFrame {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     
-	// Componentes de la GUI
-	private JComboBox<String> cmbTablas;
-	private JTable tablaDatos;
-	private DefaultTableModel modeloTabla;
-	private JButton btnInsertar;
-	private JButton btnActualizar;
-	private JButton btnEliminar;
-	private JLabel lblEstadoDB;
+    private JComboBox<String> cmbTablas;
+    private JTable tablaDatos;
+    private DefaultTableModel modeloTabla;
+    private JButton btnInsertar, btnActualizar, btnEliminar;
+    private JLabel lblEstadoDB;
 
-	// Conexión y gestor de BD
-	private Connection connection;
-	private GestorBD gestorBD;
-	
-	private static final String CONNECTION_STRING = "jdbc:sqlite:resources/data/agencia.db";
-	private static final String DRIVER = "org.sqlite.JDBC";
+    private GestorBD gestorBD;
+    // Usamos el string de conexión que definiste en tu GestorBD para ser consistentes
+    private static final String CONNECTION_STRING = "jdbc:sqlite:agencia.db"; 
 
-	public VentanaGestionDB() {
-		super("Gestión de Base de Datos - Agencia de Viajes");
-		
-		gestorBD = new GestorBD();
-		inicializarConexionDB();
-		inicializarComponentes();
-		configurarLayout();
+    public VentanaGestionDB() {
+        super("Gestión de Base de Datos - Agencia de Viajes");
+        
+        gestorBD = new GestorBD();
+        inicializarComponentes();
+        configurarLayout();
 
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setSize(1000, 650);
-		setLocationRelativeTo(null);
-		
-		// Cerrar conexión al cerrar ventana
-		addWindowListener(new java.awt.event.WindowAdapter() {
-			@Override
-			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-				cerrarConexionDB();
-			}
-		});
-		
-		if (cmbTablas != null) {
-	        cmbTablas.setSelectedItem("Reserva"); // 1. Selecciona la tabla de Reservas
-	    }
-	    manejarCargarDatos(null);
-	    
-	    
-	}
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(1000, 650);
+        setLocationRelativeTo(null);
+        
+        // Carga inicial
+        cmbTablas.setSelectedItem("Reserva");
+        manejarCargarDatos(null);
+    }
 
-    // --- CONEXIÓN Y DESCONEXIÓN DE LA BASE DE DATOS ---
+    private void inicializarComponentes() {
+        cmbTablas = new JComboBox<>(new String[] {
+            "Reserva", "Vuelo", "Hotel", "User"
+        });
+        
+        cmbTablas.addActionListener(this::manejarCargarDatos);
+        
+        modeloTabla = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+        
+        tablaDatos = new JTable(modeloTabla);
+        tablaDatos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tablaDatos.setRowHeight(25);
+        
+        JTableHeader cabecera = tablaDatos.getTableHeader();
+        cabecera.setReorderingAllowed(false);
+        cabecera.setFont(new Font("Arial", Font.BOLD, 12));
+        
+        btnInsertar = new JButton("Insertar");
+        btnActualizar = new JButton("Actualizar");
+        btnEliminar = new JButton("Eliminar");
+        lblEstadoDB = new JLabel("✓ Gestor BD Activo");
+        
+        btnInsertar.addActionListener(this::manejarInsertar);
+        btnEliminar.addActionListener(this::manejarEliminar);
+    }
 
-	private void inicializarConexionDB() {
-		try {
-			Class.forName(DRIVER);
-			connection = DriverManager.getConnection(CONNECTION_STRING);
-			lblEstadoDB = new JLabel("✓ Conectado a la BD");
-			lblEstadoDB.setForeground(Color.GREEN);
-			System.out.println("Conexión a BD establecida");
-		} catch (Exception ex) {
-			lblEstadoDB = new JLabel("✗ Error de conexión");
-			lblEstadoDB.setForeground(Color.RED);
-			System.err.println("Error al conectar con la BD: " + ex.getMessage());
-		}
-	}
-    
-    public void cerrarConexionDB() {
-        try {
-        	if (connection != null && !connection.isClosed()) {
-        		connection.close();
-        		System.out.println("Conexión cerrada correctamente");
-        	}
-        } catch (SQLException ex) {
-        	System.err.println("Error al cerrar conexión: " + ex.getMessage());
+    private void configurarLayout() {
+        setLayout(new BorderLayout(10, 10));
+        
+        JPanel panelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelNorte.add(new JLabel("Seleccionar Tabla:"));
+        panelNorte.add(cmbTablas);
+        panelNorte.add(lblEstadoDB);
+        add(panelNorte, BorderLayout.NORTH);
+        
+        add(new JScrollPane(tablaDatos), BorderLayout.CENTER);
+        
+        JPanel panelSur = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        JButton botonInicio = new JButton("Volver al Login");
+        
+        panelSur.add(botonInicio);
+        panelSur.add(btnInsertar);
+        panelSur.add(btnActualizar);
+        panelSur.add(btnEliminar);
+        add(panelSur, BorderLayout.SOUTH);
+        
+        botonInicio.addActionListener(e -> {
+            dispose(); 
+            new Ventana1Login().setVisible(true);
+        });
+    }
+
+    private void manejarCargarDatos(ActionEvent e) {
+        String tabla = (String) cmbTablas.getSelectedItem();
+        modeloTabla.setRowCount(0);
+        modeloTabla.setColumnCount(0);
+
+        if ("Reserva".equals(tabla)) {
+            cargarDatosReservas();
+        } else {
+            // Para otras tablas podrías implementar métodos similares en GestorBD
+            lblEstadoDB.setText("Carga genérica no implementada para " + tabla);
+        }
+        centrarColumnas();
+    }
+
+    private void cargarDatosReservas() {
+        String[] columnas = {"USUARIO", "CIUDAD", "HOTEL", "EMAIL", "HABITACIÓN", "ADULTOS", "NIÑOS", "ENTRADA", "SALIDA", "PRECIO"};
+        modeloTabla.setColumnIdentifiers(columnas);
+
+        List<Reserva> lista = gestorBD.getListaTodasLasReservas();
+        for (Reserva r : lista) {
+            Object[] fila = {
+                r.getUsuario(), r.getCiudad(), r.getNombreHotel(), r.getEmail(),
+                r.getTipoHabitacion(), r.getNumAdultos(), r.getNumNiños(),
+                r.getFechaEntrada(), r.getFechaSalida(), r.getPrecioNoche()
+            };
+            modeloTabla.addRow(fila);
+        }
+        lblEstadoDB.setText("✓ " + lista.size() + " reservas cargadas");
+    }
+
+    private void manejarInsertar(ActionEvent event) {
+        String tabla = (String) cmbTablas.getSelectedItem();
+        
+        if ("Reserva".equals(tabla)) {
+            mostrarDialogoInsertarReserva();
+        } else if ("User".equals(tabla)) {
+            mostrarDialogoInsertarUsuario();
+        }
+        // ... añadir más según necesites
+    }
+
+    private void mostrarDialogoInsertarReserva() {
+        JPanel panel = new JPanel(new GridLayout(0, 2, 5, 5));
+        JTextField[] campos = {
+            new JTextField(), new JTextField(), new JTextField(), new JTextField(),
+            new JTextField(), new JTextField("2"), new JTextField("0"),
+            new JTextField("2026-01-01"), new JTextField("2026-01-05"), new JTextField("80.0")
+        };
+        String[] etiquetas = {"Usuario:", "Ciudad:", "Hotel:", "Email:", "Habitación:", "Adultos:", "Niños:", "F. Entrada:", "F. Salida:", "Precio:"};
+        
+        for (int i = 0; i < etiquetas.length; i++) {
+            panel.add(new JLabel(etiquetas[i]));
+            panel.add(campos[i]);
+        }
+
+        if (JOptionPane.showConfirmDialog(this, panel, "Nueva Reserva", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            try {
+                Reserva r = new Reserva();
+                r.setUsuario(campos[0].getText());
+                r.setCiudad(campos[1].getText());
+                r.setNombreHotel(campos[2].getText());
+                r.setEmail(campos[3].getText());
+                r.setTipoHabitacion(campos[4].getText());
+                r.setNumAdultos(Integer.parseInt(campos[5].getText()));
+                r.setNumNiños(Integer.parseInt(campos[6].getText()));
+                r.setFechaEntrada(java.sql.Date.valueOf(campos[7].getText()));
+                r.setFechaSalida(java.sql.Date.valueOf(campos[8].getText()));
+                r.setPrecioNoche(Double.parseDouble(campos[9].getText()));
+
+                gestorBD.insertarReserva(r);
+                manejarCargarDatos(null);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+            }
         }
     }
 
-	// --- CONFIGURACIÓN DE LA INTERFAZ DE USUARIO (GUI) ---
+    private void mostrarDialogoInsertarUsuario() {
+        JTextField txtUser = new JTextField();
+        JTextField txtPass = new JTextField();
+        JPanel panel = new JPanel(new GridLayout(0, 2));
+        panel.add(new JLabel("Usuario:")); panel.add(txtUser);
+        panel.add(new JLabel("Password:")); panel.add(txtPass);
 
-	private void inicializarComponentes() {
-		// ComboBox con las tablas disponibles
-		cmbTablas = new JComboBox<>(new String[] {
-			"Reserva", "Vuelo", "Aeropuerto", "Aerolinea", "Avion"
-		});
-		
-		cmbTablas.addActionListener(this::manejarCargarDatos);
-		
-		// Tabla de datos
-		modeloTabla = new DefaultTableModel();
-		tablaDatos = new JTable(modeloTabla);
-		tablaDatos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		tablaDatos.setRowHeight(25);
-		tablaDatos.setAlignmentX(CENTER_ALIGNMENT);
-		
-	
-		//cabecera
-        JTableHeader cabecera = tablaDatos.getTableHeader();
-        cabecera.setReorderingAllowed(false);
-        cabecera.setAlignmentX(CENTER_ALIGNMENT);
-        cabecera.setFont(cabecera.getFont().deriveFont(Font.BOLD));
-        
-        
-		// Botones CRUD
-		btnInsertar = new JButton("Insertar");
-		btnActualizar = new JButton("Actualizar");
-		btnEliminar = new JButton("Eliminar");
-		
-		// ActionListeners
-		btnInsertar.addActionListener(this::manejarInsertar);
-		btnActualizar.addActionListener(this::manejarActualizar);
-		btnEliminar.addActionListener(this::manejarEliminar);
-	}
-
-	
-	private void configurarLayout() {
-		setLayout(new BorderLayout(10, 10));
-		
-		// Panel Norte: Selector de tabla y estado
-		JPanel panelNorte = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		panelNorte.add(new JLabel("Seleccionar Tabla:"));
-		panelNorte.add(cmbTablas);
-		panelNorte.add(lblEstadoDB);
-		add(panelNorte, BorderLayout.NORTH);
-		
-		// Panel Centro: Tabla con scroll
-		JScrollPane scrollPane = new JScrollPane(tablaDatos);
-		add(scrollPane, BorderLayout.CENTER);
-		
-		// Panel Sur: Botones CRUD
-		JPanel panelSur = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-		panelSur.add(btnInsertar);
-		panelSur.add(btnActualizar);
-		panelSur.add(btnEliminar);
-		add(panelSur, BorderLayout.SOUTH);
-		
-		
-		JButton botonInicio = new JButton("Inicio"); //luego cambiarlo a un icono
-        
-        panelSur.add(botonInicio, BorderLayout.WEST); // Botón a la izquierda
-        
-	    botonInicio.addActionListener(new ActionListener() {
-		    
-			@Override
-		    public void actionPerformed(ActionEvent e) {
-		        // Cierra la ventana actual
-		        dispose(); 
-		        
-		        // Abre una nueva instancia de la ventana de inicio
-		        Ventana1Login vInicio = new Ventana1Login();
-		        vInicio.setVisible(true);
-		    }
-		});
-	}
-	
-	private void manejarCargarDatos(ActionEvent e) {
-	    String tablaSeleccionada = (String) cmbTablas.getSelectedItem();
-
-	    if (tablaSeleccionada == null) {
-	        // En la carga inicial desde el constructor, cmbTablas podría ser nulo.
-	        // Forzamos la carga de Reservas si es la primera vez que se abre.
-	        tablaSeleccionada = "Reserva"; 
-	    }
-
-	    if (tablaSeleccionada.equals("Reserva")) {
-	        cargarDatosReservas();
-	    } 
-
-	    modeloTabla.setRowCount(0);
-		modeloTabla.setColumnCount(0);
-		
-		try (PreparedStatement pStmt = connection.prepareStatement(
-				"SELECT * FROM " + tablaSeleccionada + ";");
-		     ResultSet rs = pStmt.executeQuery()) {
-			
-			// Configurar columnas
-			int numColumnas = rs.getMetaData().getColumnCount();
-			for (int i = 1; i <= numColumnas; i++) {
-				modeloTabla.addColumn(rs.getMetaData().getColumnName(i));
-			}
-			
-			// Cargar datos
-			int contador = 0;
-			while (rs.next()) {
-				Object[] fila = new Object[numColumnas];
-				for (int i = 1; i <= numColumnas; i++) {
-					fila[i-1] = rs.getObject(i);
-				}
-				modeloTabla.addRow(fila);
-				contador++;
-			}
-			
-			lblEstadoDB.setText("✓ " + contador + " registros cargados de " + tablaSeleccionada);
-			lblEstadoDB.setForeground(Color.GREEN);
-			
-		} catch (SQLException ex) {
-			lblEstadoDB.setText("✗ Error al cargar datos");
-			lblEstadoDB.setForeground(Color.RED);
-			JOptionPane.showMessageDialog(this, 
-				"Error al cargar datos: " + ex.getMessage(),
-				"Error", JOptionPane.ERROR_MESSAGE);
-		}
-		centrarColumnas();
-	}
-
-	private void cargarDatosReservas() {
-	    // 1. Establecer las cabeceras de la tabla
-	    String[] nombresColumna = {"ID", "Usuario", "Ciudad", "Reserva", "Fecha Salida", "Precio"}; 
-	    modeloTabla.setColumnIdentifiers(nombresColumna);
-
-	    // 2. Limpiar la tabla
-	    modeloTabla.setRowCount(0);
-
-	    // 3. Obtener datos y añadir filas
-	    java.util.List<Object[]> reservas = gestorBD.getListaTodasLasReservas(); // Llamada al GestorBD modificado
-	    
-	    for (Object[] reserva : reservas) {
-	        modeloTabla.addRow(reserva);
-	    }
-	}
-	
-	
-	private void manejarInsertar(ActionEvent event) {
-		String tablaSeleccionada = (String) cmbTablas.getSelectedItem();
-		
-		if (tablaSeleccionada == null) return;
-		
-		// Crear diálogo específico según la tabla
-		if (tablaSeleccionada.equals("Reserva")) {
-			mostrarDialogoInsertarReserva();
-		} else if (tablaSeleccionada.equals("Aeropuerto")) {
-			mostrarDialogoInsertarAeropuerto();
-		} else if (tablaSeleccionada.equals("Vuelo")) { // <-- NUEVO
-			mostrarDialogoInsertarVuelo();
-		} else if (tablaSeleccionada.equals("Aerolinea")) { // <-- NUEVO
-			mostrarDialogoInsertarAerolinea();
-		} else if (tablaSeleccionada.equals("Avion")) { // <-- NUEVO
-			mostrarDialogoInsertarAvion();
-		} else {
-			JOptionPane.showMessageDialog(this,
-				"Inserción para la tabla " + tablaSeleccionada + " no implementada aún",
-				"Info", JOptionPane.INFORMATION_MESSAGE);
-		}
-	}
-	
-	private void mostrarDialogoInsertarReserva() {
-		JPanel panel = new JPanel(new GridLayout(10, 2, 5, 5));
-		
-		JTextField txtUsuario = new JTextField();
-		JTextField txtCiudad = new JTextField();
-		JTextField txtReservaNombre = new JTextField();
-		JTextField txtEmail = new JTextField();
-		JTextField txtTipoHab = new JTextField();
-		JTextField txtAdultos = new JTextField("2");
-		JTextField txtNinos = new JTextField("0");
-		JTextField txtFechaSalida = new JTextField("2025-06-01");
-		JTextField txtFechaRegreso = new JTextField("2025-06-10");
-		JTextField txtPrecio = new JTextField("100.00");
-		
-		panel.add(new JLabel("Usuario:"));
-		panel.add(txtUsuario);
-		panel.add(new JLabel("Ciudad:"));
-		panel.add(txtCiudad);
-		panel.add(new JLabel("Nombre Reserva:"));
-		panel.add(txtReservaNombre);
-		panel.add(new JLabel("Email:"));
-		panel.add(txtEmail);
-		panel.add(new JLabel("Tipo Habitación:"));
-		panel.add(txtTipoHab);
-		panel.add(new JLabel("Adultos:"));
-		panel.add(txtAdultos);
-		panel.add(new JLabel("Niños:"));
-		panel.add(txtNinos);
-		panel.add(new JLabel("Fecha Salida:"));
-		panel.add(txtFechaSalida);
-		panel.add(new JLabel("Fecha Regreso:"));
-		panel.add(txtFechaRegreso);
-		panel.add(new JLabel("Precio:"));
-		panel.add(txtPrecio);
-		
-		int resultado = JOptionPane.showConfirmDialog(this, panel, 
-			"Insertar Nueva Reserva", JOptionPane.OK_CANCEL_OPTION);
-		
-		if (resultado == JOptionPane.OK_OPTION) {
-			try {
-				gestorBD.insertarReserva(
-					txtUsuario.getText(),
-					txtCiudad.getText(),
-					txtReservaNombre.getText(),
-					txtEmail.getText(),
-					txtTipoHab.getText(),
-					Integer.parseInt(txtAdultos.getText()),
-					Integer.parseInt(txtNinos.getText()),
-					txtFechaSalida.getText(),
-					txtFechaRegreso.getText(),
-					Double.parseDouble(txtPrecio.getText())
-				);
-				
-				JOptionPane.showMessageDialog(this, "Reserva insertada correctamente");
-				manejarCargarDatos(null); // Recargar datos
-				
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this, 
-					"Error al insertar: " + ex.getMessage(),
-					"Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-	
-	private void mostrarDialogoInsertarAeropuerto() {
-		String nombre = JOptionPane.showInputDialog(this, 
-			"Nombre del Aeropuerto:", "Insertar Aeropuerto", 
-			JOptionPane.PLAIN_MESSAGE);
-		
-		if (nombre != null && !nombre.trim().isEmpty()) {
-			try {
-				gestorBD.insertarAeropuerto(new agencia_prog_3_data.Aeropuertos(nombre));
-				JOptionPane.showMessageDialog(this, "Aeropuerto insertado correctamente");
-				manejarCargarDatos(null);
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this, 
-					"Error al insertar: " + ex.getMessage(),
-					"Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-	
-	private void mostrarDialogoInsertarVuelo() {
-		JPanel panel = new JPanel(new GridLayout(8, 2, 5, 5));
-		
-		JTextField txtCodigo = new JTextField();
-		JTextField txtFecha = new JTextField("YYYY-MM-DD");
-		JTextField txtDuracion = new JTextField("3.5"); // Horas
-		JTextField txtPrecio = new JTextField("350.00");
-		JTextField txtIdAerolinea = new JTextField();
-		JTextField txtIdAvion = new JTextField();
-		JTextField txtIdOrigen = new JTextField();
-		JTextField txtIdDestino = new JTextField();
-		
-		panel.add(new JLabel("Código Vuelo:"));
-		panel.add(txtCodigo);
-		panel.add(new JLabel("Fecha (YYYY-MM-DD):"));
-		panel.add(txtFecha);
-		panel.add(new JLabel("Duración (h):"));
-		panel.add(txtDuracion);
-		panel.add(new JLabel("Precio:"));
-		panel.add(txtPrecio);
-		panel.add(new JLabel("ID Aerolínea (FK):"));
-		panel.add(txtIdAerolinea);
-		panel.add(new JLabel("ID Avión (FK):"));
-		panel.add(txtIdAvion);
-		panel.add(new JLabel("ID Aeropuerto Origen (FK):"));
-		panel.add(txtIdOrigen);
-		panel.add(new JLabel("ID Aeropuerto Destino (FK):"));
-		panel.add(txtIdDestino);
-		
-		int resultado = JOptionPane.showConfirmDialog(this, panel, 
-			"Insertar Nuevo Vuelo", JOptionPane.OK_CANCEL_OPTION);
-		
-		if (resultado == JOptionPane.OK_OPTION) {
-			try {
-				gestorBD.insertarVuelo(
-					Integer.parseInt(txtIdAerolinea.getText()),
-					Integer.parseInt(txtIdAvion.getText()),
-					Integer.parseInt(txtIdOrigen.getText()),
-					Integer.parseInt(txtIdDestino.getText()),
-					txtCodigo.getText(),
-					txtFecha.getText(),
-					Double.parseDouble(txtDuracion.getText()),
-					Double.parseDouble(txtPrecio.getText())
-				);
-				
-				JOptionPane.showMessageDialog(this, "Vuelo insertado correctamente");
-				manejarCargarDatos(null); // Recargar datos
-				
-			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(this, 
-					"Error: Formato de ID, Duración o Precio incorrecto. " + ex.getMessage(),
-					"Error", JOptionPane.ERROR_MESSAGE);
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this, 
-					"Error al insertar Vuelo: " + ex.getMessage(),
-					"Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-	
-	private void mostrarDialogoInsertarAerolinea() {
-		String nombre = JOptionPane.showInputDialog(this, 
-			"Nombre de la Aerolínea:", "Insertar Aerolínea", 
-			JOptionPane.PLAIN_MESSAGE);
-		
-		if (nombre != null && !nombre.trim().isEmpty()) {
-			try {
-				// El GestorBD espera objetos Aerolinea
-				Aerolinea nuevaAerolinea = new Aerolinea(nombre); 
-				gestorBD.insertarAerolinea(nuevaAerolinea);
-				
-				JOptionPane.showMessageDialog(this, "Aerolínea insertada correctamente");
-				manejarCargarDatos(null);
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this, 
-					"Error al insertar Aerolínea: " + ex.getMessage(),
-					"Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-	
-	private void mostrarDialogoInsertarAvion() {
-		JPanel panel = new JPanel(new GridLayout(4, 2, 5, 5));
-		
-		JTextField txtCodigo = new JTextField();
-		JTextField txtNombre = new JTextField();
-		JTextField txtNumeroAsientos = new JTextField();
-		
-		panel.add(new JLabel("Código Avión (ej: B737):"));
-		panel.add(txtCodigo);
-		panel.add(new JLabel("Nombre (ej: Boeing 737):"));
-		panel.add(txtNombre);
-		panel.add(new JLabel("Nº Asientos:"));
-		panel.add(txtNumeroAsientos);
-		
-		int resultado = JOptionPane.showConfirmDialog(this, panel, 
-			"Insertar Nuevo Avión", JOptionPane.OK_CANCEL_OPTION);
-		
-		if (resultado == JOptionPane.OK_OPTION) {
-			try {
-				// El GestorBD espera objetos Avion
-				Avion nuevoAvion = new Avion(
-					txtCodigo.getText(),
-					txtNombre.getText(),
-					Integer.parseInt(txtNumeroAsientos.getText())
-				);
-				gestorBD.insertarAvion(nuevoAvion);
-				
-				JOptionPane.showMessageDialog(this, "Avión insertado correctamente");
-				manejarCargarDatos(null); // Recargar datos
-				
-			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(this, 
-					"Error: Nº Asientos debe ser un número entero.",
-					"Error", JOptionPane.ERROR_MESSAGE);
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this, 
-					"Error al insertar Avión: " + ex.getMessage(),
-					"Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-
-	private void manejarActualizar(ActionEvent event) {
-		int filaSeleccionada = tablaDatos.getSelectedRow();
-		
-		if (filaSeleccionada < 0) {
-			JOptionPane.showMessageDialog(this,
-				"Por favor, selecciona una fila para actualizar",
-				"Aviso", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-		
-		JOptionPane.showMessageDialog(this,
-			"Funcionalidad de actualización en desarrollo.\n" +
-			"Fila seleccionada: " + (filaSeleccionada + 1),
-			"Info", JOptionPane.INFORMATION_MESSAGE);
-	}
-	
-	private void manejarEliminar(ActionEvent event) {
-		int filaSeleccionada = tablaDatos.getSelectedRow();
-		String tablaSeleccionada = (String) cmbTablas.getSelectedItem();
-		
-		if (filaSeleccionada < 0) {
-			JOptionPane.showMessageDialog(this,
-				"Por favor, selecciona una fila para eliminar",
-				"Aviso", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-		
-		int confirm = JOptionPane.showConfirmDialog(this,
-			"¿Estás seguro de eliminar este registro?",
-			"Confirmar Eliminación",
-			JOptionPane.YES_NO_OPTION);
-		
-		if (confirm == JOptionPane.YES_OPTION) {
-			if (tablaSeleccionada.equals("Reserva")) {
-				eliminarReserva(filaSeleccionada);
-			} else if (tablaSeleccionada.equals("Aeropuerto")) {
-	            eliminarAeropuerto(filaSeleccionada);
-			} else {
-				JOptionPane.showMessageDialog(this,
-					"Eliminación para " + tablaSeleccionada + " no implementada aún");
-			}
-		}
-	}
-	
-	private void eliminarAeropuerto(int filaSeleccionada) {
-		try {
-	        Object idObj = modeloTabla.getValueAt(filaSeleccionada, 0);
-	        if (idObj == null) throw new IllegalArgumentException("ID de aeropuerto no encontrado");
-
-	        int id = Integer.parseInt(idObj.toString());
-	        String nombre = String.valueOf(modeloTabla.getValueAt(filaSeleccionada, 1));
-
-	        boolean eliminado = gestorBD.eliminarAeropuertoPorId(id); // llama al nuevo método
-
-	        if (eliminado) {
-	            JOptionPane.showMessageDialog(this,
-	                "Aeropuerto eliminado correctamente" + (nombre != null ? ": " + nombre : ""));
-	            manejarCargarDatos(null); // Recargar la tabla actual
-	        } else {
-	            JOptionPane.showMessageDialog(this,
-	                "No se pudo eliminar el aeropuerto (puede que no exista).",
-	                "Aviso", JOptionPane.WARNING_MESSAGE);
-	        }
-	    } catch (Exception ex) {
-	        JOptionPane.showMessageDialog(this,
-	            "Error al eliminar aeropuerto: " + ex.getMessage(),
-	            "Error", JOptionPane.ERROR_MESSAGE);
-	    }
-	}
-
-	private void eliminarReserva(int fila) {
-		try {
-			// Obtener datos de la fila (asumiendo que columna 1 es usuario, 2 ciudad, etc.)
-			String usuario = modeloTabla.getValueAt(fila, 1).toString();
-			String ciudad = modeloTabla.getValueAt(fila, 2).toString();
-			String reservaNombre = modeloTabla.getValueAt(fila, 3).toString();
-			String fechaSalida = modeloTabla.getValueAt(fila, 8).toString();
-			double precio = Double.parseDouble(modeloTabla.getValueAt(fila, 10).toString());
-			
-			boolean eliminado = gestorBD.eliminarReserva(usuario, ciudad, 
-				reservaNombre, fechaSalida, precio);
-			
-			if (eliminado) {
-				JOptionPane.showMessageDialog(this, "Reserva eliminada correctamente");
-				manejarCargarDatos(null); // Recargar
-			} else {
-				JOptionPane.showMessageDialog(this, "No se pudo eliminar la reserva");
-			}
-			
-		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, 
-				"Error al eliminar: " + ex.getMessage(),
-				"Error", JOptionPane.ERROR_MESSAGE);
-		}
-	}
-
-	
-	private void centrarColumnas() {
-	    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-	    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
-	    int columnas = tablaDatos.getColumnCount();
-	    for (int i = 0; i < columnas; i++) {
-	        tablaDatos.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-	    }
-	}
-
-	
-	// --- MÉTODO PRINCIPAL ---
-    
-	public static void main(String[] args) {
-		GestorBD gestorBD = new GestorBD();
-		gestorBD.borrarBBDD();
-        gestorBD.crearBBDD();
-		
-		if (new File("resources/data/vuelosagencia_completo.csv").exists() && new File("resources/data/reservas.csv").exists()) {
-            System.out.println("Iniciando carga de datos desde CSV...");
-            
-            gestorBD.cargarDatosDesdeCSVs("resources/data/reservas.csv", "resources/data/vuelosagencia_completo.csv");
-            
-            System.out.println("Carga de datos CSV finalizada.");
-        } else {
-            System.err.println("Advertencia: No se encontraron los archivos CSV en las rutas especificadas. La base de datos estará vacía.");
+        if (JOptionPane.showConfirmDialog(this, panel, "Nuevo Usuario", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            User u = new User();
+            u.setUsuario(txtUser.getText());
+            u.setPassword(txtPass.getText());
+            gestorBD.insertarUsuario(u);
+            manejarCargarDatos(null);
         }
-		
-		
-		SwingUtilities.invokeLater(() -> {
-			VentanaGestionDB ventana = new VentanaGestionDB();
-			ventana.setVisible(true);
-		});
-	}
+    }
+
+    private void manejarEliminar(ActionEvent event) {
+        int fila = tablaDatos.getSelectedRow();
+        if (fila < 0) return;
+
+        String tabla = (String) cmbTablas.getSelectedItem();
+        
+        if (JOptionPane.showConfirmDialog(this, "¿Eliminar registro?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            if ("Reserva".equals(tabla)) {
+                // Obtenemos los campos que forman la Primary Key en tu GestorBD
+                String user = modeloTabla.getValueAt(fila, 0).toString();
+                String hotel = modeloTabla.getValueAt(fila, 2).toString();
+                String ciudad = modeloTabla.getValueAt(fila, 1).toString();
+                java.sql.Date fEntrada = java.sql.Date.valueOf(modeloTabla.getValueAt(fila, 7).toString());
+                java.sql.Date fSalida = java.sql.Date.valueOf(modeloTabla.getValueAt(fila, 8).toString());
+                
+                if (gestorBD.eliminarReserva(user, hotel, ciudad, fEntrada, fSalida)) {
+                    manejarCargarDatos(null);
+                }
+            } else if ("User".equals(tabla)) {
+                String user = modeloTabla.getValueAt(fila, 0).toString();
+                if (gestorBD.eliminarUser(user)) manejarCargarDatos(null);
+            }
+        }
+    }
+
+    private void centrarColumnas() {
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        for (int i = 0; i < tablaDatos.getColumnCount(); i++) {
+            tablaDatos.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new VentanaGestionDB().setVisible(true));
+    }
 }
