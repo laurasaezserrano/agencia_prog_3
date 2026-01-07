@@ -17,48 +17,102 @@ import java.util.HashMap;
 
 public class Ventana1Login extends JFrame {
 	private static final long serialVersionUID = 1L;
+	
 	protected static JTextField userField;
     protected static JPasswordField passField;
+    
     private JButton loginButton;
     private JLabel statusLabel;
-    private String userCSV = "resources/data/user.csv";
     
+    private String userCSV = "resources/data/user.csv";
     private HashMap<String, String> validUsers;
 
     public Ventana1Login() {
         validUsers = loadUsers(); 
 
         setTitle("Bienvenid@!");
-        setSize(350, 160);
+        setSize(420, 240);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
-
+        setLayout(new BorderLayout());
+        
+        
+        //panel principal
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+        main.setBackground(new Color(245, 248, 255));
+        add(main, BorderLayout.CENTER);
+        
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 2, 3, 4));
-
+        panel.setLayout(new GridLayout(3, 2, 12, 12));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBackground(new Color(245, 248, 255));
+        panel.setPreferredSize(new Dimension(320, 120));
 
         JLabel userLabel = new JLabel("Usuario:");
         JLabel passLabel = new JLabel("Contraseña:");
+        userLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        passLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        userLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        passLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        
         userField = new JTextField();
         passField = new JPasswordField();
-        loginButton = new JButton("Iniciar sesión");
-        statusLabel = new JLabel("", SwingConstants.CENTER);
         
+        //boton de ver contraseña
+        final char echoChar = passField.getEchoChar();
+        JToggleButton mostrarcontraseña = new JToggleButton("👁");
+        mostrarcontraseña.setFocusable(false);
+        mostrarcontraseña.setBorderPainted(false);
+        mostrarcontraseña.setFocusPainted(false);
+        mostrarcontraseña.setContentAreaFilled(false);
+        mostrarcontraseña.setOpaque(false);
+        mostrarcontraseña.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        mostrarcontraseña.setToolTipText("Mostar/Ocultar");
+        mostrarcontraseña.setPreferredSize(new Dimension(28, 28));
+                
+        mostrarcontraseña.addActionListener(e -> {
+            if (mostrarcontraseña.isSelected()) {
+                passField.setEchoChar((char) 0); //mostrar
+            } else {
+                passField.setEchoChar(echoChar);//ocultar
+            }
+        });
+      
+        
+        // Panel para contraseña + ojo
+        JPanel passPanel = new JPanel(new BorderLayout(6, 0));
+        passPanel.setOpaque(false);
+        passPanel.add(passField, BorderLayout.CENTER);
+        passPanel.add(mostrarcontraseña, BorderLayout.EAST);
+        
+        
+        loginButton = new JButton("Iniciar sesión");
+        loginButton.setPreferredSize(new Dimension(180, 30));
+        loginButton.setBackground(new Color(50, 150, 200));
+        loginButton.setForeground(Color.WHITE);
+        loginButton.setFont(new Font("Arial", Font.BOLD, 14));
+        loginButton.setFocusPainted(false);
+        
+        
+        statusLabel = new JLabel("", SwingConstants.CENTER);
+        statusLabel.setOpaque(true);
+        statusLabel.setBackground(new Color(245, 248, 255));
         
         panel.add(userLabel);
         panel.add(userField);
+        
         panel.add(passLabel);
-        panel.add(passField);
+        panel.add(passPanel);
         
         panel.add(new JLabel()); 
-        panel.add(new JLabel()); 
-        
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.add(loginButton); 
-        panel.add(buttonPanel);
+        panel.add(loginButton);
 
-        add(panel, BorderLayout.CENTER);
+        JPanel centrado = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 20));
+        centrado.setBackground(new Color(245, 248, 255));
+        centrado.add(panel);
+        main.add(centrado, BorderLayout.CENTER);
         add(statusLabel, BorderLayout.SOUTH);
 
         loginButton.addActionListener(e -> checkLogin());
@@ -101,7 +155,9 @@ public class Ventana1Login extends JFrame {
     private HashMap<String, String> loadUsers () {
         File file = new File(userCSV);
         if (!file.exists()) return new HashMap<>();
+        
         HashMap<String, String> usuarios = new HashMap<>();
+        
         try (BufferedReader in = new BufferedReader(new FileReader(file))) {
         	
         	String linea = null;
