@@ -657,7 +657,7 @@ public class VentanaVueloYHotel extends JFrame {
     
     static class PrecioRenderer extends DefaultTableCellRenderer {
         private static final long serialVersionUID = 1L;
-        private static final NumberFormat C = NumberFormat.getCurrencyInstance(new Locale("es", "ES"));
+        private static final NumberFormat C = NumberFormat.getCurrencyInstance(new Locale("es", "ES")); //generado por IAG
         
         static String format(double d) {
             return C.format(d);

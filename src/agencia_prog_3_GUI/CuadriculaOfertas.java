@@ -43,7 +43,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import java.util.List;
 import agencia_prog_3_thread.VentanaConfirmacionReserva;
-import db.GestorBD;
 
 //FALTA
 //Añadir boton de reserva para que acabe de confirmar la reserva con los datos necesarios y añadirla a su perfil
@@ -74,7 +73,6 @@ public class CuadriculaOfertas extends JFrame{
 	    	private JLabel lblPrecioTotal;
 	    	private JLabel lblHotelSeleccionado;
 	    	private Hotel hotelSeleccionado;
-	    	private JTextField nomUser;
 	    	private JTextField txtNombre;
 	    	private JTextField txtEmail;
 	    	private JSpinner spinAdultos; // Para ajustar los numeros de 1 hasta ...
@@ -301,7 +299,6 @@ public class CuadriculaOfertas extends JFrame{
 		        // Lo trataremos como Precio por Habitación Estándar por Noche:
 	        
 	        double totalPersonasFactor = adultos + ninos;
-	        double precioNocheAjustado = precioBaseNoche * factorHabitacion;
 	        
 	        double precioFinal = (precioBaseNoche * factorHabitacion) * totalPersonasFactor * duracionViaje;
 	        
@@ -310,7 +307,6 @@ public class CuadriculaOfertas extends JFrame{
 	        // Si hay más de 2 adultos/niños, cobramos un extra por persona adicional
 	        double extraPersonas = Math.max(0, totalPersonas - 2) * 0.3; // 30% extra por persona adicional (simplificado)
 	        
-//	        double precioFinal = (precioNocheAjustado * (1 + extraPersonas)) * difDias;
 	
 	        lblPrecioTotal.setText(String.format("%.2f € (%d días)", precioFinal, duracionViaje));
 	    }
@@ -622,7 +618,6 @@ public class CuadriculaOfertas extends JFrame{
         contenidoPanel.add(panelImagen);
         ventanaoferta.add(contenidoPanel, BorderLayout.CENTER);
         
-		JPanel centro = new JPanel(new BorderLayout());
 		JLabel imagen = new JLabel();
 		imagen.setOpaque(true);
 		imagen.setBackground(new Color(200, 220, 255));
@@ -682,14 +677,9 @@ public class CuadriculaOfertas extends JFrame{
 		public HashMap<String, List<Hotel>> cargarHotelesDesdeCSV() {
 		    HashMap<String, List<Hotel>> hotelesPorCiudad = new HashMap<>();
 		    
-//		    if (is == null) {
-//	            // Si no se encuentra con getResourceAsStream, intenta con FileReader (ruta relativa normal)
-//	            is = new java.io.FileInputStream("hoteles_mundiales_variedad_EUR.csv");
-//	        }
 		    
-		    try {
-		    	BufferedReader br = new BufferedReader(new FileReader("resources/data/hoteles.csv"));
-		        String linea;
+		    try (BufferedReader br = new BufferedReader(new FileReader("resources/data/hoteles.csv"))) {
+		    	String linea;
 		        
 		     // Saltar la cabecera
 		        while ((linea = br.readLine()) != null) {

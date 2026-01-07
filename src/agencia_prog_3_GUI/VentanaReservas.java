@@ -19,7 +19,6 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -322,10 +321,7 @@ public class VentanaReservas extends JFrame {
                         salida, regreso, precio, "Cancelar"
                     };
                     
-                    Object[] filaEx = {
-                            ciudad, HotelOExcursion, email, HabOTipo, adultos, ninos, 
-                            salida, regreso, precio, "Cancelar"
-                        };
+                    
                     
                     // --- NUEVA LÓGICA DE CLASIFICACIÓN ---
                     if (HabOTipo.equalsIgnoreCase("Excursión")) {
