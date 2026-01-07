@@ -40,6 +40,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.border.LineBorder;
 import java.util.List;
@@ -552,6 +553,14 @@ public class CuadriculaOfertas extends JFrame{
 			final JButton botonActual = boton;
 
 			boton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+						abriroferta(numero);
+						CuadriculaOfertas.this.dispose();
+					}
+				}
+				
 				@Override
 				public void mouseEntered(MouseEvent evt) {
 					// 1. CAMBIAR IMAGEN (a la versión ligeramente más grande)
