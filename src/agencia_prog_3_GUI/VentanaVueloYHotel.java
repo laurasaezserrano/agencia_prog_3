@@ -263,7 +263,7 @@ public class VentanaVueloYHotel extends JFrame {
     }
 
     private JPanel configurarbusqueda() {
-        JPanel panel1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        JPanel panel1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         panel1.setBackground(new Color(230, 240, 255));
         panel1.add(new JLabel("Buscar (origen/destino/fecha):"));
         campofiltro = new JTextField(24);
