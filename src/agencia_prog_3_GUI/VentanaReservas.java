@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.ImageIcon;
@@ -36,24 +37,23 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
-import agencia_prog_3_GUI.Ventana1Login;
-import agencia_prog_3_GUI.VentanaExcursiones.ButtonEditor;
-import agencia_prog_3_GUI.VentanaExcursiones.ButtonRenderer;
-import db.VentanaGestionDB;
 
 public class VentanaReservas extends JFrame {
 
 	private static final long serialVersionUID = 1L;
     JPanel centerPanel = new JPanel();
-    private DefaultTableModel modeloTabla;
     private String usuarioLogueado;
-    private TableRowSorter<DefaultTableModel> sorter;
     
     private DefaultTableModel modeloTablaHoteles;
     private DefaultTableModel modeloTablaExcursiones ;
     private TableRowSorter<DefaultTableModel> sorterHoteles;
     private TableRowSorter<DefaultTableModel> sorterExcursiones;
     private JTabbedPane tabbedPane;
+    
+    private JTextField txtFiltroCiudad;
+    
+    private JTable tablaHoteles;
+    private JTable tablaExcursiones;
 
 	
 	public VentanaReservas() {
@@ -76,21 +76,16 @@ public class VentanaReservas extends JFrame {
         panelSuperior.add(titleLabel, BorderLayout.CENTER); // Título en el centro
 
         
-        JPanel panelFiltro = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Panel para los filtros
-		JLabel lblFiltrarCiudad = new JLabel("Filtrar por Ciudad:");
-		JTextField txtFiltroCiudad = new JTextField(20); // Campo de texto de 20 cols
-		JButton btnFiltrar = new JButton("Filtrar");
-		JButton btnLimpiarFiltro = new JButton("Limpiar Filtro");
-		
-		panelFiltro.add(lblFiltrarCiudad);
-		panelFiltro.add(txtFiltroCiudad);
-		panelFiltro.add(btnFiltrar);
-		panelFiltro.add(btnLimpiarFiltro);
-		
-		// Añadimos el panel de filtro debajo del título
-		panelSuperior.add(panelFiltro, BorderLayout.SOUTH);
+        JPanel panelFiltro = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelFiltro.add(new JLabel("Filtrar por Ciudad:"));
+        txtFiltroCiudad = new JTextField(20); 
+        JButton btnFiltrar = new JButton("Filtrar");
+        JButton btnLimpiarFiltro = new JButton("Limpiar Filtro");
         
-       		
+        panelFiltro.add(txtFiltroCiudad);
+        panelFiltro.add(btnFiltrar);
+        panelFiltro.add(btnLimpiarFiltro);
+        panelSuperior.add(panelFiltro, BorderLayout.SOUTH);
         add(panelSuperior, BorderLayout.NORTH);
         
         tabbedPane = new JTabbedPane();
@@ -131,32 +126,8 @@ public class VentanaReservas extends JFrame {
                 return column == 9; 
             }
         };
-//        JTable tablaHoteles = new JTable(modeloTablaHoteles) {
-//            @Override
-//            public String getToolTipText(java.awt.event.MouseEvent e) {
-//                int row = rowAtPoint(e.getPoint());
-//                int col = columnAtPoint(e.getPoint());
-//                
-//                
-//                if (col == 0 && row != -1) {
-//                    Object value = getValueAt(row, col);
-//                    if (value != null) {
-//                        String ciudad = value.toString();
-//                        System.out.println(value.toString());
-//                        
-//                        File imgFile = new File("resources/images/ciudades/" + ciudad + ".jpg");
-//                        
-//                        if (imgFile.exists()) {
-//                            // Usamos HTML para mostrar la imagen en el ToolTip
-//                            return "<html><img src='" + imgFile.toURI() + "' width='200' height='150'><br><center>" + ciudad + "</center></html>";
-//                        }
-//                    }
-//                }
-//                return super.getToolTipText(e);
-//            }
-//        };
         
-        JTable tablaHoteles = new JTable(modeloTablaHoteles);
+        tablaHoteles = new JTable(modeloTablaHoteles);
         
         sorterHoteles = new TableRowSorter<>(modeloTablaHoteles);
         tablaHoteles.setRowSorter(sorterHoteles);
@@ -183,8 +154,8 @@ public class VentanaReservas extends JFrame {
         
         
         
-        JTable tablaExcursiones = new JTable(modeloTablaExcursiones);
-        TableRowSorter sorterExcursiones = new TableRowSorter<>(modeloTablaExcursiones);
+        tablaExcursiones = new JTable(modeloTablaExcursiones);
+        sorterExcursiones = new TableRowSorter<>(modeloTablaExcursiones);
         tablaExcursiones.setRowSorter(sorterExcursiones);
         // Configuramos la tabla de excursiones (incluyendo el botón)
         configurarTabla(tablaExcursiones, modeloTablaExcursiones);
@@ -192,6 +163,20 @@ public class VentanaReservas extends JFrame {
         tabbedPane.addTab("Excursiones", scrollExcursiones);
         
         add(tabbedPane, BorderLayout.CENTER);
+        
+        txtFiltroCiudad.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { 
+            	aplicarbusqueda();
+            }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { 
+            	aplicarbusqueda(); 
+            }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { 
+            	aplicarbusqueda(); 
+            }
+        });
+        
+
         
         
         btnFiltrar.addActionListener(new ActionListener() {
@@ -233,36 +218,29 @@ public class VentanaReservas extends JFrame {
 	    tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
 	    tabla.setFillsViewportHeight(true);
 
-	    // ----- CENTRAR TEXTO -----
 	    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 	    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
-	    // ----- COLORES ALTERNADOS -----
-	    TableCellRenderer colorRenderer = (table1, value, isSelected, hasFocus, row, column) -> {
-	        JLabel result = new JLabel(value != null ? value.toString() : "");
-            result.setFont(new Font("Arial", Font.PLAIN, 14));       
-	        if (!isSelected) {
-	            if (row % 2 == 0) {
-	                result.setBackground(new Color(250, 249, 249)); 
-	            } else {
-	                result.setBackground(new Color(235, 235, 235)); 
-	            }
-	        }
-	        
-	        result.setOpaque(true);
-	        return result;
-	    };
+//	    TableCellRenderer colorRenderer = (table1, value, isSelected, hasFocus, row, column) -> {
+//	        JLabel result = new JLabel(value != null ? value.toString() : "");
+//            result.setFont(new Font("Arial", Font.PLAIN, 14));       
+//	        if (!isSelected) {
+//	            if (row % 2 == 0) {
+//	                result.setBackground(new Color(250, 249, 249)); 
+//	            } else {
+//	                result.setBackground(new Color(235, 235, 235)); 
+//	            }
+//	        }
+//	        
+//	        result.setOpaque(true);
+//	        return result;
+//	    };
 
 	    int columnas = tabla.getColumnCount();
 
 	    // Aplicamos tanto el centrado como el color alternado a todas menos la última
 	    for (int i = 0; i < columnas - 1; i++) {
-	        tabla.getColumnModel().getColumn(i).setCellRenderer((table2, value, isSelected, hasFocus, row, col) -> {
-	            JLabel lbl = (JLabel) colorRenderer.getTableCellRendererComponent(table2, value, isSelected, hasFocus, row, col);
-
-	            lbl.setHorizontalAlignment(SwingConstants.CENTER);
-	            return lbl;
-	        });
+	        tabla.getColumnModel().getColumn(i).setCellRenderer(highlightRenderer);
 	    }
 
 	    // Botón cancelar
@@ -276,6 +254,33 @@ public class VentanaReservas extends JFrame {
 	    tabla.getColumnModel().getColumn(columnaCancelar).setMaxWidth(100);
 	    tabla.getColumnModel().getColumn(columnaCancelar).setMinWidth(100);
 	}
+	
+	
+	TableCellRenderer highlightRenderer = new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel c = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            
+            String textoFiltro = txtFiltroCiudad.getText();
+            String valorCelda = (value != null) ? value.toString() : "";
+
+            if (!textoFiltro.isEmpty() && column == 0 && !isSelected) {
+                // Usamos Regex para buscar el texto sin importar mayúsculas y ponerle fondo amarillo con HTML
+                String pattern = "(?i)(" + Pattern.quote(textoFiltro) + ")";
+                String resaltado = valorCelda.replaceAll(pattern, "<span style='background: yellow;'>$1</span>");
+                c.setText("<html>" + resaltado + "</html>");
+            } else {
+                c.setText(valorCelda);
+            }
+
+            // Mantener colores alternos de filas si no está seleccionado
+            if (!isSelected) {
+                c.setBackground(row % 2 == 0 ? new Color(250, 249, 249) : new Color(235, 235, 235));
+            }
+            c.setHorizontalAlignment(SwingConstants.CENTER);
+            return c;
+        }
+    };
 	
 	
 	private void cargarReservasDesdeCSV(String usuarioFiltrar) {
@@ -430,6 +435,23 @@ public class VentanaReservas extends JFrame {
         
         return true; // Éxito
     }
+	
+	private void aplicarbusqueda() {
+    	String texto = txtFiltroCiudad.getText();
+        RowFilter<DefaultTableModel, Object> rf = null;
+        try {
+            // Filtra por la columna 0 (Ciudad/Destino)
+            rf = RowFilter.regexFilter("(?i)" + Pattern.quote(texto), 0);
+        } catch (java.util.regex.PatternSyntaxException e) {
+            return;
+        }
+        sorterHoteles.setRowFilter(rf);
+        sorterExcursiones.setRowFilter(rf);
+        
+        // Forzar a las tablas a repintarse para que el renderizador resalte el texto
+        tablaHoteles.repaint();
+        tablaExcursiones.repaint();
+    };
 
 	
 	static class ButtonRenderer extends JButton implements TableCellRenderer {
