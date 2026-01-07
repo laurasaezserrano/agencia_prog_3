@@ -40,6 +40,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.ToolTipManager;
 import javax.swing.border.LineBorder;
 import java.util.List;
 import agencia_prog_3_thread.VentanaConfirmacionReserva;
@@ -64,6 +65,69 @@ public class CuadriculaOfertas extends JFrame{
 		    "Nueva York",  
 		    "Oslo"         
 		};
+	
+	/**IAG - Descripciones generadas por Gemini y ChatGPT
+	 * 
+	 */
+	String[] descripcionesOfertas = {
+			 
+	        //CARIBE
+			 "¡Descubre las playas paradisíacas del Caribe! \nIncluye vuelo directo desde Madrid con estancia en el Hotel Palace Aurora (4⭐) junto con un todo incluido. " 
+	        + "Disfruta de aguas cristalinas, arena blanca, café de origen, ritmo caribeño y clima perfecto durante todo el año." + "Este maravilloso paquete incluye un city tour"
+	        + "por La Candelaria, ruta del cafe y cata de origen, visita a la isla colombiana de San Andres, famosa por su 'mar de los 7 colores', alli podras hacer snorkel "
+	        + "y ver una enorme diversidad de vida marina, tambien visitaras Cartagena de Indias donde apreciaras la ciudad amurallada y las Islas del Rosario.",
+	        
+	        //PARIS
+	        "Escapada romántica a París, 'La Ciudad de la Luz' y 'La Ciudad del Amor'. \n Visita la Torre Eiffel, el Louvre y pasea por los Campos Elíseos. " 
+	        + "Incluye vuelo + estancia en Suites Andres (4★), desayuno continental y tour guiado por la ciudad, asi como crucero al atardecer por el rio Sena y dia completo en "
+	        + "Disneyland® Paris (opcion de familias).",
+	        
+	        //ALPES
+	        "Aventura en los Alpes Suizos con estancia en el Hotel Montaña (5★) ubicado en Zurich, Suiza. \nMontañas nevadas, lagos "
+	        + "turquesa y pueblos encantadores te esperan. \nEste paquete inclute vuelo directo desde Madrid, entrada para el teleférico "
+	        + "panorámico por Lucerna y Monte Pilatus, dia completo por Interlaken & Jungfraujoch, Titlis: puente colgante y glaciar, "
+	        + "tren panoramico Glacier Express, cata de comida tradicional como el fondue suizo o el chocolate artesanal entre otras muchas actividades. ",
+	        
+	        //ROMA
+	        "El Resort Victoria (5★) te espera en Roma. \nNo te pierdas la historia viva, las plazas y la gran gastronoia italiana. \nIncluye catas de vino, "
+	        + "visita al Vaticano, dia completo en Florencia, Napoles o Pompeya, clases de cocina italiana, una inigualable ruta gastronomica por Trastevere "
+	        + "y visitas a los monumentos más emblemáticos como el Coliseo.",
+	        
+	        //TORONTO
+	        "Siente la energía de Toronto: lagos, rascacielos y la excursión a Niágara. Vuela desde Madrid y alójate en el Hotel Plaza Sol (3★) al mejor precio. "
+	        + "\nToronto combina rascacielos, barrios multiculturales, y el encanto del Lago Ontario. Es una base perfecta para disfrutar de museos, deporte, "
+	        + "gastronomia internacional y, por supuesto, la excursion mas famosa de Canadá: La visita a las Cataratas del Niagara, una experiencia inolvidable "
+	        + "que podreis disfrutar en familia. \n A parte de las mencionadas anteriormente, tambien incluye un visita a CN Tower, Harbourfront, Distillery District "
+	        + "y St. Lawrence Market. ",
+	        
+	        //TOKIO
+	        "Tokio es un contraste perfecto entre templos milenarios y barrios futuristas. Desde Asakusa a Shibuya, la ciudad vibra 24/7 con izakayas, sushi de "
+	        + "mercado y centros comerciales infinitos. Ideal para foodies, parejas y viajeros curiosos. Tokio en 4 días: ¡vive Japón a tu ritmo con vuelo desde "
+	        + "Madrid y estancia en uno de los mejores hoteles de la ciudad, el Hotel Bahia (5★). \nPodras valorar Tokyo desde el Mirador Tokyo Skytree y presenciar "
+	        + "la cantidad de gente que transcurre por el cruce de Shibuya. Podras apreciar la cultura pop y tech asi como visitar el templo de Nikko y la ciudad de "
+	        + "Kamakura. Tambien podras pasar un dia en Hakone y ver las vistas del Monte Fuji." ,
+	        
+	        //Bangkok
+	        "Hotel Palace Pacifico (4⭐) en Bangkok + vuelo directo desde Madrid. \nCultura milenaria, templos "
+	        + "dorados y vida callejera vibrante. Ideal para combinar ciudad + naturaleza, con opción de extensión "
+	        + "a Bali uno de los destinos mas aclamados de Tailandia. " + "Este paquete incluye aparte del vuelo y hotel, "
+	        + "excuriones como: Tours guiados por el Gran Palacio, Wat Pho y Wat Arun, un dia completo por las ruinas de "
+	        + "Ayutthaya, visita a los mercados flotantes, spa, yoga matinal, excursiones a arrozales y visita a la faosa ciudad de Ubud.",
+	        
+	        //NEW YORK
+	        "Hotel Resort Imperial (4⭐) en Nueva York + vuelo directo desde Madrid. \n" + "'La ciudad que nunca duerme' ofrece rascacielos, "
+	        + "cultura pop, museos, musicales de Broadway, barrios iconicos como Times Square, Central Park y diversidad de planes para "
+	        + "todo tipo de viajeros. \n"+ "El paquete incluye diferentes excursiones como: Paseo en ferry hasta la Estatua de la Libertad, "
+	        + "entradas a musicales, tour por Manhattan, ruta gastronomica y subida al Empire State.",
+	        
+	        //OSLO
+	        "Oslo te espera con aire puro, arquitectura vanguardista y el encanto de los fiordos noruegos. Disfruta de una escapada nórdica desde Madrid con vuelos directos "
+	        + "y alojamiento 3★ en el Hotel Plaza Laguna. ¡Descubre el norte en su estado más puro. \nOslo combina modernidad y naturaleza salvaje en una ciudad compacta y "
+	        + "acogedora. Entre sus montañas, fiordos y museos, descubriras una capital limpia, segura y culturalmente vibrante. Perfecta para quienes buscan una escapada "
+	        + "tranquila, sostenible y con aire fresco. \nEl paquete incluye excursiones como visita al museo Munch, visita a la futurista Opera de Oslo, visita al puerto "
+	        + "de Aker Brygger entre mutras otras mas."
+	        
+	    };
 
 	    
 	    public class VentanaReserva extends JFrame {
@@ -334,6 +398,13 @@ public class CuadriculaOfertas extends JFrame{
 }
 	    
 	public CuadriculaOfertas() {
+		/**
+		 * Ayuda de ña IAG para que el tool tip saliese mas rapido
+		 */
+		ToolTipManager.sharedInstance().setInitialDelay(0); 
+		ToolTipManager.sharedInstance().setDismissDelay(8000);
+		
+		
 		this.hotelesPorCiudad = cargarHotelesDesdeCSV();
 		setLayout(new BorderLayout());
 		setTitle("OFERTAS RECIENTES");
@@ -454,6 +525,21 @@ public class CuadriculaOfertas extends JFrame{
 			boton.setPreferredSize(new Dimension(200, 120));
 			boton.setHorizontalTextPosition(SwingConstants.CENTER); // Centra horizontalmente el texto
 			boton.setVerticalTextPosition(SwingConstants.BOTTOM);
+			
+			String desc = descripcionesOfertas[i];
+				String descripcioncorta;
+				if (desc.length() > 180) {
+				    descripcioncorta = desc.substring(0, 180) + "...";
+				} else {
+				    descripcioncorta = desc;
+				}
+				final String tooltipHtml =
+					    "<html><div style='width:320px; padding:6px;'>" +
+					    "<b>" + ciudadesOferta[i] + "</b><br><br>" +
+					    descripcioncorta.replace("\n", "<br>") +
+					    "</div></html>";
+				
+			
 			boton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -473,18 +559,32 @@ public class CuadriculaOfertas extends JFrame{
 					
 					botonActual.setBackground(new Color(200, 220, 255)); // Fondo azul claro
 					botonActual.setBorder(new LineBorder(new Color(0, 100, 255), 3)); // Borde azul resaltado
+					/**
+					 * IAG - tool tip generado con ayuda de ChatGPT		
+					 */
+					botonActual.setToolTipText(tooltipHtml);
+					ToolTipManager.sharedInstance().mouseMoved(
+							new MouseEvent(
+									botonActual,
+									MouseEvent.MOUSE_MOVED,
+									System.currentTimeMillis(),
+									0,
+									10, 10, 0, false
+	               ) );
 				}
 				
 				@Override
 				public void mouseExited(MouseEvent evt) {
-					// 1. RESTAURAR IMAGEN (a la versión pequeña)
 					botonActual.setIcon(iconoInicial); 
 			
 					botonActual.setBackground(new Color(255, 255, 255)); // Fondo blanco
 				}
 			});
 				
-				panel1.add(boton);			
+				panel1.add(boton);	
+				
+				
+				
 			}
 		
 		
@@ -505,68 +605,8 @@ public class CuadriculaOfertas extends JFrame{
 		
 		
 		
-		/**IAG - Descripciones generadas por Gemini y ChatGPT
-		 * 
-		 */
-		 String[] descripciones = {
-				 
-		        //CARIBE
-				 "¡Descubre las playas paradisíacas del Caribe! \nIncluye vuelo directo desde Madrid con estancia en el Hotel Palace Aurora (4⭐) junto con un todo incluido. " 
-		        + "Disfruta de aguas cristalinas, arena blanca, café de origen, ritmo caribeño y clima perfecto durante todo el año." + "Este maravilloso paquete incluye un city tour"
-		        + "por La Candelaria, ruta del cafe y cata de origen, visita a la isla colombiana de San Andres, famosa por su 'mar de los 7 colores', alli podras hacer snorkel "
-		        + "y ver una enorme diversidad de vida marina, tambien visitaras Cartagena de Indias donde apreciaras la ciudad amurallada y las Islas del Rosario.",
-		        
-		        //PARIS
-		        "Escapada romántica a París, 'La Ciudad de la Luz' y 'La Ciudad del Amor'. \n Visita la Torre Eiffel, el Louvre y pasea por los Campos Elíseos. " 
-		        + "Incluye vuelo + estancia en Suites Andres (4★), desayuno continental y tour guiado por la ciudad, asi como crucero al atardecer por el rio Sena y dia completo en "
-		        + "Disneyland® Paris (opcion de familias).",
-		        
-		        //ALPES
-		        "Aventura en los Alpes Suizos con estancia en el Hotel Montaña (5★) ubicado en Zurich, Suiza. \nMontañas nevadas, lagos "
-		        + "turquesa y pueblos encantadores te esperan. \nEste paquete inclute vuelo directo desde Madrid, entrada para el teleférico "
-		        + "panorámico por Lucerna y Monte Pilatus, dia completo por Interlaken & Jungfraujoch, Titlis: puente colgante y glaciar, "
-		        + "tren panoramico Glacier Express, cata de comida tradicional como el fondue suizo o el chocolate artesanal entre otras muchas actividades. ",
-		        
-		        //ROMA
-		        "El Resort Victoria (5★) te espera en Roma. \nNo te pierdas la historia viva, las plazas y la gran gastronoia italiana. \nIncluye catas de vino, "
-		        + "visita al Vaticano, dia completo en Florencia, Napoles o Pompeya, clases de cocina italiana, una inigualable ruta gastronomica por Trastevere "
-		        + "y visitas a los monumentos más emblemáticos como el Coliseo.",
-		        
-		        //TORONTO
-		        "Siente la energía de Toronto: lagos, rascacielos y la excursión a Niágara. Vuela desde Madrid y alójate en el Hotel Plaza Sol (3★) al mejor precio. "
-		        + "\nToronto combina rascacielos, barrios multiculturales, y el encanto del Lago Ontario. Es una base perfecta para disfrutar de museos, deporte, "
-		        + "gastronomia internacional y, por supuesto, la excursion mas famosa de Canadá: La visita a las Cataratas del Niagara, una experiencia inolvidable "
-		        + "que podreis disfrutar en familia. \n A parte de las mencionadas anteriormente, tambien incluye un visita a CN Tower, Harbourfront, Distillery District "
-		        + "y St. Lawrence Market. ",
-		        
-		        //TOKIO
-		        "Tokio es un contraste perfecto entre templos milenarios y barrios futuristas. Desde Asakusa a Shibuya, la ciudad vibra 24/7 con izakayas, sushi de "
-		        + "mercado y centros comerciales infinitos. Ideal para foodies, parejas y viajeros curiosos. Tokio en 4 días: ¡vive Japón a tu ritmo con vuelo desde "
-		        + "Madrid y estancia en uno de los mejores hoteles de la ciudad, el Hotel Bahia (5★). \nPodras valorar Tokyo desde el Mirador Tokyo Skytree y presenciar "
-		        + "la cantidad de gente que transcurre por el cruce de Shibuya. Podras apreciar la cultura pop y tech asi como visitar el templo de Nikko y la ciudad de "
-		        + "Kamakura. Tambien podras pasar un dia en Hakone y ver las vistas del Monte Fuji." ,
-		        
-		        //Bangkok
-		        "Hotel Palace Pacifico (4⭐) en Bangkok + vuelo directo desde Madrid. \nCultura milenaria, templos "
-		        + "dorados y vida callejera vibrante. Ideal para combinar ciudad + naturaleza, con opción de extensión "
-		        + "a Bali uno de los destinos mas aclamados de Tailandia. " + "Este paquete incluye aparte del vuelo y hotel, "
-		        + "excuriones como: Tours guiados por el Gran Palacio, Wat Pho y Wat Arun, un dia completo por las ruinas de "
-		        + "Ayutthaya, visita a los mercados flotantes, spa, yoga matinal, excursiones a arrozales y visita a la faosa ciudad de Ubud.",
-		        
-		        //NEW YORK
-		        "Hotel Resort Imperial (4⭐) en Nueva York + vuelo directo desde Madrid. \n" + "'La ciudad que nunca duerme' ofrece rascacielos, "
-		        + "cultura pop, museos, musicales de Broadway, barrios iconicos como Times Square, Central Park y diversidad de planes para "
-		        + "todo tipo de viajeros. \n"+ "El paquete incluye diferentes excursiones como: Paseo en ferry hasta la Estatua de la Libertad, "
-		        + "entradas a musicales, tour por Manhattan, ruta gastronomica y subida al Empire State.",
-		        
-		        //OSLO
-		        "Oslo te espera con aire puro, arquitectura vanguardista y el encanto de los fiordos noruegos. Disfruta de una escapada nórdica desde Madrid con vuelos directos "
-		        + "y alojamiento 3★ en el Hotel Plaza Laguna. ¡Descubre el norte en su estado más puro. \nOslo combina modernidad y naturaleza salvaje en una ciudad compacta y "
-		        + "acogedora. Entre sus montañas, fiordos y museos, descubriras una capital limpia, segura y culturalmente vibrante. Perfecta para quienes buscan una escapada "
-		        + "tranquila, sostenible y con aire fresco. \nEl paquete incluye excursiones como visita al museo Munch, visita a la futurista Opera de Oslo, visita al puerto "
-		        + "de Aker Brygger entre mutras otras mas."
-		        
-		    };
+		
+		 
 		
 		JLabel titulo = new JLabel("Detalles del viaje a " + ciudadesOferta [numero-1], SwingConstants.CENTER);
 		titulo.setFont(new Font("Times New Roman", Font.PLAIN, 22));
@@ -605,7 +645,7 @@ public class CuadriculaOfertas extends JFrame{
 	    
 		//Descripcion
 		JTextArea descripcionArea = new JTextArea();
-		descripcionArea.setText(descripciones[numero - 1]);
+		descripcionArea.setText(descripcionesOfertas[numero - 1]);
         descripcionArea.setFont(new Font("Arial", Font.PLAIN, 14));
         descripcionArea.setLineWrap(true);
         descripcionArea.setWrapStyleWord(true);
