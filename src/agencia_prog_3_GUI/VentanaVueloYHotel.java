@@ -184,7 +184,12 @@ public class VentanaVueloYHotel extends JFrame {
         mainpanel.add(sp, BorderLayout.CENTER);
 
         //boton de atras
+        JPanel panelAtras = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelAtras.setBackground(new Color(50, 150, 200));
+        
         JButton atras = new JButton("Atrás");
+        atras.setPreferredSize(new Dimension(80, 28));
+        
         atras.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -192,7 +197,9 @@ public class VentanaVueloYHotel extends JFrame {
                 new VentanaInicio().setVisible(true);
             }
         });
-        mainpanel.add(atras, BorderLayout.SOUTH);
+        
+        panelAtras.add(atras);
+        mainpanel.add(panelAtras, BorderLayout.SOUTH);
         
         cerrarventana(campofiltro, tabla, atras);
     }
