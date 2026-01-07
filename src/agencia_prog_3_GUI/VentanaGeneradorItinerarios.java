@@ -6,11 +6,13 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -20,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -27,6 +30,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellEditor;
 
 import agencia_prog_3_recursividad.GeneradorItinerariosRecursivos;
 import agencia_prog_3_recursividad.GenerarRutasConectadas;
@@ -46,6 +50,8 @@ public class VentanaGeneradorItinerarios extends JFrame {
     private JLabel labelResultados;
     private JButton btnGenerar;
     private JButton btnLimpiar;
+    
+    private List<List<DatosVuelos>> resultadosActuales = new ArrayList<>();
     
 	public VentanaGeneradorItinerarios(List<DatosVuelos> vuelos) {
         this.vuelosDisponibles = vuelos;
@@ -156,12 +162,12 @@ public class VentanaGeneradorItinerarios extends JFrame {
         panel.add(labelResultados, BorderLayout.NORTH);
         
         // Crear modelo de tabla
-        String[] columnas = {"#", "Itinerario", "Vuelos", "Precio Total", "Detalles", "Ver"};
+        String[] columnas = {"#", "Itinerario", "Vuelos", "Precio Total", "Detalles", "Ver", "Reservar"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             private static final long serialVersionUID = 1L;
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 5; // Solo columna "Ver" es editable
+                return column == 5 || column == 6; // Ambas columnas de botones son editables
             }
         };
         
@@ -179,12 +185,20 @@ public class VentanaGeneradorItinerarios extends JFrame {
         cabecera.setFont(cabecera.getFont().deriveFont(Font.BOLD, 12f));
         
         // Ajustar anchos de columna
-        tablaResultados.getColumnModel().getColumn(0).setPreferredWidth(50);  // #
-        tablaResultados.getColumnModel().getColumn(1).setPreferredWidth(200); // Itinerario
-        tablaResultados.getColumnModel().getColumn(2).setPreferredWidth(80);  // Vuelos
-        tablaResultados.getColumnModel().getColumn(3).setPreferredWidth(100); // Precio
-        tablaResultados.getColumnModel().getColumn(4).setPreferredWidth(400); // Detalles
-        tablaResultados.getColumnModel().getColumn(5).setPreferredWidth(80);  // Ver
+        tablaResultados.getColumnModel().getColumn(0).setPreferredWidth(30);
+        tablaResultados.getColumnModel().getColumn(4).setPreferredWidth(350);
+        tablaResultados.getColumnModel().getColumn(5).setPreferredWidth(60);
+        tablaResultados.getColumnModel().getColumn(6).setPreferredWidth(80);
+
+        tablaResultados.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer("Ver"));
+        tablaResultados.getColumnModel().getColumn(5).setCellEditor(
+            new ButtonEditorItinerario(tablaResultados, this::verDetalleItinerario)
+        );
+        
+        tablaResultados.getColumnModel().getColumn(6).setCellRenderer(new ButtonRenderer("Reservar"));
+        tablaResultados.getColumnModel().getColumn(6).setCellEditor(
+            new ButtonEditorItinerario(tablaResultados, this::reservarItinerario)
+        );
         
         // Centrar columnas numéricas
         DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
@@ -193,11 +207,7 @@ public class VentanaGeneradorItinerarios extends JFrame {
         tablaResultados.getColumnModel().getColumn(2).setCellRenderer(centrado);
         tablaResultados.getColumnModel().getColumn(3).setCellRenderer(centrado);
         
-        // Renderer para botón "Ver"
-        tablaResultados.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer("Ver"));
-        tablaResultados.getColumnModel().getColumn(5).setCellEditor(
-            new ButtonEditorItinerario(tablaResultados, this::verDetalleItinerario)
-        );
+        
         
         JScrollPane scrollPane = new JScrollPane(
             tablaResultados,
@@ -210,6 +220,101 @@ public class VentanaGeneradorItinerarios extends JFrame {
         return panel;
     }
 
+	
+//	private void generarItinerarios() {
+//        try {
+//            String tipo = (String) comboTipoBusqueda.getSelectedItem();
+//            int numVuelos = (Integer) comboNumVuelos.getSelectedItem();
+//            List<List<DatosVuelos>> resultados = new ArrayList<>();
+//
+//            if (tipo.equals("Itinerarios por presupuesto")) {
+//                double presupuesto = Double.parseDouble(campoPresupuesto.getText().trim());
+//                GeneradorItinerariosRecursivos.generarItinerarios(vuelosDisponibles, resultados, numVuelos, presupuesto);
+//            } else {
+//                String origen = campoOrigen.getText().trim();
+//                String destino = campoDestino.getText().trim();
+//                GenerarRutasConectadas.generarRutasConectadas(vuelosDisponibles, resultados, numVuelos - 1, origen, destino);
+//            }
+//
+//            // IMPORTANTE: Guardamos los resultados para poder acceder a ellos al pulsar "Reservar"
+//            this.resultadosActuales = resultados;
+//            mostrarResultados(resultados);
+//
+//        } catch (NumberFormatException ex) {
+//            JOptionPane.showMessageDialog(this, "Presupuesto no válido");
+//        }
+//    }
+
+	private void reservarItinerario(int fila) {
+        if (fila < 0 || fila >= resultadosActuales.size()) return;
+        List<DatosVuelos> itinerario = resultadosActuales.get(fila);
+        double precioPorPersona = calcularPrecioTotal(itinerario);
+
+        // Crear el diálogo de reserva (Igual que en VentanaVueloYHotel)
+        javax.swing.JDialog mensaje = new javax.swing.JDialog(this, "Realizar Reserva de Itinerario", true);
+        mensaje.setLayout(new BorderLayout(10, 10));
+        mensaje.setSize(600, 450);
+        mensaje.setLocationRelativeTo(this);
+
+        JPanel resumen1 = new JPanel();
+        resumen1.setLayout(new javax.swing.BoxLayout(resumen1, javax.swing.BoxLayout.Y_AXIS));
+        resumen1.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        
+        JLabel titulo = new JLabel("Resumen del Itinerario Seleccionado");
+        titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 16f));
+        resumen1.add(titulo);
+        resumen1.add(javax.swing.Box.createVerticalStrut(10));
+
+        JTextArea info = new JTextArea("Ruta: " + obtenerResumenItinerario(itinerario) + "\n" +
+                                     "Vuelos: " + itinerario.size() + "\n" +
+                                     "Precio/persona: " + String.format("%.2f €", precioPorPersona));
+        info.setEditable(false);
+        info.setBackground(new Color(245, 245, 245));
+        resumen1.add(new JScrollPane(info));
+        resumen1.add(javax.swing.Box.createVerticalStrut(15));
+        
+        // Campos de datos del cliente
+        JPanel panelNombre = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelNombre.add(new JLabel("Nombre Completo:"));
+        JTextField campoNombre = new JTextField(20);
+        panelNombre.add(campoNombre);
+        resumen1.add(panelNombre);
+
+        JPanel personas = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        personas.add(new JLabel("Número de Personas: "));
+        JComboBox<Integer> combob = new JComboBox<>();
+        for (int i = 1; i <= 10; i++) combob.addItem(i);
+        personas.add(combob);
+        resumen1.add(personas);
+
+        JLabel total = new JLabel("TOTAL A PAGAR: " + String.format("%.2f €", precioPorPersona));
+        total.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        total.setForeground(new Color(0, 100, 0));
+        resumen1.add(total);
+
+        combob.addActionListener(e -> {
+            int n = (Integer) combob.getSelectedItem();
+            total.setText("TOTAL A PAGAR: " + String.format("%.2f €", precioPorPersona * n));
+        });
+
+        JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton confirmar = new JButton("Confirmar Reserva");
+        confirmar.setBackground(new Color(0, 120, 215));
+        confirmar.setForeground(Color.WHITE);
+        confirmar.addActionListener(e -> {
+            if (campoNombre.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(mensaje, "Por favor, introduzca su nombre.");
+                return;
+            }
+            JOptionPane.showMessageDialog(mensaje, "RESERVA COMPLETADA CON ÉXITO\nCliente: " + campoNombre.getText() + "\nTotal: " + total.getText());
+            mensaje.dispose();
+        });
+        south.add(confirmar);
+
+        mensaje.add(resumen1, BorderLayout.CENTER);
+        mensaje.add(south, BorderLayout.SOUTH);
+        mensaje.setVisible(true);
+    }
 	
 	private JPanel crearPanelBotones() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
@@ -318,6 +423,7 @@ public class VentanaGeneradorItinerarios extends JFrame {
     
     private void mostrarResultados(List<List<DatosVuelos>> itinerarios) {
         limpiarTabla();
+        this.resultadosActuales = itinerarios;
         
         if (itinerarios.isEmpty()) {
             JOptionPane.showMessageDialog(this, 
@@ -340,7 +446,8 @@ public class VentanaGeneradorItinerarios extends JFrame {
                 numVuelos,
                 String.format("%.2f €", precioTotal),
                 detalles,
-                "Ver"
+                "Ver",
+                "Reservar"
             });
         }
         
@@ -402,18 +509,32 @@ public class VentanaGeneradorItinerarios extends JFrame {
         labelResultados.setText("Resultados: 0 itinerarios encontrados");
     }
     
-    // Editor de botón para la columna "Ver"
-    static class ButtonEditorItinerario extends VentanaVueloYHotel.ButtonEditor {
+    static class ButtonEditorItinerario extends AbstractCellEditor implements TableCellEditor, ActionListener {
         private static final long serialVersionUID = 1L;
+        private final JButton button;
         private final JTable tabla;
         private final java.util.function.Consumer<Integer> onClick;
-        
-        ButtonEditorItinerario(JTable tabla, java.util.function.Consumer<Integer> onClick) {
-            super(new ArrayList<>(), tabla, null);
+        private String label;
+
+        public ButtonEditorItinerario(JTable tabla, java.util.function.Consumer<Integer> onClick) {
             this.tabla = tabla;
             this.onClick = onClick;
+            this.button = new JButton();
+            this.button.addActionListener(this);
         }
-        
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            label = (value == null) ? "" : value.toString();
+            button.setText(label);
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return label;
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             int fila = tabla.getEditingRow();
