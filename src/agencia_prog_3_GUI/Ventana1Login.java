@@ -50,12 +50,11 @@ public class Ventana1Login extends JFrame {
         panel.add(userField);
         panel.add(passLabel);
         panel.add(passField);
-        panel.add(new JLabel());
-        panel.add(loginButton);
+        
+        panel.add(new JLabel()); 
+        panel.add(new JLabel()); 
         
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panel.add(new JLabel()); 
-        panel.add(new JLabel()); 
         buttonPanel.add(loginButton); 
         panel.add(buttonPanel);
 
@@ -64,6 +63,15 @@ public class Ventana1Login extends JFrame {
 
         loginButton.addActionListener(e -> checkLogin());
 
+        getRootPane().registerKeyboardAction(e -> { //al darle al esc se vacia el texto
+        	userField.setText("");
+        	passField.setText("");
+        	statusLabel.setText("");
+        	userField.requestFocusInWindow();
+        }, 
+        		KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), 
+        		JComponent.WHEN_IN_FOCUSED_WINDOW);
+        
         KeyAdapter introListener = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
