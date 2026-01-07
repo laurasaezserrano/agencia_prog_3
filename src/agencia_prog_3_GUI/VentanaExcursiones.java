@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -304,20 +305,23 @@ public class VentanaExcursiones extends JFrame{
         mainpanel.add(sp, BorderLayout.CENTER); 
  
         //Boton de retorno a interfaz principal
-        JButton botonInicio = new JButton("Atras"); //luego cambiarlo a un icono
-        botonInicio.setBounds(0, 0, 10, 30);
+        JPanel panelAtras = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelAtras.setBackground(new Color(50, 150, 200));
+        
+        JButton botonInicio = new JButton("Atras"); 
+        botonInicio.setPreferredSize(new Dimension(90, 28));
+
         botonInicio.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				dispose();
 				VentanaInicio ventanainicio = new VentanaInicio();
 				ventanainicio.setVisible(true);
 			}
          
 		});
-        mainpanel.add(botonInicio, BorderLayout.SOUTH);
+        panelAtras.add(botonInicio);
+        mainpanel.add(panelAtras, BorderLayout.SOUTH);
         
         cerrarventana();
         
