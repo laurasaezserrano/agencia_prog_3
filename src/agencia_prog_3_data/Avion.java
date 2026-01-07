@@ -6,6 +6,7 @@ public class Avion implements Serializable {
     private static final long serialVersionUID = 1L;
     private String codigo;
     private String nombre; 
+    private int duracion;
     
     public Avion(String nombre) {
         this.nombre = nombre;
@@ -17,9 +18,10 @@ public class Avion implements Serializable {
 
     }
     
-    public Avion(String codigo, String nombre, int i) {
+    public Avion(String codigo, String nombre, int duracion) {
         this.codigo = codigo;
     	this.nombre = nombre;
+    	this.duracion = duracion;
     }
     
     @Override

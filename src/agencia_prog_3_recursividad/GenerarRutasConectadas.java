@@ -2,83 +2,85 @@ package agencia_prog_3_recursividad;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import agencia_prog_3_GUI.DatosVuelos;
-import agencia_prog_3_data.Vuelo;
 
 public class GenerarRutasConectadas {
-	
-	public static void generarRutasConectadas(List<DatosVuelos> vuelos,
+    
+    public static void generarRutasConectadas(List<DatosVuelos> vuelos,
             List<List<DatosVuelos>> rutas,
-            int numEscalas,
+            int maxEscalas,
             String ciudadOrigen,
             String ciudadDestinoFinal) {
-		generarRutasConectadas(vuelos, rutas, numEscalas, ciudadOrigen, ciudadDestinoFinal, new ArrayList<>(), ciudadOrigen, 0);
-	}
-	
-	
-	private static void generarRutasConectadas(List<DatosVuelos> vuelos,
+        // Iniciamos la recursividad con una lista de ciudades visitadas para evitar ciclos
+        List<String> ciudadesVisitadas = new ArrayList<>();
+        ciudadesVisitadas.add(ciudadOrigen);
+        
+        generarRutasRecursivo(vuelos, rutas, maxEscalas, ciudadDestinoFinal, 
+                             new ArrayList<>(), ciudadOrigen, 0, ciudadesVisitadas);
+    }
+    
+    private static void generarRutasRecursivo(List<DatosVuelos> vuelos,
             List<List<DatosVuelos>> rutas,
-            int numEscalas,
-            String ciudadOrigen,
+            int maxEscalas,
             String ciudadDestinoFinal,
             List<DatosVuelos> rutaAux,
-            String ciudadActual,
-            int escalaActual) {
-		
-		// CASO BASE: Hemos llegado al destino final con el número correcto de escalas
-		if (escalaActual == numEscalas + 1 && ciudadActual.equals(ciudadDestinoFinal)) {
-			List<DatosVuelos> nuevaRuta = new ArrayList<>(rutaAux);
-			if (!itinerariosContiene(rutas, nuevaRuta)) {
-				rutas.add(nuevaRuta);
-			}
-			return;
-		}
+            String ciudadOrigen,
+            int escalaActual,
+            List<String> ciudadesVisitadas) {
+        
+        // CASO BASE: Si la ciudad actual es el destino, hemos encontrado una ruta válida
+        if (ciudadOrigen.equals(ciudadDestinoFinal)) {
+            rutas.add(new ArrayList<>(rutaAux));
+            return;
+        }
 
-		// CASO RECURSIVO: Buscar vuelos que salgan de la ciudad actual
-		if (escalaActual <= numEscalas) {
-			for (DatosVuelos vuelo : vuelos) {
-				//El vuelo debe salir de la ciudad actual
-				if (vuelo.getOrigen().equals(ciudadActual) && !contieneVuelo(rutaAux, vuelo)) {
-					// Agregar vuelo a la ruta
-					rutaAux.add(vuelo);
+        // PODA: Si hemos alcanzado el límite de escalas (vuelos - 1), no seguimos
+        if (escalaActual > maxEscalas) {
+            return;
+        }
 
-					// LLAMADA RECURSIVA con el destino del vuelo como nueva ciudad actual
-					generarRutasConectadas(vuelos, rutas, numEscalas, ciudadOrigen, ciudadDestinoFinal, rutaAux, vuelo.getDestino().toString(), escalaActual + 1);
+        // CASO RECURSIVO: Buscar vuelos que salgan de la ciudad actual
+        for (DatosVuelos vuelo : vuelos) {
+            if (vuelo.getOrigen().equals(ciudadOrigen)) {
+                
+                // 1. Evitar ciclos: No volver a una ciudad ya visitada en esta ruta
+                if (ciudadesVisitadas.contains(vuelo.getDestino().toString())) continue;
 
-					// BACKTRACKING
-					rutaAux.remove(rutaAux.size() - 1);
-				}
-			}
-		}
-	}
+                // 2. Consistencia Temporal: El vuelo debe salir después de que llegue el anterior
+                if (!esVueloTemporalmenteValido(rutaAux, vuelo)) continue;
 
-	
-	private static boolean contieneVuelo(List<DatosVuelos> itinerario, DatosVuelos vuelo) {
-        for (DatosVuelos v : itinerario) {
-            if (v.getCodigo().equals(vuelo.getCodigo())) {
-                return true;
+                // BACKTRACKING
+                rutaAux.add(vuelo);
+                ciudadesVisitadas.add(vuelo.getDestino().toString());
+
+                generarRutasRecursivo(vuelos, rutas, maxEscalas, ciudadDestinoFinal, 
+                                     rutaAux, vuelo.getDestino().toString(), escalaActual + 1, ciudadesVisitadas);
+
+                // Limpieza para probar otros caminos
+                rutaAux.remove(rutaAux.size() - 1);
+                ciudadesVisitadas.remove(ciudadesVisitadas.size() - 1);
             }
         }
-        return false;
     }
-	
-	private static boolean itinerariosContiene(List<List<DatosVuelos>> itinerarios, 
-            List<DatosVuelos> itinerario) {
-		for (List<DatosVuelos> it : itinerarios) {
-			if (it.size() == itinerario.size()) {
-				boolean iguales = true;
-				for (int i = 0; i < it.size(); i++) {
-					if (!it.get(i).getCodigo().equals(itinerario.get(i).getCodigo())) {
-						iguales = false;
-						break;
-					}
-				}
-				if (iguales) return true;
-			}
-		}
-		return false;
-	}
-	
-	
+
+    /**
+     * Comprueba si el nuevo vuelo sale después de que el último vuelo de la ruta haya aterrizado.
+     */
+    private static boolean esVueloTemporalmenteValido(List<DatosVuelos> rutaActual, DatosVuelos proximoVuelo) {
+        if (rutaActual.isEmpty()) return true; // El primer vuelo siempre es válido temporalmente
+
+        DatosVuelos ultimoVuelo = rutaActual.get(rutaActual.size() - 1);
+        
+        // Convertir horas "HH:mm" a minutos totales para comparar fácilmente
+        int llegadaUltimo = convertirAMinutos(ultimoVuelo.getHora()) + ultimoVuelo.getDuracionvuelo();
+        int salidaProximo = convertirAMinutos(proximoVuelo.getHora());
+
+        // Margen de seguridad: al menos 45 minutos para hacer la escala
+        return salidaProximo >= (llegadaUltimo + 45);
+    }
+
+    private static int convertirAMinutos(String hora) {
+        String[] partes = hora.split(":");
+        return Integer.parseInt(partes[0]) * 60 + Integer.parseInt(partes[1]);
+    }
 }
