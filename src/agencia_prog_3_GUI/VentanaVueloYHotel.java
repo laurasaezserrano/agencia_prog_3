@@ -106,18 +106,24 @@ public class VentanaVueloYHotel extends JFrame {
         mainpanel.setBackground(new Color(50, 150, 200));
         add(mainpanel, BorderLayout.CENTER);
         
-        
-        
+        //panel de titulo y busqueda
+        JPanel panelsup = new JPanel();
+        panelsup.setLayout(new BoxLayout(panelsup, BoxLayout.Y_AXIS));
+        panelsup.setBackground(Color.WHITE);
+        		
         //titulo
-        titulo = new JTextField("Búsqueda de Vuelos y Ofertas");
-        titulo.setEditable(false);
-        titulo.setHorizontalAlignment(JTextField.CENTER);
+        JLabel titulo = new JLabel("Búsqueda de Vuelos y Ofertas");
+        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         titulo.setFont(titulo.getFont().deriveFont(Font.BOLD, 22f));
-        add(titulo, BorderLayout.NORTH);
+        titulo.setBorder(BorderFactory.createEmptyBorder(8, 0, 5, 0));
+        panelsup.add(titulo);
         
-      //panel busqueda
+        //panel busqueda
         JPanel panelBusqueda = configurarbusqueda();
-        mainpanel.add(panelBusqueda, BorderLayout.NORTH);
+        panelBusqueda.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panelsup.add(panelBusqueda);
+        
+        mainpanel.add(panelsup, BorderLayout.NORTH);
         
         //tabla
         vuelos = crearlistavuelos();
