@@ -221,6 +221,8 @@ public class VentanaExcursiones extends JFrame{
 		cabecera.setReorderingAllowed(false); //no se puedecambiar el orden de las columnas
 		cabecera.setFont(cabecera.getFont().deriveFont(Font.BOLD));
 		
+	
+		
 		//que la tabla se ajuste a la ventana
 		tabla.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		int[] ancho = {50, 200, 90, 90, 90};
@@ -234,7 +236,8 @@ public class VentanaExcursiones extends JFrame{
 		DefaultTableCellRenderer center = new DefaultTableCellRenderer();
 		center.setHorizontalAlignment(SwingConstants.CENTER);
 		tabla.getColumnModel().getColumn(0).setCellRenderer(center); //se centra el texto
-        tabla.getColumnModel().getColumn(2).setCellRenderer(verInfoboton); // Boton para ver la informacion
+        tabla.getColumnModel().getColumn(1).setCellRenderer(center);
+		tabla.getColumnModel().getColumn(2).setCellRenderer(verInfoboton); // Boton para ver la informacion
         tabla.getColumnModel().getColumn(3).setCellRenderer(new ExcursionPrecio()); // Precio formateado
         tabla.addMouseListener(new MouseAdapter() {
         	
