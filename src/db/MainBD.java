@@ -1,7 +1,7 @@
 package db;
 
 import agencia_prog_3_data.Aerolinea;
-import agencia_prog_3_data.Aeropuertos;
+import agencia_prog_3_data.Aeropuerto;
 import agencia_prog_3_data.Avion;
 import agencia_prog_3_data.VueloData;
 
@@ -27,7 +27,7 @@ public class MainBD {
         List<Aerolinea> aerolineas = initAerolineas();
         gestorBD.insertarAerolinea(aerolineas.toArray(new Aerolinea[0]));
         
-        List<Aeropuertos> aeropuertos = initAeropuertos();
+        List<Aeropuerto> aeropuertos = initAeropuertos();
         gestorBD.insertarAeropuerto(aeropuertos.toArray(new Aeropuertos[0]));
         
         List<Avion> aviones = initAviones();
@@ -171,11 +171,11 @@ public class MainBD {
         return aerolineas;
     }
     
-    private static List<Aeropuertos> initAeropuertos() {
-        List<Aeropuertos> aeropuertos = new ArrayList<>();
-        aeropuertos.add(new Aeropuertos("Aeropuerto de Madrid"));
-        aeropuertos.add(new Aeropuertos("Aeropuerto de Paris"));
-        aeropuertos.add(new Aeropuertos("Aeropuerto de Nueva York"));
+    private static List<Aeropuerto> initAeropuertos() {
+        List<Aeropuerto> aeropuertos = new ArrayList<>();
+        aeropuertos.add(new Aeropuerto("Aeropuerto de Madrid"));
+        aeropuertos.add(new Aeropuerto("Aeropuerto de Paris"));
+        aeropuertos.add(new Aeropuerto("Aeropuerto de Nueva York"));
         return aeropuertos;
     }
 
