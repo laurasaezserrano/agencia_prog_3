@@ -75,7 +75,7 @@ public class VentanaReservas extends JFrame {
         panelSuperior.add(titleLabel, BorderLayout.CENTER); // Título en el centro
 
         
-        JPanel panelFiltro = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel panelFiltro = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
         panelFiltro.add(new JLabel("Filtrar por Ciudad:"));
         txtFiltroCiudad = new JTextField(20); 
         JButton btnFiltrar = new JButton("Filtrar");
