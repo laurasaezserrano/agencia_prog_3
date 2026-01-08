@@ -31,7 +31,7 @@ public class Ventana1Login extends JFrame {
         validUsers = loadUsers(); 
 
         setTitle("Bienvenid@!");
-        setSize(420, 240);
+        setSize(360, 220);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -52,8 +52,8 @@ public class Ventana1Login extends JFrame {
 
         JLabel userLabel = new JLabel("Usuario:");
         JLabel passLabel = new JLabel("Contraseña:");
-        userLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        passLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        userLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        passLabel.setHorizontalAlignment(SwingConstants.CENTER);
         userLabel.setFont(new Font("Arial", Font.BOLD, 13));
         passLabel.setFont(new Font("Arial", Font.BOLD, 13));
         
