@@ -1152,7 +1152,26 @@ public class GestorBD {
 	}
 
 	public List<Hotel> getHoteles() {
-		// TODO Auto-generated method stub
+		List<Hotel> hoteles = new ArrayList<>();
+		String sql = "SELECT * FROM HOTEL;";
+		try (Connection con = DriverManager.getConnection(connection);
+		         PreparedStatement pStmt = con.prepareStatement(sql);
+		         ResultSet rs = pStmt.executeQuery()){
+			while (rs.next()) {
+				Hotel h = new Hotel(
+						rs.getString("NOMBRE"),
+						rs.getString("CIUDAD"),
+						rs.getString("PAIS"),
+						rs.getInt("ESTRELLAS"),
+						rs.getInt("CAPACIDAD"),
+						rs.getDouble("PRECIO_NOCHE"),
+						rs.getString("MONEDA")
+						);
+				hoteles.add(h);
+			}
+			logger.info(String.format("Se han recuperado %d hoteles.", hoteles.size()));
+		} catch (Exception e) {
+			logger.warning(String.format("Error al recuperar hoteles: %s", e.getMessage()));		}
 		return null;
 	}
 	
