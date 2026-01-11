@@ -35,7 +35,7 @@ public class Main {
         
         // 3. Carga de usuarios y sus reservas
         List<User> usuarios = gbd.getUsuarios();
-        List<Reserva> reservas = gbd.getReservas();
+        List<Reserva> reservas = gbd.getListaTodasLasReservas();
         
         // 4. Lógica de vinculación (Update)
         // Al igual que con los equipos, aquí podrías necesitar conectar objetos
