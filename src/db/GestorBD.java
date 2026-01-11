@@ -951,7 +951,105 @@ public class GestorBD {
 
 	public void updateReservas(List<Reserva> reservas, List<User> usuarios, List<Vuelo> listaVuelos,
 			List<Hotel> listaHoteles) {
-		// TODO Auto-generated method stub
+		if (reservas == null) {
+			return;
+		}
+		if (usuarios != null) {
+			for (Reserva r : reservas) {
+				if (r == null) {
+					continue;
+				}
+				String usuarioreserva = (r.getUsuario() == null) ? null : r.getUsuario().trim();
+				if(usuarioreserva == null || usuarioreserva.isEmpty()) {
+					continue;
+				}
+				for (User u : usuarios) {
+					if (u == null || u.getUsuario() == null) {
+						continue;
+					}
+					if (u.getUsuario().trim().equalsIgnoreCase(usuarioreserva)) {
+						r.setUsuario(u.getUsuario().trim());
+						if (u.getEmail() != null && !u.getEmail().trim().isEmpty()) {
+							String emailrese = (r.getEmail() == null) ? "" : r.getEmail().trim();
+							if (emailrese.isEmpty() || !emailrese.equalsIgnoreCase(u.getEmail().trim())) {
+								r.setEmail(u.getEmail().trim());
+							} else {
+								r.setEmail(emailrese);
+							}
+						} else if (r.getEmail() != null) {
+							r.setEmail(r.getEmail().trim());
+						}
+						break;
+					}
+				}
+			}
+		} else {
+			for (Reserva r : reservas) {
+				if (r == null) {
+					continue;
+				}
+				if (r.getUsuario() != null) {
+					r.setUsuario(r.getUsuario().trim());
+				}
+				if (r.getEmail() != null) {
+					r.setEmail(r.getEmail().trim());
+				}
+			}
+		}
+		
+		if (listaHoteles != null) {
+			for (Reserva r : reservas) {
+				if (r == null) {
+					continue;
+				}
+				String ciudadreserva = (r.getCiudad() == null) ? null : r.getCiudad().trim();
+	            String hotelreserva = (r.getNombreHotel() == null) ? null : r.getNombreHotel().trim(); 
+	            if (ciudadreserva == null || ciudadreserva.isEmpty()) {
+	            	continue;
+	            }
+	            if (hotelreserva == null || hotelreserva.isEmpty()) {
+	            	continue;
+	            }
+	            
+	            r.setCiudad(ciudadreserva);
+	            r.setNombreHotel(hotelreserva);
+	            
+	            for (Hotel h : listaHoteles) {
+	            	if (h == null || h.getCiudad() == null || h.getNombre() == null) {
+	            		continue;
+	            	}
+	            	boolean mismaciudad = h.getCiudad().trim().equalsIgnoreCase(ciudadreserva);
+	            	boolean mismohotel = h.getNombre().trim().equalsIgnoreCase(hotelreserva);
+	            	if (mismaciudad && mismohotel) {
+	            		r.setCiudad(h.getCiudad().trim());
+	            		r.setNombreHotel(h.getNombre().trim());
+	            		r.setPrecioNoche(h.getPrecioNoche());
+	            		break;
+	            	}
+	            }
+			}
+		} else {
+			for (Reserva r : reservas) {
+				if (r == null) {
+					continue;
+				}
+				if (r.getCiudad() != null) {
+					r.setCiudad(r.getCiudad().trim());
+				}
+	            if (r.getNombreHotel() != null) {
+	            	r.setNombreHotel(r.getNombreHotel().trim());
+	            }
+			}
+		}
+		
+		for (Reserva r : reservas) {
+			if (r == null) {
+				continue;
+			}
+			if (r.getTipoHabitacion() != null) {
+				r.setTipoHabitacion(r.getTipoHabitacion().trim());
+			}
+		}
 		
 	}
 
@@ -1025,6 +1123,16 @@ public class GestorBD {
 		}
 
 		return aeropuertos;
+	}
+
+	public List<Vuelo> getVuelos() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<Hotel> getHoteles() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
