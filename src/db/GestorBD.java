@@ -955,8 +955,33 @@ public class GestorBD {
 	}
 
 	public List<User> getUsuarios() {
-		// TODO Auto-generated method stub
-		return null;
+		List<User> usuarios = new ArrayList<>();
+		String sql = "SELECT * FROM USER;";
+		try (Connection con = DriverManager.getConnection(connection);
+		         PreparedStatement pStmt = con.prepareStatement(sql);
+		         ResultSet rs = pStmt.executeQuery()) {
+
+			while (rs.next()) {
+				User u = new User();
+		        u.setUsuario(rs.getString("USUARIO"));
+		        u.setPassword(rs.getString("PASSWORD"));
+		        u.setNombre(rs.getString("NOMBRE"));
+		        u.setDni(rs.getString("DNI"));
+		        u.setEmail(rs.getString("EMAIL"));
+		        u.setTelefono(rs.getInt("TELEFONO"));
+		        u.setDireccion(rs.getString("DIRECCION"));
+		        u.setIdioma(rs.getString("IDIOMA"));
+		        u.setMoneda(rs.getString("MONEDA"));
+
+		        usuarios.add(u);
+			}
+		 
+			logger.info(String.format("Se han recuperado %d usuarios.", usuarios.size()));
+
+		} catch (Exception e) {
+			logger.warning(String.format("Error al recuperar usuarios: %s", e.getMessage()));
+		}
+	    return usuarios;
 	}
 
 	public List<Excursion> getExcursiones() {
@@ -966,7 +991,7 @@ public class GestorBD {
 
 	public List<Aeropuerto> getAeropuertos() {
 	    List<Aeropuerto> aeropuertos = new ArrayList<>();
-	    String sql = "SELECT NOMBRE FROM AEROPUERTO";
+	    String sql = "SELECT NOMBRE FROM AEROPUERTO;";
 		try (Connection con = DriverManager.getConnection(connection);
 				PreparedStatement pstm = con.prepareStatement(sql);
 				ResultSet rs = pstm.executeQuery()){
