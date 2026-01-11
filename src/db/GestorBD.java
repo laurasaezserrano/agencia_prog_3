@@ -941,8 +941,23 @@ public class GestorBD {
 	}
 
 	public List<Aeropuerto> getAeropuertos() {
-		// TODO Auto-generated method stub
-		return null;
+	    List<Aeropuerto> aeropuertos = new ArrayList<>();
+	    String sql = "SELECT NOMBRE FROM AEROPUERTO";
+		try (Connection con = DriverManager.getConnection(connection);
+				PreparedStatement pstm = con.prepareStatement(sql);
+				ResultSet rs = pstm.executeQuery()){
+			while(rs.next()) {
+				Aeropuerto a = new Aeropuerto(
+						rs.getString("NOMBRE"));
+				aeropuertos.add(a);
+			}
+			logger.info(String.format("Se han recuperado %d aeropuertos.", aeropuertos.size()));
+			
+		} catch (Exception e) {
+			logger.warning(String.format("Error al recuperar aeropuertos: %s", e.getMessage()));
+		}
+
+		return aeropuertos;
 	}
 	
 }
