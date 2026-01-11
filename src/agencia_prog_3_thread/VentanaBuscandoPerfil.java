@@ -1,4 +1,4 @@
-package agencia_prog_3_thread;  // pon el tuyo
+package agencia_prog_3_thread;  
 
 import javax.swing.*;
 import java.awt.*;

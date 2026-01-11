@@ -2,7 +2,6 @@ package agencia_prog_3_thread;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class VentanaCarga extends JWindow {
 
@@ -72,8 +71,6 @@ public class VentanaCarga extends JWindow {
             
             if (imageUrl != null) {
                 ImageIcon loadingIcon = new ImageIcon(imageUrl);
-                
-                // Escalar el GIF a un tamaño más grande
                 int newWidth = 150;
                 int newHeight = 150;
                 Image scaledImage = loadingIcon.getImage().getScaledInstance(

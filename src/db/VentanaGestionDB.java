@@ -11,10 +11,6 @@ import gui.Ventana1Login;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.List;
 
 public class VentanaGestionDB extends JFrame {
@@ -28,7 +24,6 @@ public class VentanaGestionDB extends JFrame {
     private JLabel lblEstadoDB;
 
     private GestorBD gestorBD;
-    // Usamos el string de conexión que definiste en tu GestorBD para ser consistentes
     private static final String CONNECTION_STRING = "jdbc:sqlite:agencia.db"; 
 
     public VentanaGestionDB() {
@@ -110,7 +105,6 @@ public class VentanaGestionDB extends JFrame {
         if ("Reserva".equals(tabla)) {
             cargarDatosReservas();
         } else {
-            // Para otras tablas podrías implementar métodos similares en GestorBD
             lblEstadoDB.setText("Carga genérica no implementada para " + tabla);
         }
         centrarColumnas();
@@ -140,7 +134,6 @@ public class VentanaGestionDB extends JFrame {
         } else if ("User".equals(tabla)) {
             mostrarDialogoInsertarUsuario();
         }
-        // ... añadir más según necesites
     }
 
     private void mostrarDialogoInsertarReserva() {
@@ -203,7 +196,7 @@ public class VentanaGestionDB extends JFrame {
         
         if (JOptionPane.showConfirmDialog(this, "¿Eliminar registro?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             if ("Reserva".equals(tabla)) {
-                // Obtenemos los campos que forman la Primary Key en tu GestorBD
+                // Obtenemos los campos que forman la Primary Key 
                 String user = modeloTabla.getValueAt(fila, 0).toString();
                 String hotel = modeloTabla.getValueAt(fila, 2).toString();
                 String ciudad = modeloTabla.getValueAt(fila, 1).toString();

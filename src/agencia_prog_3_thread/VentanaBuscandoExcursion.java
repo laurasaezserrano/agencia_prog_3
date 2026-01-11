@@ -29,7 +29,6 @@ public class VentanaBuscandoExcursion extends JDialog {
         fondo.setBackground(new Color(50, 150, 200)); 
         fondo.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        // Tarjeta blanca
         JPanel tarjeta = new JPanel(new BorderLayout(15, 15));
         tarjeta.setBackground(Color.WHITE);
         tarjeta.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));

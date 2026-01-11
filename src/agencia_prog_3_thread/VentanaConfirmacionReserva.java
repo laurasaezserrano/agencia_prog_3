@@ -1,7 +1,6 @@
 package agencia_prog_3_thread;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
@@ -10,7 +9,8 @@ import javax.swing.Timer;
 
 public class VentanaConfirmacionReserva extends JFrame {
 
-    private JLabel statusLabel;
+	private static final long serialVersionUID = 1L;
+	private JLabel statusLabel;
     private JTextArea logArea;
 
     public VentanaConfirmacionReserva() {
@@ -113,7 +113,6 @@ public class VentanaConfirmacionReserva extends JFrame {
                 statusLabel.setBackground(new Color(255, 160, 160));
                 logArea.append("\n" + errorMessage + "\n");
             } finally {
-                // Inicia un Timer para esperar 3 segundos (3000ms) sin bloquear el EDT
                 Timer timer = new Timer(3000, new java.awt.event.ActionListener() {
                     @Override
                     public void actionPerformed(java.awt.event.ActionEvent e) {

@@ -34,8 +34,6 @@ public class GenerarRutasConectadas {
             rutas.add(new ArrayList<>(rutaAux));
             return;
         }
-
-        // PODA: Si hemos alcanzado el límite de escalas (vuelos - 1), no seguimos
         if (escalaActual > maxEscalas) {
             return;
         }
@@ -43,21 +41,13 @@ public class GenerarRutasConectadas {
         // CASO RECURSIVO: Buscar vuelos que salgan de la ciudad actual
         for (DatosVuelos vuelo : vuelos) {
             if (vuelo.getOrigen().equals(ciudadOrigen)) {
-                
-                // 1. Evitar ciclos: No volver a una ciudad ya visitada en esta ruta
                 if (ciudadesVisitadas.contains(vuelo.getDestino().toString())) continue;
-
-                // 2. Consistencia Temporal: El vuelo debe salir después de que llegue el anterior
                 if (!esVueloTemporalmenteValido(rutaAux, vuelo)) continue;
-
                 // BACKTRACKING
                 rutaAux.add(vuelo);
                 ciudadesVisitadas.add(vuelo.getDestino().toString());
-
                 generarRutasRecursivo(vuelos, rutas, maxEscalas, ciudadDestinoFinal, 
                                      rutaAux, vuelo.getDestino().toString(), escalaActual + 1, ciudadesVisitadas);
-
-                // Limpieza para probar otros caminos
                 rutaAux.remove(rutaAux.size() - 1);
                 ciudadesVisitadas.remove(ciudadesVisitadas.size() - 1);
             }
@@ -69,13 +59,10 @@ public class GenerarRutasConectadas {
      */
     private static boolean esVueloTemporalmenteValido(List<DatosVuelos> rutaActual, DatosVuelos proximoVuelo) {
         if (rutaActual.isEmpty()) return true; // El primer vuelo siempre es válido temporalmente
-
         DatosVuelos ultimoVuelo = rutaActual.get(rutaActual.size() - 1);
-        
         // Convertir horas "HH:mm" a minutos totales para comparar fácilmente
         int llegadaUltimo = convertirAMinutos(ultimoVuelo.getHora()) + ultimoVuelo.getDuracionvuelo();
         int salidaProximo = convertirAMinutos(proximoVuelo.getHora());
-
         // Margen de seguridad: al menos 45 minutos para hacer la escala
         return salidaProximo >= (llegadaUltimo + 45);
     }

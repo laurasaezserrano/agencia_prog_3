@@ -26,13 +26,8 @@ public class GeneradorItinerariosRecursivos {
 		
 		// CASO BASE: El itinerario tiene el número correcto de vuelos y cumple el presupuesto
 		if (itinerarioAux.size() == numVuelos && calcularPrecioTotal(preciosAux) <= presupuestoMax) {
-			//Crear nueva lista para evitar que las modificaciones afecten la recursividad
 			List<DatosVuelos> nuevoItinerario = new ArrayList<>(itinerarioAux);
-
-			// Ordenar por código de vuelo para evitar duplicados
 			Collections.sort(nuevoItinerario, (v1, v2) -> v1.getCodigo().compareTo(v2.getCodigo()));
-
-			// Verificar que no esté repetido
 			if (!itinerariosContiene(itinerarios, nuevoItinerario)) {
 				itinerarios.add(nuevoItinerario);
 			}
@@ -42,21 +37,13 @@ public class GeneradorItinerariosRecursivos {
 			// CASO RECURSIVO: Seguir construyendo el itinerario
 			for (int i = 0; i < vuelos.size(); i++) {
 				DatosVuelos vueloActual = vuelos.get(i);
-
-				// Verificar que el vuelo no esté ya en el itinerario
 				if (!contieneVuelo(itinerarioAux, vueloActual)) {
-					// Poda: Si agregar este vuelo excede el presupuesto, no continuar
 					double precioAcumulado = calcularPrecioTotal(preciosAux) + vueloActual.getPrecio();
 					if (precioAcumulado <= presupuestoMax) {
-						// Agregar vuelo y precio a las listas temporales
 						itinerarioAux.add(vueloActual);
 						preciosAux.add((double) vueloActual.getPrecio());
-
-						// LLAMADA RECURSIVA
 						generarItinerarios(vuelos, itinerarios, numVuelos, presupuestoMax, 
 								itinerarioAux, preciosAux);
-
-						// BACKTRACKING: Eliminar el último elemento agregado
 						itinerarioAux.remove(itinerarioAux.size() - 1);
 						preciosAux.remove(preciosAux.size() - 1);
 					}
@@ -64,8 +51,6 @@ public class GeneradorItinerariosRecursivos {
 			}
 		}
 	}
-	
-	
 	
 	/**
      * Calcula el precio total de una lista de precios.
