@@ -1,4 +1,4 @@
-package agencia_prog_3_data;
+package domain;
 
 public class User {
 
