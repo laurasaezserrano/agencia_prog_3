@@ -920,8 +920,32 @@ public class GestorBD {
 	}
 
 	public void updateVuelos(List<Vuelo> listaVuelos, List<Aeropuerto> listaAeropuertos) {
-		// TODO Auto-generated method stub
-		
+	    if (listaVuelos == null || listaAeropuertos == null) {
+	    	return;
+	    }
+		for (Vuelo v : listaVuelos) {
+			if (v == null) {
+				continue;
+			}
+			String origen = v.getOrigen();
+			if (origen != null) {
+				for (Aeropuerto a : listaAeropuertos) {
+					if (a != null && a.getNombre() != null && a.getNombre().equalsIgnoreCase(origen.trim())) {
+						v.setOrigen(a.getNombre());
+						break;
+					}
+				}
+			}
+			String destino = v.getDestino();
+			if (destino != null) {
+				for (Aeropuerto a : listaAeropuertos) {
+					if (a != null && a.getNombre() != null && a.getNombre().equalsIgnoreCase(destino.trim())) {
+						v.setDestino(a.getNombre());
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	public void updateReservas(List<Reserva> reservas, List<User> usuarios, List<Vuelo> listaVuelos,
