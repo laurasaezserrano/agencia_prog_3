@@ -867,7 +867,7 @@ public class GestorBD {
 	}
 	
 	
-	
+	//metodo que guarda los vuelos
 	public void storeVuelos(List<Vuelo> vuelos){
 		if (vuelos != null) {
 			try (PrintWriter out = new PrintWriter(new File(CSV_VUELOS))){
@@ -891,6 +891,30 @@ public class GestorBD {
 				logger.warning(String.format("Error guardando vuelos en el CSV: %s", e.getMessage()));			}
 		}
 		
+	}
+	
+	//metodo que guarda los hoteles
+	public void storeHoteles (List<Hotel> hoteles) {
+		if (hoteles != null) {
+			try (PrintWriter out = new PrintWriter(new File(CSV_HOTELES))){
+	            hoteles.forEach(h -> {
+	            	String linea = String.format(
+	            			"%s;%s;%s;%d;%d;%.2f %s",
+	            			h.getNombre(), 
+	            			h.getCiudad(),
+	            			h.getPais(), 
+	            			h.getEstrellas(),
+	            			h.getCapacidad(),
+	            			h.getPrecioNoche(),
+	            			h.getMoneda());
+	            	out.print(linea);
+	            });
+				logger.info("Se han guardado los hoteles en un CSV.");
+
+			} catch (Exception e) {
+	            logger.warning(String.format("Error guardando hoteles en el CSV: %s", e.getMessage()));
+			}
+		}
 	}
 	
 }
