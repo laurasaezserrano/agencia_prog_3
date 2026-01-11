@@ -52,7 +52,6 @@ import javax.swing.table.TableRowSorter;
 
 import domain.Excursion;
 import domain.ExcursionPrecio;
-import db.GestorBD;
 
 public class VentanaExcursiones extends JFrame{
 	private static final long serialVersionUID = 1L;
@@ -291,8 +290,6 @@ public class VentanaExcursiones extends JFrame{
         int columnareserva = 4;
         tabla.getColumnModel().getColumn(columnareserva).setCellRenderer(new ButtonRenderer("Reservar"));
         tabla.getColumnModel().getColumn(columnareserva).setCellEditor(new ButtonEditor(modelo, tabla, this::abrirReserva));
-        
-        //scroll pane para deslizarse entre las diferentes excursiones
         JScrollPane sp = new JScrollPane(tabla, 
         		JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
         		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -320,39 +317,12 @@ public class VentanaExcursiones extends JFrame{
         
 	}
 
-
 		private List<Excursion> crearListaExcursiones() { 
             List<Excursion> out = new ArrayList<>();
             for (int i = 0; i < tituloexcursion.length; i++) {
                 out.add(new Excursion(i + 1, tituloexcursion[i], descrip[i], precio[i])); //añade a la lista la excursion
             }
             return out;
-        }
-        
-        //CASO RECURSIVO 2 version simple 
-        private boolean existeexcrecursiva(List<Excursion> lista, String texto, int i) {
-        	if (i >= lista.size()) {
-        		return false;
-        	}
-        	if (lista.get(i).getNombre().contains(texto)) {
-        		return true;
-        	}
-        	return existeexcrecursiva(lista, texto, i+1);
-        }
-        
-        //CASO RECURSIVO 1 (no implementada porque nose)
-        private List<Excursion> busquedarecursiva(List<Excursion> lista, String texto, int i){
-        	//caso base --> fin de la lista
-        	if (i >= lista.size()) {
-        		return new ArrayList<>();
-        	}
-        	//llamada recursiva
-        	List<Excursion> resultado = busquedarecursiva(lista, texto, i+1);
-        	//si coincide lo añadinos
-        	if (lista.get(i).getNombre().contains(texto)) {
-        		resultado.add(0, lista.get(i));
-        	}
-        	return resultado;        
         }
         
         //panel de eleccion de numero de personas + filtro de busqueda
@@ -384,7 +354,6 @@ public class VentanaExcursiones extends JFrame{
             return panel1;
         }
         
-        //el del caso recursivo 1 (NO IMPLEMENTADO FALTA DE ESCRIBIR)
         private void aplicabusqueda() {
             String txt = campoFiltro.getText().trim(); //obtiene el texto que estamos escribiendo
             if (txt.isEmpty()) { //si esta vacio enseña todas las excursiones
@@ -392,19 +361,7 @@ public class VentanaExcursiones extends JFrame{
             } else { //sino, muestra las coincidencias del buscador con las que tenemos
             	ordena.setRowFilter(RowFilter.regexFilter("(?i)" + Pattern.quote(txt), 1)); 
             }}
-        
-        //el del caso recursivo 2 sencillo 
-        private void aplicabusqueda2() {
-        	String txt = campoFiltro.getText().trim();
-        	//se llama al metodo recursivo que recorre la lista y devuelve true o false
-        	boolean existe = existeexcrecursiva(crearListaExcursiones(), txt, 0); 
-        	if (!existe && !txt.isEmpty()) {//comprueba que no haya ninguna coincidencia o que el texto este vacio
-        		System.out.println("No se han encontrado excursiones");
-        	}
-        }
 
-        
-        
         //Resumen de la excursion seleccionada
         private void abrirReserva(Excursion ex) {           
             JDialog mensaje = new JDialog(this, "Reserva", true);
@@ -473,22 +430,10 @@ public class VentanaExcursiones extends JFrame{
             JButton confirmar = new JButton("Confirmar reserva");
             confirmar.setFont(new Font("Segoe UI", Font.BOLD, 12));
             confirmar.addActionListener(e -> {
-
-                // --- 1. RECOGER DATOS (de los componentes de ESTE diálogo) ---
                 int numPersonas = (Integer) numpersonas.getSelectedItem();
                 double totalPrecioCalculado = (ex.getPrecio() * numPersonas);
-                
-                // --- 2. GESTIONAR DATOS FALTANTES (Fecha y Ciudad) ---
-                
-                // FECHA: Tu diálogo no pide fecha, así que usamos la fecha actual.
-                // (Si quieres pedir una fecha, debes añadir un JSpinner de fecha a este diálogo)
                 java.util.Date fechaExcursion = new java.util.Date(); 
-
-                // CIUDAD: Tu objeto Excursion no tiene ciudad. La ponemos como "N/A".
-                String ciudadExcursion = "N/A"; 
-                // (La alternativa es intentar adivinarla del nombre, pero es complicado)
-                
-                // --- 3. OBTENER USUARIO (de Ventana1Login) ---
+                String ciudadExcursion = "N/A";                 
                 String usuario = "UsuarioDesconocido"; // Valor por defecto
                 try {
                      usuario = Ventana1Login.userField.getText();
@@ -496,18 +441,16 @@ public class VentanaExcursiones extends JFrame{
                      System.err.println("No se pudo leer el usuario de Ventana1Login");
                 }
                 
-                // --- 4. "MAPEAR" DATOS AL FORMATO CSV ---
                 String ciudad_csv = ciudadExcursion;
-                String hotel_csv = ex.getNombre();          // TRUCO: Nombre de excursión en columna "Hotel"
+                String hotel_csv = ex.getNombre();          
                 String email_csv = "N/A";
-                String habitacion_csv = "Excursión";        // TRUCO: Identificador en columna "Habitación"
+                String habitacion_csv = "Excursión";       
                 int adultos_csv = numPersonas;
                 int ninos_csv = 0;
                 java.util.Date salida_csv = fechaExcursion;
                 java.util.Date regreso_csv = fechaExcursion; // Mismo día
                 double precioFinal_csv = totalPrecioCalculado;
 
-                // --- 5. LLAMAR AL MÉTODO DE GUARDADO (¡ANTES DE CERRAR!) ---
                 guardarReservaEnCSV(
                     usuario, 
                     ciudad_csv, 
@@ -521,10 +464,6 @@ public class VentanaExcursiones extends JFrame{
                     precioFinal_csv
                 );
                 
-                
-
-                // --- 6. CONFIRMAR AL USUARIO ---
-                // (Esto es de tu código original, está bien)
                 JOptionPane.showMessageDialog(
                         mensaje,
                         "Excursión: " + ex.getNombre() + "\n" +
@@ -534,8 +473,6 @@ public class VentanaExcursiones extends JFrame{
                         "Confirmación",
                         JOptionPane.INFORMATION_MESSAGE
                 );
-                
-                // --- 7. CERRAR EL DIÁLOGO ---
                 mensaje.dispose();
             });
 
@@ -551,8 +488,6 @@ public class VentanaExcursiones extends JFrame{
         }
 
         
-      
-     // Crea la tabla de dos colores
         static class StripedTable extends JTable {
 			private static final long serialVersionUID = 1L;
 			private final Color par = new Color(245, 250, 255);
@@ -583,19 +518,10 @@ public class VentanaExcursiones extends JFrame{
 
                 if (viewRow >= 0) {
                     try {
-                        // Convierte la fila de la vista al modelo (importante si la tabla está ordenada)
                         int modelRow = convertRowIndexToModel(viewRow);
-                        
-                        // Obtiene el modelo de la tabla
                         ExcursionTabla model = (ExcursionTabla) getModel();
-                        
-                        // Obtiene la excursión de esa fila
                         Excursion ex = model.getAt(modelRow);
-                        
-                        // Obtiene la descripción completa
                         String fullDescription = ex.getDescripcion();
-                        
-                        // Acorta la descripción para la previsualización (p.ej. 150 caracteres)
                         String shortDesc = fullDescription;
                         if (fullDescription.length() > 150) {
                             shortDesc = fullDescription.substring(0, 150) + "...";
@@ -626,8 +552,6 @@ public class VentanaExcursiones extends JFrame{
                 return this;
             }
         }
-        
-        
 
         static class ButtonEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
 			private static final long serialVersionUID = 1L;
@@ -668,31 +592,21 @@ public class VentanaExcursiones extends JFrame{
     	   };
        };
      
-       
-       
-       
        private void guardarReservaEnCSV(String usuario, String ciudad, String hotel, String email, 
                String hab, int adultos, int ninos, Date salida, Date regreso, 
                double precioFinal) {
                    
    		final String FILE_NAME = "resources/data/reservas.csv";
-   		// Formato de fecha estándar para CSV
    		final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
-
    		File file = new File(FILE_NAME);
-   		// Comprueba si el archivo es nuevo para añadir la cabecera
    		boolean needsHeader = !file.exists() || file.length() == 0;
-
    		// Usamos try-with-resources para asegurar que se cierre el writer
    		try (FileWriter fw = new FileWriter(file, true); // true = modo append
    				PrintWriter pw = new PrintWriter(fw)) {
 
    			if (needsHeader) {
-   				// El "Usuario" es la primera columna, para filtrar en VentanaReservas
    				pw.println("Usuario,Ciudad,Hotel,Email,Habitacion,Adultos,Ninos,Salida,Regreso,Precio");
    			}
-
-   			// Formatea la línea CSV
    			String csvLine = String.format("%s,%s,%s,%s,%s,%d,%d,%s,%s,%.2f",
    					usuario,
    					ciudad,
@@ -721,7 +635,7 @@ public class VentanaExcursiones extends JFrame{
     		   @Override
     		public void keyPressed(KeyEvent e) {
     			if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_X) {
-    				dispose(); //se cierra
+    				dispose();
     			}
     		}
 		};

@@ -424,9 +424,7 @@ public class VentanaGeneradorItinerarios extends JFrame {
         }
     }
     
-    // Método main para pruebas
     public static void main(String[] args) {
-        // Crear vuelos de ejemplo
         List<DatosVuelos> vuelos = new ArrayList<>();
         vuelos.add(new DatosVuelos("IB001", "Iberia", "Madrid", 120, "París", "10/01/2025", "10:00", 150, 100f, "Vuelo a París"));
         vuelos.add(new DatosVuelos("AF002", "Air France", "París", 90, "Londres", "10/01/2025", "14:00", 180, 80f, "Vuelo a Londres"));

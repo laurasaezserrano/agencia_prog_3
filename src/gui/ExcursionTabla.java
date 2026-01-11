@@ -81,7 +81,6 @@ public class ExcursionTabla extends AbstractTableModel{
     
     
     public Excursion getAt(int fila) { 
-    //devuelve la excursion que esta en la fila indicada
     	return excursion.get(fila); 
     	}
 

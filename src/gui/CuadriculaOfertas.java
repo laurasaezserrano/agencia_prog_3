@@ -291,12 +291,6 @@ public class CuadriculaOfertas extends JFrame{
 	            case "Familiar": factorHabitacion = 1.4; break;
 	            case "Suite": factorHabitacion = 1.7; break;
 	        }
-	
-	        //PRECIO TOTAL
-		        // Fórmula: (PrecioBaseNoche * FactorHabitación * TotalPersonas * Días)
-		        // Usamos el precio base por habitación del hotel, y luego multiplicamos por personas.
-		        // Asumimos que el precioBaseNoche del CSV es por persona y noche, o por habitación doble.
-		        // Lo trataremos como Precio por Habitación Estándar por Noche:
 	        
 	        double totalPersonasFactor = adultos + ninos;
 	        
@@ -501,9 +495,7 @@ public class CuadriculaOfertas extends JFrame{
 		ventanaoferta.setLocationRelativeTo(this);
 		ventanaoferta.setLayout(new BorderLayout(10, 10));
 		ventanaoferta.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
-		
-		
+
 		
 		/**IAG - Descripciones generadas por Gemini y ChatGPT
 		 * 
@@ -784,23 +776,16 @@ public class CuadriculaOfertas extends JFrame{
             double precioFinal) {
                 
 		final String FILE_NAME = "resources/data/reservas.csv";
-		// Formato de fecha estándar para CSV
 		final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
-
 		File file = new File(FILE_NAME);
-		// Comprueba si el archivo es nuevo para añadir la cabecera
 		boolean needsHeader = !file.exists() || file.length() == 0;
 
-		// Usamos try-with-resources para asegurar que se cierre el writer
 		try (FileWriter fw = new FileWriter(file, true); // true = modo append
 				PrintWriter pw = new PrintWriter(fw)) {
-
 			if (needsHeader) {
-				// El "Usuario" es la primera columna, para filtrar en VentanaReservas
 				pw.println("Usuario,Ciudad,Hotel,Email,Habitacion,Adultos,Ninos,Salida,Regreso,Precio");
 			}
 
-			// Formatea la línea CSV
 			String csvLine = String.format("%s,%s,%s,%s,%s,%d,%d,%s,%s,%.2f",
 					usuario,
 					ciudad,
@@ -814,7 +799,6 @@ public class CuadriculaOfertas extends JFrame{
 					precioFinal
 					);
 
-			// Escribe la nueva reserva
 			pw.println(csvLine);
 
 		} catch (IOException e) {

@@ -45,11 +45,9 @@ public class VentanaComienzoPrev extends JFrame{
 	                "Error de Carga", JOptionPane.ERROR_MESSAGE);
 	    }
 	    
-//	    JPanel panelImagen = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		JLabel fondoLabel = new JLabel(new ImageIcon(imagenAjustada));
 		fondoLabel.setBounds(0, 0, ANCHO_VENTANA, ALTO_VENTANA);	
 	    
-	    //JButton de comienzo
 	    JButton boton = new JButton("START");
 	    boton.setFont(new Font ("Calibri", Font.BOLD, 18));
 	    boton.setForeground(Color.BLACK);
@@ -59,20 +57,15 @@ public class VentanaComienzoPrev extends JFrame{
 	    boton.setOpaque(true);
 	    boton.setBorderPainted(false);
 		    
-		    //Posicion X - Centrado Horizontalmente
 		    int botonX = 700;;
-		    //Posicion Y - Centrado Verticalmente
 		    int botonY = 200;;
 		    
 		    boton.setBounds(botonX, botonY, ANCHO_BOTON, ALTO_BOTON);
 		    
-	//Action Listener
 	boton.addActionListener(new ActionListener(){
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JOptionPane.showMessageDialog(VentanaComienzoPrev.this, "Has accedido a la app web de Sunny Agencia de Viajes!");
-	
-            // Cerrar la ventana actual
             dispose();
             
             // Abrir la nueva ventana
@@ -87,7 +80,7 @@ public class VentanaComienzoPrev extends JFrame{
 	setVisible(true);
 	
 	}
-	//MAIN
+
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

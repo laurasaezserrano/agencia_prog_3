@@ -158,10 +158,7 @@ public class Ventana1Login extends JFrame {
             int option = JOptionPane.showConfirmDialog(this, "El usuario no está registrado. ¿Deseas registrarte?",
                     "Usuario no encontrado", JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {
-                registerUser();
-                // La llamada a iniciarSesion se hace dentro de registerUser para evitar duplicados.
-                
-                // Si el registro es exitoso y quieres abrir VentanaInicio después:
+                registerUser();                
                 this.setVisible(false);
                 Runnable abrirVentanaInicio = () -> {
                     VentanaInicio inicio = new VentanaInicio();

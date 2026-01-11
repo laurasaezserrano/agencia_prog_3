@@ -101,16 +101,12 @@ public class VentanaReservas extends JFrame {
 		    
 			@Override
 		    public void actionPerformed(ActionEvent e) {
-		        // Cierra la ventana actual
 		        dispose(); 
-		        
-		        // Abre una nueva instancia de la ventana de inicio
 		        VentanaInicio vInicio = new VentanaInicio();
 		        vInicio.setVisible(true);
 		    }
 		});
         
-		// 1. Definir las columnas que leeremos del CSV (omitimos 'Usuario')
         String[] columnasHoteles  = {
             "Ciudad", "Hotel", "Email", "Habitación", "Adultos", 
             "Niños", "Salida", "Regreso", "Precio (€)", "Cancelar"
@@ -150,9 +146,6 @@ public class VentanaReservas extends JFrame {
             }
         };
         
-        
-        
-        
         tablaExcursiones = new JTable(modeloTablaExcursiones);
         sorterExcursiones = new TableRowSorter<>(modeloTablaExcursiones);
         tablaExcursiones.setRowSorter(sorterExcursiones);
@@ -174,10 +167,7 @@ public class VentanaReservas extends JFrame {
             	aplicarbusqueda(); 
             }
         });
-        
-
-        
-        
+ 
         btnFiltrar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -185,13 +175,11 @@ public class VentanaReservas extends JFrame {
                 RowFilter<DefaultTableModel, Object> filtro = null;
                 if (texto.trim().length() > 0) {
                     try {
-                        // Filtro por columna 0 (Ciudad)
                         filtro = RowFilter.regexFilter("(?i)" + texto, 0);
                     } catch (java.util.regex.PatternSyntaxException ex) {
                         System.err.println("Error en el filtro regex");
                     }
                 }
-                // Aplicamos el mismo filtro a ambos sorters
                 sorterHoteles.setRowFilter(filtro);
                 sorterExcursiones.setRowFilter(filtro);
             }
@@ -201,7 +189,6 @@ public class VentanaReservas extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 txtFiltroCiudad.setText("");
-                // Limpiamos ambos filtros
                 sorterHoteles.setRowFilter(null);
                 sorterExcursiones.setRowFilter(null);
             }
@@ -219,21 +206,6 @@ public class VentanaReservas extends JFrame {
 
 	    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 	    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
-//	    TableCellRenderer colorRenderer = (table1, value, isSelected, hasFocus, row, column) -> {
-//	        JLabel result = new JLabel(value != null ? value.toString() : "");
-//            result.setFont(new Font("Arial", Font.PLAIN, 14));       
-//	        if (!isSelected) {
-//	            if (row % 2 == 0) {
-//	                result.setBackground(new Color(250, 249, 249)); 
-//	            } else {
-//	                result.setBackground(new Color(235, 235, 235)); 
-//	            }
-//	        }
-//	        
-//	        result.setOpaque(true);
-//	        return result;
-//	    };
 
 	    int columnas = tabla.getColumnCount();
 
@@ -264,7 +236,6 @@ public class VentanaReservas extends JFrame {
             String valorCelda = (value != null) ? value.toString() : "";
 
             if (!textoFiltro.isEmpty() && column == 0 && !isSelected) {
-                // Usamos Regex para buscar el texto sin importar mayúsculas y ponerle fondo amarillo con HTML
                 String pattern = "(?i)(" + Pattern.quote(textoFiltro) + ")";
                 String resaltado = valorCelda.replaceAll(pattern, "<span style='background: yellow;'>$1</span>");
                 c.setText("<html>" + resaltado + "</html>");
@@ -303,8 +274,6 @@ public class VentanaReservas extends JFrame {
 
                 String usuarioCSV = datos[0];
                 if (usuarioCSV.compareToIgnoreCase(usuarioFiltrar) == 0) {
-                    
-                    // Extraemos los datos del CSV
                     String ciudad = datos[1];
                     String HotelOExcursion = datos[2].replace(";", ",");
                     String email = datos[3];
@@ -315,15 +284,11 @@ public class VentanaReservas extends JFrame {
                     String regreso = datos[8];
                     double precio = Double.parseDouble(datos[9]);
                     
-                    // Creamos la fila (incluyendo el "Cancelar")
                     Object[] fila = {
                         ciudad, HotelOExcursion, email, HabOTipo, adultos, ninos, 
                         salida, regreso, precio, "Cancelar"
                     };
-                    
-                    
-                    
-                    // --- NUEVA LÓGICA DE CLASIFICACIÓN ---
+                
                     if (HabOTipo.equalsIgnoreCase("Excursión")) {
                         modeloTablaExcursiones.addRow(fila);
                         contadorExcursiones++;
@@ -368,13 +333,10 @@ public class VentanaReservas extends JFrame {
         }
     }
 	
-	
 	private boolean eliminarReservaDelCSV(DefaultTableModel model, int row) {
         File inputFile = new File("resources/data/reservas.csv");
         File tempFile = new File("reservas.temp.csv"); // Archivo temporal
 
-        // Obtenemos los datos clave de la fila para identificarla
-        // Índices del MODELO (0=Ciudad, 1=Reserva, 6=Salida, 8=Precio)
         String ciudad = model.getValueAt(row, 0).toString();
         String hotelOExcursion = model.getValueAt(row, 1).toString();
         String salida = model.getValueAt(row, 6).toString();
@@ -391,8 +353,6 @@ public class VentanaReservas extends JFrame {
             while ((linea = reader.readLine()) != null) {
                 if (linea.trim().isEmpty()) continue;
                 String[] datos = linea.split(",");
-
-                // Índices del CSV (0=Usuario, 1=Ciudad, 2=Hotel, 7=Salida, 9=Precio)
                 if (datos.length < 10) continue; 
                 
                 String usuarioCSV = datos[0];
@@ -401,7 +361,6 @@ public class VentanaReservas extends JFrame {
                 String salidaCSV = datos[7];
                 String precioCSV = datos[9];
 
-                // Comprobamos si esta línea es la que queremos borrar
                 boolean esLaReservaABorrar = 
                         usuarioCSV.equalsIgnoreCase(usuarioLogueado) &&
                         ciudadCSV.equalsIgnoreCase(ciudad) &&
@@ -429,7 +388,7 @@ public class VentanaReservas extends JFrame {
             return false;
         }
         
-        return true; // Éxito
+        return true; 
     }
 	
 	private void aplicarbusqueda() {
@@ -443,8 +402,6 @@ public class VentanaReservas extends JFrame {
         }
         sorterHoteles.setRowFilter(rf);
         sorterExcursiones.setRowFilter(rf);
-        
-        // Forzar a las tablas a repintarse para que el renderizador resalte el texto
         tablaHoteles.repaint();
         tablaExcursiones.repaint();
     };
@@ -461,13 +418,10 @@ public class VentanaReservas extends JFrame {
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            // Se ve igual si está seleccionado o no
             return this;
         }
     }
 
-    
-    
     static class ButtonEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
         private static final long serialVersionUID = 1L;
         private final JButton button;

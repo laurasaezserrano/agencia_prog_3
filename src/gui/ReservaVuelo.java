@@ -20,7 +20,6 @@ public class ReservaVuelo implements Serializable{
 		this.pasajeros = pasajeros;
 	}
 
-
 	public String getCodigoreserva() {
 		return codigoreserva;
 	}

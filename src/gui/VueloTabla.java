@@ -110,7 +110,3 @@ public class VueloTabla extends AbstractTableModel{
 		}
 	}
 }
-	
-	
-	
-	

@@ -18,8 +18,6 @@ public class ProcesoReserva extends JFrame {
 	private static final long serialVersionUID = 1L;
 	// Contador para el número de reserva
     private static int contadorReservas = 0;
-    
-    // Nombre del archivo CSV donde se guardarán los datos
     private final String NOMBRE_ARCHIVO_CSV = "reservas.csv";
 	
 	public ProcesoReserva() {
@@ -66,8 +64,6 @@ public class ProcesoReserva extends JFrame {
                 writer.write("Usuario,CodigoReserva"); //escribe la cabecera del csv
                 writer.newLine(); //añade una linea vacia
             }
-            
-            //Escribe los datos de la reserva
             writer.write(nombreUsuario + "," + codigoReserva);
             writer.newLine();
             
@@ -77,7 +73,6 @@ public class ProcesoReserva extends JFrame {
                 JOptionPane.INFORMATION_MESSAGE);
             
         } catch (IOException ex) {
-            //Muestra un mensaje de error si algo falla
             ex.printStackTrace(); //Imprime el error en la consola
             JOptionPane.showMessageDialog(this, 
                 "Error al guardar el archivo CSV: " + ex.getMessage(),

@@ -4,29 +4,23 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
-import javax.swing.JDialog;
-import javax.swing.JProgressBar;
 import agencia_prog_3_thread.VentanaBuscandoExcursion;
 import agencia_prog_3_thread.VentanaBuscandoPerfil;
 import agencia_prog_3_thread.VentanaBuscandoReservas;
@@ -36,8 +30,10 @@ import agencia_prog_3_thread.VentanaRuletaDeLaSuerte;
 public class VentanaInicio extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private JTextField titulo;
+	@SuppressWarnings("unused")
 	private static final String MENSAJE_GANADOR = "¡Felicidades! Has ganado un 15% de descuento en tu próximo viaje.";
 	
+	@SuppressWarnings("unused")
 	public VentanaInicio(){
 		JPanel mainpanel = new JPanel();
 		JPanel panel1 = new JPanel(new GridLayout(2, 6, 40, 40));

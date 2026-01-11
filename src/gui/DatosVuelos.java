@@ -22,8 +22,6 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	private List<ReservaVuelo> reservas;
 	
 
-	// CONSTRUCTOR DE 10 PARÁMETROS (CORREGIDO PARA COINCIDIR CON LA LLAMADA DESDE VentanaVueloYHotel)
-	// NOTA: Se asume que Aerolinea y Aeropuertos tienen un constructor que acepta un String.
 	public DatosVuelos(
 	    String codigo, 
 	    String aerolineaNombre, 
@@ -37,7 +35,6 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	    String descripcion
 	) {
         this.codigo = codigo;
-        // CONVERSIÓN ASUMIDA: Crea un objeto Aerolinea/Aeropuertos a partir del nombre String.
         this.aerolinea = new Aerolinea(aerolineaNombre); 
         this.origen = new Aeropuerto(origenNombre);
         this.duracionvuelo = duracionvuelo;
@@ -52,11 +49,7 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
         this.reservas = new ArrayList<>(); // Inicializamos la lista para evitar NullPointerException
     }
     
-    // El constructor anterior ha sido eliminado o comentado para evitar conflictos.
-    // Si aún necesitas el constructor anterior, asegúrate de que tome 10 parámetros
-    // o que el constructor que uses en VentanaVueloYHotel tenga la firma correcta.
-	
-	
+ 	
 	public int asientosrestantes() {
 		int asi = 0;
 		if (reservas != null) {
@@ -65,7 +58,6 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 				asi += r.getPasajeros().size(); 
 			}
 		}
-		// CORRECCIÓN: Usa el campo 'asientos' en lugar de la variable 'plazas'
 		return (asientos - asi); 
 	}
 
@@ -98,12 +90,6 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 		return hora;
 	}
 
-	// El campo Avion no está definido, se elimina su getter si existiera.
-	/* public Avion getAvion() {
-		return avion;
-	} */
-
-	// CORRECCIÓN: Usa el campo 'asientos' en lugar de la variable 'plazas'
 	public int getAsientos() { 
 		return asientos;
 	}
@@ -123,7 +109,6 @@ public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	public void setReservas(List<ReservaVuelo> reservas) {
 		this.reservas = reservas;
 	}
-
 
 	@Override
 	public int compareTo(DatosVuelos o) {

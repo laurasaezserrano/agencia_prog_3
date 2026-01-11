@@ -170,7 +170,6 @@ public class VentanaVueloYHotel extends JFrame {
             }
         });
 
-        //boton reserva (columna 9)
         int colReserva = 9;
         tabla.getColumnModel().getColumn(colReserva).setCellRenderer(new ButtonRenderer("Reservar"));
         tabla.getColumnModel().getColumn(colReserva).setCellEditor(new ButtonEditor(vuelos, tabla, this::abrirreserva));
@@ -212,9 +211,7 @@ public class VentanaVueloYHotel extends JFrame {
 		tabla.addKeyListener(listener);
 		atras.addKeyListener(listener);
     }
-    
-    
-    
+
     private DefaultTableModel crearModelo() {
         String[] columnas = {"Código", "Aerolínea", "Origen", "Destino", "Fecha", "Hora", "Precio", "Asientos", "Duración", "Reservar"};
         DefaultTableModel m = new DefaultTableModel(columnas, 0) {
@@ -504,9 +501,7 @@ public class VentanaVueloYHotel extends JFrame {
         mensaje.add(south, BorderLayout.SOUTH);
         mensaje.setVisible(true);
     }
-    
-    
-    
+
     class HighlightRenderer extends DefaultTableCellRenderer {
         private static final long serialVersionUID = 1L;
         
@@ -522,9 +517,7 @@ public class VentanaVueloYHotel extends JFrame {
                 
                 String cellText = value == null ? "" : value.toString();
                 
-                
                 //ayudado por IAG para el matcher (método más sencillo) 
-                
                 // Si hay texto de búsqueda y no está vacío, resaltar
                 if (!textoBusqueda.isEmpty() && cellText != null) {
                     Pattern pattern = Pattern.compile(Pattern.quote(textoBusqueda), Pattern.CASE_INSENSITIVE);
@@ -561,9 +554,7 @@ public class VentanaVueloYHotel extends JFrame {
             return c;
         }
     }
-    
-    
-        
+   
     static class StripedTable extends JTable {
         private static final long serialVersionUID = 1L;
         private final Color par = new Color(245, 250, 255);
@@ -614,15 +605,10 @@ public class VentanaVueloYHotel extends JFrame {
     static class ButtonEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
     	
         private static final long serialVersionUID = 1L;
-        
         private final JButton button = new JButton("Reservar");
-        
         private final List<DatosVuelos> vuelos;
-        
         private final JTable table;
-        
         private final java.util.function.Consumer<DatosVuelos> onClick;
-        
         ButtonEditor(List<DatosVuelos> vuelos, JTable table, java.util.function.Consumer<DatosVuelos> onClick) {
             this.vuelos = vuelos;
             this.table = table;
@@ -657,7 +643,8 @@ public class VentanaVueloYHotel extends JFrame {
     
     static class PrecioRenderer extends DefaultTableCellRenderer {
         private static final long serialVersionUID = 1L;
-        private static final NumberFormat C = NumberFormat.getCurrencyInstance(new Locale("es", "ES")); //generado por IAG
+        @SuppressWarnings("deprecation")
+		private static final NumberFormat C = NumberFormat.getCurrencyInstance(new Locale("es", "ES")); //generado por IAG
         
         static String format(double d) {
             return C.format(d);
@@ -673,11 +660,7 @@ public class VentanaVueloYHotel extends JFrame {
             setHorizontalAlignment(SwingConstants.CENTER);
         }
     }
-    
-  
-    
-    	
-    	
+ 
     public static void main(String[] args) {
         VentanaVueloYHotel vuelosyhotel = new VentanaVueloYHotel();
         vuelosyhotel.setVisible(true);
