@@ -1,8 +1,11 @@
 package db; 
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -860,6 +863,33 @@ public class GestorBD {
 			logger.warning(String.format("Error leyendo hoteles del CSV: %s", e.getMessage()));
 		}
 		return hoteles;
+		
+	}
+	
+	
+	
+	public void storeVuelos(List<Vuelo> vuelos){
+		if (vuelos != null) {
+			try (PrintWriter out = new PrintWriter(new File(CSV_VUELOS))){
+				out.println("ORIGEN;DESTINO;FECHA_SALIDA;FECHA_REGRESO;AEROLINEA;PRECIO_ECONOMY;PRECIO_BUSINESS;PLAZAS_DISPONIBLES");
+				vuelos.forEach(v -> {
+	                String linea = String.format(
+	                    "%s;%s;%s;%s;%s;%.2f EUR;%.2f EUR;%d",
+	                    v.getOrigen(),
+	                    v.getDestino(),
+	                    v.getFechaSalida().toString(),   // YYYY-MM-DD
+	                    v.getFechaRegreso().toString(),  // YYYY-MM-DD
+	                    v.getAerolinea(),
+	                    v.getPrecioEconomy(),
+	                    v.getPrecioBusiness(),
+	                    v.getPlazasDisponibles()
+	                );
+	                out.println(linea);
+	            });
+	            logger.info("Se han guardado los vuelos en un CSV.");
+			} catch (Exception e) {
+				logger.warning(String.format("Error guardando vuelos en el CSV: %s", e.getMessage()));			}
+		}
 		
 	}
 	
