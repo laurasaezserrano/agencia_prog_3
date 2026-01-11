@@ -756,7 +756,8 @@ public class GestorBD {
 	    return reservas;
 	}
 	
-	
+
+	//metodo para cargar los vuelos del csv
 	private List<Vuelo> loadVuelos() {
 		List<Vuelo> vuelos = new ArrayList<>();
 		
@@ -817,5 +818,49 @@ public class GestorBD {
 	    return Double.parseDouble(limpio);
 	}
 	
+	
+	//metodo para cargar hoteles del csv
+	private List<Hotel> loadHoteles() {
+		List<Hotel> hoteles = new ArrayList<>();
+		try (BufferedReader in = new BufferedReader(new FileReader(CSV_HOTELES))){
+			String linea;
+			while ((linea = in.readLine()) != null) {
+				linea = linea.trim();
+				if (linea.isEmpty()) {
+					continue;
+				}
+				String[] campos = linea.split(",", -1); // el -1 ayuda de la IAG para no perder campos vacios
+	            if (campos.length != 6) {
+	                logger.warning(String.format("Línea de hoteles inválida (se esperaban 6 campos): %s", linea));
+	                continue;
+	            }
+	            String nombre = campos[0].trim();
+	            String ciudad = campos[1].trim();
+	            String pais = campos[2].trim();
+	            int estrellas = Integer.parseInt(campos[3].trim());
+	            int capacidad = Integer.parseInt(campos[4].trim());
+	            String precioMoneda = campos[5].trim();
+	            String[] preciocampo = precioMoneda.split(" ");
+	            double precioNoche = Double.parseDouble(preciocampo[0].replace(',', '.'));
+	                String moneda = (preciocampo.length > 1) ? preciocampo[1] : "";
+			
+	            Hotel h = new Hotel();
+	            h.setNombre(nombre);
+	            h.setCiudad(ciudad);
+	            h.setPais(pais);
+	            h.setEstrellas(estrellas);
+	            h.setCapacidad(capacidad);
+	            h.setPrecioNoche(precioNoche);
+	            h.setMoneda(moneda);
+
+	            hoteles.add(h);
+			}
+			logger.info(String.format("Se han cargado %d hoteles desde el CSV.", hoteles.size()));
+		} catch (Exception e) {
+			logger.warning(String.format("Error leyendo hoteles del CSV: %s", e.getMessage()));
+		}
+		return hoteles;
+		
+	}
 	
 }
