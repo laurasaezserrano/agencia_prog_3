@@ -1125,9 +1125,30 @@ public class GestorBD {
 		return aeropuertos;
 	}
 
+	
 	public List<Vuelo> getVuelos() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Vuelo> vuelos = new ArrayList<>();
+		String sql = "SELECT * FROM VUELO;";
+		try (Connection conn = DriverManager.getConnection(connection);
+				PreparedStatement pstm = conn.prepareStatement(sql);
+				ResultSet rs = pstm.executeQuery()){
+			while (rs.next()) {
+				Vuelo v = new Vuelo(
+						rs.getString("ORIGEN"),
+						rs.getString("DESTINO"),
+						java.sql.Date.valueOf(rs.getString("FECHA_SALIDA")),
+						java.sql.Date.valueOf(rs.getString("FECHA_REGRESO")),
+						rs.getString("AEROLINEA"),
+						rs.getDouble("PRECIO_ECONOMY"),
+						rs.getDouble("PRECIO_BUSINESS"),
+						rs.getInt("PLAZAS_DISPONIBLES"));
+				vuelos.add(v);
+			}
+			logger.info(String.format("Se han recuperado %d vuelos.", vuelos.size()));
+		} catch (Exception e) {
+			logger.warning(String.format("Error al recuperar vuelos: %s", e.getMessage()));		
+		}
+		return vuelos;
 	}
 
 	public List<Hotel> getHoteles() {
