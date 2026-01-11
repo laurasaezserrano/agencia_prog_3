@@ -18,11 +18,11 @@ import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import agencia_prog_3_data.Aerolinea;
-import agencia_prog_3_data.Hotel;
-import agencia_prog_3_data.Reserva;
-import agencia_prog_3_data.User;
-import agencia_prog_3_data.Vuelo;
+import domain.Aerolinea;
+import domain.Hotel;
+import domain.Reserva;
+import domain.User;
+import domain.Vuelo;
 
 public class GestorBD {
 
