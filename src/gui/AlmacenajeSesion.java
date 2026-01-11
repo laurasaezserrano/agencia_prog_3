@@ -1,4 +1,4 @@
-package agencia_prog_3_GUI;
+package gui;
 
 public class AlmacenajeSesion {
     private static String nombreUsuario;

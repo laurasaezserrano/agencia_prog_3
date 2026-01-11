@@ -1,11 +1,11 @@
-package agencia_prog_3_GUI;
+package gui;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import agencia_prog_3_data.Aerolinea;
-import agencia_prog_3_data.Aeropuerto;
+import domain.Aerolinea;
+import domain.Aeropuerto;
 
 public class DatosVuelos implements Comparable<DatosVuelos>, Serializable{
 	private static final long serialVersionUID = 1L;

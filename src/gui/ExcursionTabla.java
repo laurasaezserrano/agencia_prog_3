@@ -1,10 +1,10 @@
-package agencia_prog_3_GUI;
+package gui;
 
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import agencia_prog_3_data.Excursion;
+import domain.Excursion;
 
 public class ExcursionTabla extends AbstractTableModel{
 	private static final long serialVersionUID = 1L;

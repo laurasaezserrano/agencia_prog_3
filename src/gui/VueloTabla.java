@@ -1,4 +1,4 @@
-package agencia_prog_3_GUI;
+package gui;
 
 import java.util.ArrayList;
 import java.util.Arrays;

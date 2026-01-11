@@ -1,4 +1,4 @@
-package agencia_prog_3_GUI;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -50,8 +50,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import agencia_prog_3_data.Excursion;
-import agencia_prog_3_data.ExcursionPrecio;
+import domain.Excursion;
+import domain.ExcursionPrecio;
 import db.GestorBD;
 
 public class VentanaExcursiones extends JFrame{
