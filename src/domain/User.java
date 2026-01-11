@@ -28,7 +28,6 @@ public class User {
         this.moneda = moneda;
     }
 
-    // Getters y Setters
     public String getUsuario() { return usuario; }
     public void setUsuario(String usuario) { this.usuario = usuario; }
 

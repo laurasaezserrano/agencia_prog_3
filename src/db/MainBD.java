@@ -1,12 +1,12 @@
 package db;
 
-import agencia_prog_3_data.Aerolinea;
-import agencia_prog_3_data.Aeropuerto;
-import agencia_prog_3_data.Avion;
-import agencia_prog_3_data.VueloData;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import domain.Aerolinea;
+import domain.Aeropuerto;
+import domain.Avion;
 
 public class MainBD {
 
@@ -154,9 +154,7 @@ public class MainBD {
         System.out.println("\n--- 9. LIMPIEZA FINAL ---");
         System.out.println("Para borrar todos los datos, descomenta la siguiente línea:");
         gestorBD.borrarDatos();
-        
-        
-        
+   
         gestorBD.cargarDatosDesdeCSVs("resources/data/reservas.csv", "resources/data/vuelosagencia_completo.csv");
         
         

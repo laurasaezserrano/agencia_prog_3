@@ -15,7 +15,6 @@ public class Aeropuerto implements Serializable {
         return nombre;
     }
     
-    // Si necesitas el getter:
     public String getNombre() {
         return nombre;
     }

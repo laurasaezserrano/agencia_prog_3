@@ -27,11 +27,9 @@ import domain.Vuelo;
 
 public class GestorBD {
 
-    //Configuración
 	private final String PROPERTIES_FILE = "resources/conf/app.properties";
 	private static Logger logger = Logger.getLogger(GestorBD.class.getName());
 	
-	//Constantes (rutas csv)
 	private final String CSV_HOTELES = "resources/data/hoteles.csv";
 	private final String CSV_USER = "resources/data/user.csv"; 
 	private final String CSV_RESERVAS = "resources/data/reservas.csv"; 
@@ -59,11 +57,7 @@ public class GestorBD {
 	    }
 	}
 	
-	//Creacion de las tablas (Reservas, hoteles, user(usuarios), vuelos) 
-	//Las utilizadas en la app
-	
 	public void crearBBDD() {
-		//USER
 		String sqlUser =
 			    "CREATE TABLE IF NOT EXISTS USER (\n" +
 			    "    usuario TEXT,\n" +
@@ -78,7 +72,6 @@ public class GestorBD {
 			    "    PRIMARY KEY (usuario)\n" +
 			    ");";
 		
-		//HOTEL
 		String sqlHotel =
 			    "CREATE TABLE IF NOT EXISTS HOTEL (\n" +
 			    "    nombre TEXT,\n" +
@@ -91,7 +84,6 @@ public class GestorBD {
 			    "    PRIMARY KEY (nombre, ciudad)\n" +
 			    ");";
 
-		//VUELO
 		String sqlVuelo =
 			    "CREATE TABLE IF NOT EXISTS VUELO (\n" +
 			    "    origen TEXT,\n" +
@@ -105,7 +97,6 @@ public class GestorBD {
 			    "    PRIMARY KEY (origen, destino, fecha_salida, fecha_regreso, aerolinea)\n" +
 			    ");";
 			 
-		//RESERVA
 		String sqlReserva =
 			    "CREATE TABLE IF NOT EXISTS RESERVA (\n" +
 			    "    usuario TEXT,\n" +
@@ -129,7 +120,6 @@ public class GestorBD {
 				 PreparedStatement pStmt3 = con.prepareStatement(sqlVuelo);
                  PreparedStatement pStmt4 = con.prepareStatement(sqlReserva)){
 				
-				// Ejecutar las sentencias de creación
 		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute()) {
 		        	logger.info("Se han creado las 4 tablas");
 		        }
@@ -138,7 +128,6 @@ public class GestorBD {
 			}	
 	}
 	
-	//Eliminar tablas y base
 	public void borrarBBDD() {
 
 			String sql1 = "DROP TABLE IF EXISTS USER;";
@@ -193,7 +182,6 @@ public class GestorBD {
 		
 	}
 	
-	//INSERCION MASIVA DE DATOS 
     /**
 	 * Inserta Users en la BBDD.
 	 */
@@ -329,7 +317,6 @@ public class GestorBD {
 		}			
 	}
 	
-	//INSERCIÓN DE DATOS (Un único dato en cada tabla)
     /**
 	 * Inserta Vuelo en la BBDD
 	 */
@@ -468,7 +455,6 @@ public class GestorBD {
 		}
 		
 		
-	//BORRADO DE DATOS ESPECIFICOS DE CADA TABLA
 	/**
 	 * Elimina una reserva específica de la BBDD.
 	 */
@@ -598,7 +584,6 @@ public class GestorBD {
 		}
 	}
 	
-	//MÉTODOS ÚTILES 
 	/**
 	 * Recupera todas las reservas de un usuario específico.
 	 * @return Lista de Object[] donde cada array contiene los datos de una reserva
@@ -737,7 +722,6 @@ public class GestorBD {
 	         ResultSet rs = stmt.executeQuery(sql)) {
 	        
 	        while (rs.next()) {
-	            // USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NIÑOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE
 	            Reserva reserva = new Reserva() ;
                 reserva.setUsuario(rs.getString("USUARIO"));
 	            reserva.setCiudad(rs.getString("CIUDAD"));

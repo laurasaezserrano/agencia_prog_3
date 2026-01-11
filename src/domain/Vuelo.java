@@ -29,7 +29,6 @@ public class Vuelo {
         this.plazasDisponibles = plazasDisponibles;
     }
 
-    // Getters y Setters
     public String getOrigen() { return origen; }
     public void setOrigen(String origen) { this.origen = origen; }
 
