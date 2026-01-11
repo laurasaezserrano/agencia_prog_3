@@ -755,4 +755,67 @@ public class GestorBD {
 	    }
 	    return reservas;
 	}
+	
+	
+	private List<Vuelo> loadVuelos() {
+		List<Vuelo> vuelos = new ArrayList<>();
+		
+		try(BufferedReader in = new BufferedReader(new FileReader(CSV_VUELOS))){
+			String linea;
+			in.readLine(); //se omite la cabecera
+			while ((linea = in.readLine()) != null) {
+				linea = linea.trim();
+				if (linea.isEmpty()) {
+					continue;
+				}
+				String[] campos = linea.split(",", -1);
+				if (campos.length != 8) {
+					logger.warning(String.format("Línea de vuelos inválida (se esperaban 8 campos): %s", linea));
+					continue;
+				}
+				String origen = campos[0].trim();
+	            String destino = campos[1].trim();
+	            String fechaSalidaStr = campos[2].trim();
+	            String fechaRegresoStr = campos[3].trim();
+	            String aerolinea = campos[4].trim();
+	            double precioEconomy = parsePrecio(campos[5]);
+	            double precioBusiness = parsePrecio(campos[6]);
+	            int plazasDisponibles = Integer.parseInt(campos[7].trim());
+	            
+	            Vuelo v = new Vuelo();
+	            v.setOrigen(origen);
+	            v.setDestino(destino);
+	            v.setFechaSalida(java.sql.Date.valueOf(fechaSalidaStr)); // YYYY-MM-DD
+	            v.setFechaRegreso(java.sql.Date.valueOf(fechaRegresoStr));
+	            v.setAerolinea(aerolinea);
+	            v.setPrecioEconomy(precioEconomy);
+	            v.setPrecioBusiness(precioBusiness);
+	            v.setPlazasDisponibles(plazasDisponibles);
+	            
+	            vuelos.add(v);
+			}
+	        logger.info(String.format("Se han cargado %d vuelos desde el CSV.", vuelos.size()));
+		}catch (Exception e) {
+	        logger.warning(String.format("Error leyendo vuelos del CSV: %s", e.getMessage()));
+		}
+		return vuelos;
+			
+		}
+	
+
+	private double parsePrecio(String precio) {
+		if (precio == null) {
+	        return 0.0;
+	    }
+	    String limpio = precio.trim();
+	    //nos quedamos con la parte numérica
+	    int idx = limpio.indexOf(' ');
+	    if (idx > 0) {
+	        limpio = limpio.substring(0, idx).trim();
+	    }
+	    limpio = limpio.replace(',', '.');
+	    return Double.parseDouble(limpio);
+	}
+	
+	
 }
