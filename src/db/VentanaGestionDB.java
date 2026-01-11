@@ -5,11 +5,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-import agencia_prog_3_GUI.Ventana1Login;
-import agencia_prog_3_data.Hotel;
-import agencia_prog_3_data.Reserva;
-import agencia_prog_3_data.User;
-import agencia_prog_3_data.Vuelo;
+import domain.Reserva;
+import domain.User;
+import gui.Ventana1Login;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

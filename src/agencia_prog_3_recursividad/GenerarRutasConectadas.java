@@ -2,7 +2,8 @@ package agencia_prog_3_recursividad;
 
 import java.util.ArrayList;
 import java.util.List;
-import agencia_prog_3_GUI.DatosVuelos;
+
+import gui.DatosVuelos;
 
 public class GenerarRutasConectadas {
     

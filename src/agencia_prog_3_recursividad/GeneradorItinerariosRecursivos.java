@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import agencia_prog_3_GUI.DatosVuelos;
+import gui.DatosVuelos;
+
 
 public class GeneradorItinerariosRecursivos {
 	

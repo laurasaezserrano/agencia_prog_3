@@ -829,7 +829,7 @@ public class GestorBD {
 				if (linea.isEmpty()) {
 					continue;
 				}
-				String[] campos = linea.split(",", -1); // el -1 ayuda de la IAG para no perder campos vacios
+				String[] campos = linea.split(",", -1); //el -1 ayuda de la IAG para no perder campos vacios
 	            if (campos.length != 6) {
 	                logger.warning(String.format("Línea de hoteles inválida (se esperaban 6 campos): %s", linea));
 	                continue;
