@@ -919,6 +919,7 @@ public class GestorBD {
 		}
 	}
 
+	
 	public void updateVuelos(List<Vuelo> listaVuelos, List<Aeropuerto> listaAeropuertos) {
 	    if (listaVuelos == null || listaAeropuertos == null) {
 	    	return;
@@ -984,11 +985,28 @@ public class GestorBD {
 	    return usuarios;
 	}
 
+	
 	public List<Excursion> getExcursiones() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Excursion> excursiones = new ArrayList<>();
+		String sql = "SELECT id, nombre, descripcion, precio FROM EXCURSION;";
+		try (Connection conn = DriverManager.getConnection(connection);
+				PreparedStatement pstm = conn.prepareStatement(sql);
+				ResultSet rs = pstm.executeQuery()){
+			while(rs.next()) {
+				Excursion e = new Excursion(
+						rs.getInt("id"),
+						rs.getString("nombre"),
+						rs.getString("descripcion"),
+						rs.getDouble("precio"));
+				excursiones.add(e);
+			}
+			logger.info(String.format("Se han recuperado %d excursiones.", excursiones.size()));
+		} catch (Exception e) {
+			logger.warning(String.format("Error al recuperar excursiones: %s", e.getMessage()));		}
+		return excursiones;
 	}
 
+	
 	public List<Aeropuerto> getAeropuertos() {
 	    List<Aeropuerto> aeropuertos = new ArrayList<>();
 	    String sql = "SELECT NOMBRE FROM AEROPUERTO;";
