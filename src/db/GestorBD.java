@@ -22,6 +22,8 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import domain.Aerolinea;
+import domain.Aeropuerto;
+import domain.Excursion;
 import domain.Hotel;
 import domain.Reserva;
 import domain.User;
@@ -915,6 +917,32 @@ public class GestorBD {
 	            logger.warning(String.format("Error guardando hoteles en el CSV: %s", e.getMessage()));
 			}
 		}
+	}
+
+	public void updateVuelos(List<Vuelo> listaVuelos, List<Aeropuerto> listaAeropuertos) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateReservas(List<Reserva> reservas, List<User> usuarios, List<Vuelo> listaVuelos,
+			List<Hotel> listaHoteles) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public List<User> getUsuarios() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<Excursion> getExcursiones() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<Aeropuerto> getAeropuertos() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
