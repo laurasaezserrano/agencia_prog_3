@@ -1,4 +1,4 @@
-package agencia_prog_3_thread;
+package gui;
 
 import javax.swing.*;
 import java.awt.*;

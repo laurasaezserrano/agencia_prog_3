@@ -1,7 +1,6 @@
 package gui;
 
 import javax.swing.*;
-import agencia_prog_3_thread.VentanaCarga;
 import db.GestorBD;
 import db.VentanaGestionDB;
 

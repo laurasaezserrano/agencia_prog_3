@@ -21,8 +21,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
-import agencia_prog_3_thread.VentanaBuscandoExcursion;
-import agencia_prog_3_thread.VentanaBuscandoReservas;
 
 public class VentanaInicio extends JFrame{
 	private static final long serialVersionUID = 1L;
