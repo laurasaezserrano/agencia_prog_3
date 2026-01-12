@@ -124,7 +124,7 @@ public class GestorBD {
 			    "    fecha_Salida TEXT,\n" +
 			    "    precio_Noche REAL,\n" +
 			    "    PRIMARY KEY (usuario, nombre_Hotel, ciudad, fecha_Entrada, fecha_Salida),\n" +
-			    "    FOREIGN KEY (usuario) REFERENCES USER(USUARIO)\n" +
+			    "    FOREIGN KEY (usuario) REFERENCES USER(usuario)\n" +
 			    ");";
             
 			
@@ -213,7 +213,12 @@ public class GestorBD {
 				pStmt.setString(3, u.getNombre());
 				pStmt.setString(4, u.getDni());
 				pStmt.setString(5, u.getEmail());
-				pStmt.setLong(6, u.getTelefono());
+				Integer tel = u.getTelefono();
+				if (tel == null) {
+				    pStmt.setNull(6, java.sql.Types.INTEGER);
+				} else {
+				    pStmt.setInt(6, tel);
+				}
 				pStmt.setString(7, u.getDireccion());
 				pStmt.setString(8, u.getIdioma());
 				pStmt.setString(9, u.getMoneda());
@@ -268,8 +273,7 @@ public class GestorBD {
 		String sql = "INSERT INTO VUELO (ORIGEN, DESTINO, FECHA_SALIDA, FECHA_REGRESO, AEROLINEA, PRECIO_ECONOMY, PRECIO_BUSINESS, PLAZAS_DISPONIBLES) "+
 						"VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 		
-		try (Connection con = DriverManager.getConnection(connection);
-
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
 									
 			for (Vuelo v : vuelos) {
@@ -404,7 +408,7 @@ public class GestorBD {
 			String sql = "INSERT INTO HOTEL (NOMBRE, CIUDAD, PAIS, ESTRELLAS, CAPACIDAD, PRECIO_NOCHE, MONEDA) VALUES "+
 					"(?, ?, ?, ?, ?, ?, ?);";
 			
-			try (Connection con = DriverManager.getConnection(connection);
+			try (Connection con = getConnectionWithFK();
 				 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 	            
 	            pStmt.setString(1, hotel.getNombre());
@@ -600,124 +604,6 @@ public class GestorBD {
 			return false;
 		}
 	}
-	
-	/**
-	 * Recupera todas las reservas de un usuario específico.
-	 * @return Lista de Object[] donde cada array contiene los datos de una reserva
-	 */
-	public List<Object[]> getReservasPorUsuario(String usuario) {
-		List<Object[]> reservas = new ArrayList<>();
-		String sql = "SELECT ciudad, reserva_nombre, email, tipo_habitacion, adultos, ninos, " +
-				"fecha_salida, fecha_regreso, precio FROM Reserva WHERE usuario = ?;";
-		
-		try (Connection con = DriverManager.getConnection(connection);
-		     PreparedStatement pStmt = con.prepareStatement(sql)) {
-			
-			pStmt.setString(1, usuario);
-			ResultSet rs = pStmt.executeQuery();
-			
-			while (rs.next()) {
-				Object[] fila = {
-					rs.getString("ciudad"),
-					rs.getString("reserva_nombre"),
-					rs.getString("email"),
-					rs.getString("tipo_habitacion"),
-					rs.getInt("adultos"),
-					rs.getInt("ninos"),
-					rs.getString("fecha_salida"),
-					rs.getString("fecha_regreso"),
-					rs.getDouble("precio"),
-					"Cancelar" // Para el botón
-				};
-				reservas.add(fila);
-			}
-			
-			rs.close();
-			logger.info(String.format("Se han recuperado %d reservas para %s", reservas.size(), usuario));
-			
-		} catch (Exception ex) {
-			logger.warning(String.format("Error al recuperar reservas: %s", ex.getMessage()));
-		}
-		
-		return reservas;
-	}
-	
-	
-	/**
-	 * Recupera todas las reservas (para testing o admin).
-	 */
-	public void getTodasLasReservas() {
-		String sql = "SELECT * FROM Reserva;";
-
-		try (Connection con = DriverManager.getConnection(connection);
-		     PreparedStatement pStmt = con.prepareStatement(sql)) {			
-			
-			ResultSet rs = pStmt.executeQuery();			
-			int count = 0;
-
-			while (rs.next()) {
-                String info = String.format("Reserva ID %d: %s - %s en %s (Salida: %s, Precio: %.2f€)",
-                        rs.getInt("id"),
-                        rs.getString("usuario"),
-                        rs.getString("reserva_nombre"),
-                        rs.getString("ciudad"),
-                        rs.getString("fecha_salida"),
-                        rs.getDouble("precio"));
-                
-                logger.info(info);
-				count++;
-			}
-			
-			rs.close();
-			logger.info(String.format("Se han recuperado %d reservas en total.", count));			
-		} catch (Exception ex) {
-			logger.warning(String.format("Error al recuperar las reservas: %s", ex.getMessage()));						
-		}		
-	}
-	
-	
-    /**
-	 * Recupera todos los vuelos con la información completa de las entidades relacionadas.
-	 */
-	public void getVuelosCompletos() {
-
-		String sql = "SELECT V.codigo, V.fecha, V.duracion, V.precio, "
-                + "AERO_LINEA.nombre AS aerolinea_nombre, "
-                + "AV.codigo AS avion_codigo, "
-                + "AP_ORIGEN.nombre AS origen_nombre, "
-                + "AP_DESTINO.nombre AS destino_nombre "
-                + "FROM Vuelo V "
-                + "JOIN Aerolinea AERO_LINEA ON V.id_aerolinea = AERO_LINEA.id "
-                + "JOIN Avion AV ON V.id_avion = AV.id "
-                + "JOIN Aeropuerto AP_ORIGEN ON V.id_aeropuerto_origen = AP_ORIGEN.id "
-                + "JOIN Aeropuerto AP_DESTINO ON V.id_aeropuerto_destino = AP_DESTINO.id;";
-
-
-		try (Connection con = DriverManager.getConnection(connection);
-		     PreparedStatement pStmt = con.prepareStatement(sql)) {			
-			
-			ResultSet rs = pStmt.executeQuery();			
-			int count = 0;
-
-			while (rs.next()) {
-
-                String info = String.format("Vuelo %s (%s) de %s a %s. Aerolínea: %s. Avión: %s. Precio: %.2f",
-                        rs.getString("codigo"), rs.getString("fecha"),
-                        rs.getString("origen_nombre"), rs.getString("destino_nombre"),
-                        rs.getString("aerolinea_nombre"), rs.getString("avion_codigo"),
-                        rs.getDouble("precio"));
-                
-                logger.info(info);
-				count++;
-			}
-			
-			rs.close();
-			
-			logger.info(String.format("Se han recuperado %d vuelos completos.", count));			
-		} catch (Exception ex) {
-			logger.warning(String.format("Error recuperar los vuelos: %s", ex.getMessage()));						
-		}		
-	}
 
 	private Connection getConnectionWithFK() throws Exception {
 	    Connection con = DriverManager.getConnection(connection);
@@ -908,7 +794,7 @@ public class GestorBD {
 				if (linea.isEmpty()) {
 					continue;
 				}
-				String[] campos = linea.split(",", -1);
+				String[] campos = linea.split(";", -1);
 				if (campos.length != 8) {
 					logger.warning(String.format("Línea de vuelos inválida (se esperaban 8 campos): %s", linea));
 					continue;
@@ -970,7 +856,7 @@ public class GestorBD {
 				if (linea.isEmpty()) {
 					continue;
 				}
-				String[] campos = linea.split(",", -1);
+				String[] campos = linea.split(";", -1);
 				if (campos.length != 10) {
 	                logger.warning(String.format("Línea de reservas inválida (se esperaban 10 campos): %s", linea));
 	                continue;
@@ -1050,7 +936,7 @@ public class GestorBD {
 	            if (linea.isEmpty()) {
 	                continue;
 	            }
-	            String[] campos = linea.split(",", -1);
+	            String[] campos = linea.split(";", -1);
 	            if (campos.length != 2) {
 	                logger.warning(String.format("Línea de usuarios inválida (se esperaban 2 campos): %s", linea));
 	                continue;
@@ -1097,7 +983,7 @@ public class GestorBD {
 				if (linea.isEmpty()) {
 					continue;
 				}
-				String[] campos = linea.split(",", -1); //el -1 ayuda de la IAG para no perder campos vacios
+				String[] campos = linea.split(";", -1); //el -1 ayuda de la IAG para no perder campos vacios
 	            if (campos.length != 6) {
 	                logger.warning(String.format("Línea de hoteles inválida (se esperaban 6 campos): %s", linea));
 	                continue;
