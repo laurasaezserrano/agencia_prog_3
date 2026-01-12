@@ -39,7 +39,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import java.util.List;
-import agencia_prog_3_thread.VentanaConfirmacionReserva;
 import db.GestorBD;
 import domain.Reserva;
 
@@ -233,7 +232,7 @@ public class CuadriculaOfertas extends JFrame{
 	                "Reserva Exitosa", 
 	                JOptionPane.INFORMATION_MESSAGE);
 	            dispose();
-	            VentanaConfirmacionReserva vConfirmacion = new VentanaConfirmacionReserva();
+	            VentanaConfirReserva vConfirmacion = new VentanaConfirReserva();
 	            vConfirmacion.setVisible(true);
 	        });
  

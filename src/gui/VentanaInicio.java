@@ -22,7 +22,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import agencia_prog_3_thread.VentanaBuscandoExcursion;
-import agencia_prog_3_thread.VentanaBuscandoPerfil;
 import agencia_prog_3_thread.VentanaBuscandoReservas;
 
 public class VentanaInicio extends JFrame{
@@ -269,7 +268,7 @@ public class VentanaInicio extends JFrame{
 	private void abrirPerfilHilo() {
 	    String user = AlmacenajeSesion.getNombreUsuario();
 	    String pass = AlmacenajeSesion.getPassword();
-	    VentanaBuscandoPerfil dialog = new VentanaBuscandoPerfil(this);
+	    BuscandoPerfil dialog = new BuscandoPerfil(this);
 	    Thread hilo = new Thread(() -> {
 	        try {
 	            for (int i = 0; i < 10; i++) { 
