@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.nio.channels.ConnectionPendingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -13,11 +14,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import domain.Aerolinea;
 import domain.Aeropuerto;
 import domain.Excursion;
 import domain.Hotel;
@@ -1153,6 +1156,32 @@ public class GestorBD {
 		} catch (Exception e) {
 			logger.warning(String.format("Error al recuperar hoteles: %s", e.getMessage()));		}
 		return null;
+	}
+
+	public void insertarAerolinea(Aerolinea[] array) {
+		if (array == null || array.length == 0) {
+			return;
+		}
+		String sql ="INSERT INTO AEROLINEA (NOMBRE) VALUES (?);";
+		
+		try (Connection con = DriverManager.getConnection(connection);
+				PreparedStatement pstm = con.prepareStatement(sql)){
+			for (Aerolinea a : array) {
+				if (a == null || a.getNombre() == null) {
+					continue;
+				}
+				pstm.setString(1,  a.getNombre().trim());
+				if (pstm.executeUpdate() != 1) {
+	                logger.warning(String.format("No se ha insertado la aerolínea: %s", a.getNombre()));
+	            } else {
+	                logger.info(String.format("Se ha insertado la aerolínea: %s", a.getNombre()));
+	            }
+			}
+			logger.info(String.format("%d aerolíneas procesadas para inserción.", array.length));
+		} catch (Exception e) {
+			logger.warning(String.format("Error al insertar aerolíneas: %s", e.getMessage()));		
+		}
+		
 	}
 	
 }
