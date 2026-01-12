@@ -28,7 +28,7 @@ public class MainBD {
         gestorBD.insertarAerolinea(aerolineas.toArray(new Aerolinea[0]));
         
         List<Aeropuerto> aeropuertos = initAeropuertos();
-        gestorBD.insertarAeropuerto(aeropuertos.toArray(new Aeropuertos[0]));
+        gestorBD.insertarAeropuerto(aeropuertos.toArray(new Aeropuerto[0]));
         
         List<Avion> aviones = initAviones();
         gestorBD.insertarAvion(aviones.toArray(new Avion[0]));

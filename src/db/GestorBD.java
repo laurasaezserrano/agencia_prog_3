@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.PrintWriter;
-import java.nio.channels.ConnectionPendingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -14,7 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.LogManager;
@@ -31,6 +29,9 @@ import domain.Vuelo;
 public class GestorBD {
 
 	private final String PROPERTIES_FILE = "resources/conf/app.properties";
+	private final String LOG_FOLDER = "resources/log";
+
+
 	private static Logger logger = Logger.getLogger(GestorBD.class.getName());
 	
 	private final String CSV_HOTELES = "resources/data/hoteles.csv";
@@ -53,6 +54,16 @@ public class GestorBD {
 	        driverName = properties.getProperty("driver");
 	        db = properties.getProperty("database");
 	        connection = properties.getProperty("connection");
+	        
+	        File dir = new File(LOG_FOLDER);
+	        if (!dir.exists()) {
+				dir.mkdirs();
+			}
+	        
+	        dir = new File(db.substring(0, db.lastIndexOf("/")));
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
 	        
 	        Class.forName(driverName);
 	    } catch (Exception ex) {
@@ -1181,6 +1192,11 @@ public class GestorBD {
 		} catch (Exception e) {
 			logger.warning(String.format("Error al insertar aerolíneas: %s", e.getMessage()));		
 		}
+		
+	}
+
+	public void insertarAeropuerto(Aeropuerto[] array) {
+		// TODO Auto-generated method stub
 		
 	}
 	
