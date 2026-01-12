@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.*;
 import agencia_prog_3_thread.VentanaCarga;
+import db.GestorBD;
 import db.VentanaGestionDB;
 
 import java.awt.*;
@@ -24,6 +25,8 @@ public class Ventana1Login extends JFrame {
     private String userCSV = "resources/data/user.csv";
     
     private HashMap<String, String> validUsers;
+    
+    private GestorBD gestorBD;
 
     public Ventana1Login() {
         validUsers = loadUsers(); 
@@ -87,6 +90,12 @@ public class Ventana1Login extends JFrame {
 
         userField.addKeyListener(userFieldListener);
         passField.addKeyListener(introListener);
+        
+        
+        gestorBD = new GestorBD();
+        gestorBD.crearBBDD();
+        gestorBD.initilizeFromCSV();
+        
     }
     
     
