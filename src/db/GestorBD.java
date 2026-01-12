@@ -819,8 +819,84 @@ public class GestorBD {
 	
 	
 	private List<Reserva> loadReservas() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Reserva> reservas = new ArrayList<>();
+		try (BufferedReader in = new BufferedReader(new FileReader(CSV_RESERVAS))){
+			String linea;
+			while ((linea = in.readLine()) != null) {
+				if (linea == null) {
+					continue;
+				}
+				linea = linea.trim();
+				if (linea.isEmpty()) {
+					continue;
+				}
+				String[] campos = linea.split(",", -1);
+				if (campos.length != 10) {
+	                logger.warning(String.format("Línea de reservas inválida (se esperaban 10 campos): %s", linea));
+	                continue;
+	            }
+				
+				Reserva r = new Reserva();
+				//usuario
+				if (!campos[0].trim().isEmpty()) {
+					r.setUsuario(campos[0].trim());
+				}
+				//ciudad
+				if (!campos[1].trim().isEmpty()) {
+	                r.setCiudad(campos[1].trim());
+				}
+				//nombre hotel
+				if (!campos[2].trim().isEmpty()) {
+	                r.setNombreHotel(campos[2].trim());
+	            }
+				//email
+				if (!campos[3].trim().isEmpty()) {
+	                r.setEmail(campos[3].trim());
+	            }
+				//tipo habitacion
+				if (!campos[4].trim().isEmpty()) {
+	                r.setTipoHabitacion(campos[4].trim());
+	            }
+				//num adultos
+				if (!campos[5].trim().isEmpty()) {
+	                r.setNumAdultos(Integer.parseInt(campos[5].trim()));
+	            }
+				//mun de niños
+	            if (!campos[6].trim().isEmpty()) {
+	                r.setNumNiños(Integer.parseInt(campos[6].trim()));
+	            }
+	            //fecha entrada
+	            try {
+	                if (!campos[7].trim().isEmpty()) {
+	                    r.setFechaEntrada(java.sql.Date.valueOf(campos[7].trim()));
+	                }
+	            } catch (Exception e) {
+	                r.setFechaEntrada(null);
+	            }
+	            //fecha salida
+	            try {
+	                if (!campos[8].trim().isEmpty()) {
+	                    r.setFechaSalida(java.sql.Date.valueOf(campos[8].trim()));
+	                }
+	            } catch (Exception e) {
+	                r.setFechaSalida(null);
+	            }
+	            //precio noche
+	            try {
+	                if (!campos[9].trim().isEmpty()) {
+	                    String precio = campos[9].trim().replace(',', '.');
+	                    r.setPrecioNoche(Double.parseDouble(precio));
+	                }
+	            } catch (Exception e) {
+	                r.setPrecioNoche(null);
+	            }
+	            reservas.add(r);
+			}
+			logger.info(String.format("Se han cargado %d reservas desde el CSV.", reservas.size()));
+		} catch (Exception e) {
+			logger.warning(String.format("Error leyendo reservas del CSV: %s", e.getMessage()));		
+			}
+		return reservas;
 	}
 
 	private List<User> loadUsers() {
