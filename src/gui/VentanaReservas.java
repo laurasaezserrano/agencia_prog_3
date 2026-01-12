@@ -201,7 +201,162 @@ public class VentanaReservas extends JFrame {
 		cerrarventana(txtFiltroCiudad, tablaHoteles, tablaExcursiones, tabbedPane, btnFiltrar, btnLimpiarFiltro);
 	}
 	
-			
+		
+	private void configurarTabla(JTable tabla, DefaultTableModel model) {
+	    tabla.setRowHeight(28);
+	    tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+	    tabla.setFillsViewportHeight(true);
+
+	    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+	    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+	    int columnas = tabla.getColumnCount();
+
+	    // Aplicamos tanto el centrado como el color alternado a todas menos la última
+	    for (int i = 0; i < columnas - 1; i++) {
+	        tabla.getColumnModel().getColumn(i).setCellRenderer(highlightRenderer);
+	    }
+
+	    // Botón cancelar
+	    int columnaCancelar = columnas - 1;
+	    tabla.getColumnModel().getColumn(columnaCancelar).setCellRenderer(new ButtonRenderer("Cancelar"));
+	    tabla.getColumnModel().getColumn(columnaCancelar).setCellEditor(
+	            new ButtonEditor(tabla, this::cancelarReserva)
+	    );
+
+	    tabla.getColumnModel().getColumn(columnaCancelar).setPreferredWidth(100);
+	    tabla.getColumnModel().getColumn(columnaCancelar).setMaxWidth(100);
+	    tabla.getColumnModel().getColumn(columnaCancelar).setMinWidth(100);
+	}
+	
+	
+	TableCellRenderer highlightRenderer = new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel c = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            
+            String textoFiltro = txtFiltroCiudad.getText();
+            String valorCelda = (value != null) ? value.toString() : "";
+
+            if (!textoFiltro.isEmpty() && column == 0 && !isSelected) {
+                String pattern = "(?i)(" + Pattern.quote(textoFiltro) + ")";
+                String resaltado = valorCelda.replaceAll(pattern, "<span style='background: yellow;'>$1</span>");
+                c.setText("<html>" + resaltado + "</html>");
+            } else {
+                c.setText(valorCelda);
+            }
+
+            // Mantener colores alternos de filas si no está seleccionado
+            if (!isSelected) {
+                c.setBackground(row % 2 == 0 ? new Color(250, 249, 249) : new Color(235, 235, 235));
+            }
+            c.setHorizontalAlignment(SwingConstants.CENTER);
+            return c;
+        }
+    };
+	
+	
+    private void cargarReservasDesdeBD(String usuarioFiltrar) {
+        try {
+        	modeloTablaHoteles.setRowCount(0);
+            modeloTablaExcursiones.setRowCount(0);
+            
+            List<Reserva> reservas = gestorBD.getListaTodasLasReservas();
+            
+            int contadorHoteles = 0;
+            int contadorExcursiones = 0;
+            
+            for (Reserva r : reservas) {
+                if (r.getUsuario().equalsIgnoreCase(usuarioFiltrar)) {
+                    Object[] fila = {
+                        r.getCiudad(),
+                        r.getNombreHotel(),
+                        r.getEmail(),
+                        r.getTipoHabitacion(),
+                        r.getNumAdultos(),
+                        r.getNumNiños(),
+                        r.getFechaEntrada(),
+                        r.getFechaSalida(),
+                        r.getPrecioNoche(),
+                        "Cancelar"
+                    };
+                    
+                    if (r.getTipoHabitacion().equalsIgnoreCase("Excursión")) {
+                        modeloTablaExcursiones.addRow(fila);
+                        contadorExcursiones++;
+                    } else {
+                        modeloTablaHoteles.addRow(fila);
+                        contadorHoteles++;
+                    }
+                }
+            }
+            
+            System.out.println("Cargadas " + contadorHoteles + " reservas de hotel y " + 
+                             contadorExcursiones + " excursiones");
+                             
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Error al cargar reservas: " + ex.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+	
+	private void cancelarReserva(JTable tabla) {
+        int filaView = tabla.getEditingRow();
+        if (filaView < 0) return; // Si no hay fila, no hagas nada
+
+        // Convertir la fila visual (si está filtrada) al índice real del modelo
+        int filaModel = tabla.convertRowIndexToModel(filaView);
+        DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+
+        // 1. Pedir confirmación
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "¿Seguro que quieres cancelar esta reserva?\n" + model.getValueAt(filaModel, 1),
+                "Confirmar Cancelación",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            // 2. Eliminar la reserva del archivo CSV
+            if (eliminarReservaDeBD(model, filaModel)) {
+                // 3. Si se borra del CSV, eliminarla de la tabla (JTable)
+                model.removeRow(filaModel);
+                JOptionPane.showMessageDialog(this, "Reserva cancelada con éxito.", "Cancelado", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo cancelar la reserva del archivo.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+	
+	private boolean eliminarReservaDeBD(DefaultTableModel model, int row) {
+        try {
+            String usuario = usuarioLogueado;
+            String nombreHotel = model.getValueAt(row, 1).toString();
+            String ciudad = model.getValueAt(row, 0).toString();
+            java.sql.Date fechaEntrada = (java.sql.Date) model.getValueAt(row, 6);
+            java.sql.Date fechaSalida = (java.sql.Date) model.getValueAt(row, 7);
+            
+            boolean eliminado = gestorBD.eliminarReserva(usuario, nombreHotel, ciudad, 
+                                                          fechaEntrada, fechaSalida);
+            
+            if (eliminado) {
+                model.removeRow(row);
+                JOptionPane.showMessageDialog(this, "Reserva cancelada", "Éxito", 
+                                            JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo eliminar", "Error", 
+                                            JOptionPane.ERROR_MESSAGE);
+            }
+            return eliminado;
+            
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), 
+                                        "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
 	
 	
 	private void aplicarbusqueda() {
