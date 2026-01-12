@@ -824,11 +824,53 @@ public class GestorBD {
 	}
 
 	private List<User> loadUsers() {
-		// TODO Auto-generated method stub
-		return null;
+		List<User> usuarios = new ArrayList<>();
+
+	    try (BufferedReader in = new BufferedReader(new FileReader(CSV_USER))) {
+	        String linea;
+
+	        while ((linea = in.readLine()) != null) {
+	            linea = linea.trim();
+	            if (linea.isEmpty()) {
+	                continue;
+	            }
+	            String[] campos = linea.split(",", -1);
+	            if (campos.length != 2) {
+	                logger.warning(String.format("Línea de usuarios inválida (se esperaban 2 campos): %s", linea));
+	                continue;
+	            }
+	            User u = new User();
+	            u.setUsuario(valornull(campos[0]));
+	            u.setPassword(valornull(campos[1]));
+	            u.setNombre(null);
+	            u.setDni(null);
+	            u.setEmail(null);
+	            u.setTelefono(null);
+	            u.setDireccion(null);
+	            u.setIdioma(null);
+	            u.setMoneda(null);
+
+	            usuarios.add(u);
+	        }
+	        logger.info(String.format("Se han cargado %d usuarios desde el CSV.", usuarios.size()));
+	    } catch (Exception e) {
+	    	logger.warning(String.format("Error leyendo usuarios del CSV: %s", e.getMessage()));
+		}
+	    return usuarios;
 	}
 	
 	
+	private String valornull(String string) {
+		if (string == null) {
+			return null;
+		}
+		String t = string.trim();
+		if (t.isEmpty()) {
+			return null;
+		}
+		return t;
+	}
+
 	//metodo para cargar hoteles del csv
 	private List<Hotel> loadHoteles() {
 		List<Hotel> hoteles = new ArrayList<>();
