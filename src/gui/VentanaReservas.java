@@ -56,6 +56,8 @@ public class VentanaReservas extends JFrame {
 	
 	public VentanaReservas() {
 		this.gestorBD = new GestorBD();
+		gestorBD.crearBBDD();
+		gestorBD.initilizeFromCSV();
 		
 		setTitle("Gestión de Reservas");
 		setSize(900, 600);
@@ -256,6 +258,9 @@ public class VentanaReservas extends JFrame {
 	
     private void cargarReservasDesdeBD(String usuarioFiltrar) {
         try {
+        	modeloTablaHoteles.setRowCount(0);
+            modeloTablaExcursiones.setRowCount(0);
+            
             List<Reserva> reservas = gestorBD.getListaTodasLasReservas();
             
             int contadorHoteles = 0;
@@ -434,6 +439,101 @@ public class VentanaReservas extends JFrame {
 	    tabbedPane.addKeyListener(listener);
 	    btnFiltrar.addKeyListener(listener);
 	    btnLimpiarFiltro.addKeyListener(listener);
+	}
+	
+	class TestCargaReservas {
+	    
+	    public static void main(String[] args) {
+	        System.out.println("=== INICIANDO DIAGNÓSTICO ===\n");
+	        
+	        GestorBD gestorBD = new GestorBD();
+	        
+	        // 1. Crear la base de datos
+	        System.out.println("1. Creando base de datos...");
+	        gestorBD.crearBBDD();
+	        
+	        // 2. Inicializar desde CSV
+	        System.out.println("2. Inicializando desde CSV...");
+	        gestorBD.initilizeFromCSV();
+	        
+	        // 3. Obtener todas las reservas
+	        System.out.println("\n3. Obteniendo reservas de la BD...");
+	        List<Reserva> reservas = gestorBD.getListaTodasLasReservas();
+	        
+	        System.out.println("Total de reservas encontradas: " + reservas.size());
+	        System.out.println("\n=== LISTADO DE RESERVAS ===");
+	        
+	        if (reservas.isEmpty()) {
+	            System.out.println("⚠️ NO HAY RESERVAS EN LA BASE DE DATOS");
+	            System.out.println("\nPosibles causas:");
+	            System.out.println("1. El archivo CSV está vacío o mal formateado");
+	            System.out.println("2. La propiedad 'loadCSV' no está en 'true' en app.properties");
+	            System.out.println("3. La ruta al CSV es incorrecta");
+	            System.out.println("4. Hay errores en la lectura del CSV (revisa los logs)");
+	        } else {
+	            int contador = 1;
+	            for (Reserva r : reservas) {
+	                System.out.println("\n--- Reserva #" + contador + " ---");
+	                System.out.println("Usuario: " + r.getUsuario());
+	                System.out.println("Ciudad: " + r.getCiudad());
+	                System.out.println("Hotel: " + r.getNombreHotel());
+	                System.out.println("Email: " + r.getEmail());
+	                System.out.println("Tipo Habitación: " + r.getTipoHabitacion());
+	                System.out.println("Adultos: " + r.getNumAdultos());
+	                System.out.println("Niños: " + r.getNumNiños());
+	                System.out.println("Fecha Entrada: " + r.getFechaEntrada());
+	                System.out.println("Fecha Salida: " + r.getFechaSalida());
+	                System.out.println("Precio: " + r.getPrecioNoche());
+	                contador++;
+	            }
+	        }
+	        
+	        // 4. Verificar archivo CSV
+	        System.out.println("\n\n=== VERIFICANDO ARCHIVO CSV ===");
+	        java.io.File csvFile = new java.io.File("resources/data/reservas.csv");
+	        System.out.println("Ruta absoluta del CSV: " + csvFile.getAbsolutePath());
+	        System.out.println("¿Existe el archivo? " + csvFile.exists());
+	        System.out.println("¿Se puede leer? " + csvFile.canRead());
+	        
+	        if (csvFile.exists()) {
+	            System.out.println("Tamaño del archivo: " + csvFile.length() + " bytes");
+	            
+	            // Mostrar las primeras líneas del CSV
+	            System.out.println("\n--- Primeras 5 líneas del CSV ---");
+	            try (java.io.BufferedReader br = new java.io.BufferedReader(
+	                    new java.io.FileReader(csvFile))) {
+	                String linea;
+	                int numLinea = 0;
+	                while ((linea = br.readLine()) != null && numLinea < 5) {
+	                    System.out.println("Línea " + numLinea + ": " + linea);
+	                    numLinea++;
+	                }
+	            } catch (Exception e) {
+	                System.out.println("Error al leer CSV: " + e.getMessage());
+	            }
+	        }
+	        
+	        // 5. Verificar app.properties
+	        System.out.println("\n\n=== VERIFICANDO app.properties ===");
+	        java.io.File propsFile = new java.io.File("resources/conf/app.properties");
+	        System.out.println("Ruta absoluta: " + propsFile.getAbsolutePath());
+	        System.out.println("¿Existe? " + propsFile.exists());
+	        
+	        if (propsFile.exists()) {
+	            try (java.io.BufferedReader br = new java.io.BufferedReader(
+	                    new java.io.FileReader(propsFile))) {
+	                System.out.println("\n--- Contenido de app.properties ---");
+	                String linea;
+	                while ((linea = br.readLine()) != null) {
+	                    System.out.println(linea);
+	                }
+	            } catch (Exception e) {
+	                System.out.println("Error al leer properties: " + e.getMessage());
+	            }
+	        }
+	        
+	        System.out.println("\n=== FIN DEL DIAGNÓSTICO ===");
+	    }
 	}
     
     
