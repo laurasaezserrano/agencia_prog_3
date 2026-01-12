@@ -818,6 +818,17 @@ public class GestorBD {
 	}
 	
 	
+	private List<Reserva> loadReservas() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private List<User> loadUsers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 	//metodo para cargar hoteles del csv
 	private List<Hotel> loadHoteles() {
 		List<Hotel> hoteles = new ArrayList<>();
@@ -1198,8 +1209,33 @@ public class GestorBD {
 
 
 	public void initilizeFromCSV() {
-		// TODO Auto-generated method stub
+		if (properties.get("loadCSV") != null && properties.get("loadCSV").equals("true")) {
+
+	        this.borrarDatos();
+	        List<User> usuarios = this.loadUsers();    
+	        List<Hotel> hoteles = this.loadHoteles();
+	        List<Vuelo> vuelos = this.loadVuelos();
+	        List<Reserva> reservas = this.loadReservas();  
+
+	        this.updateReservas(reservas, usuarios, vuelos, hoteles);
+	        if (usuarios != null && !usuarios.isEmpty()) {
+	            this.insertarUsuarios(usuarios.toArray(new User[usuarios.size()]));
+	        }
+	        if (hoteles != null && !hoteles.isEmpty()) {
+	            this.insertarHoteles(hoteles.toArray(new Hotel[hoteles.size()]));
+	        }
+	        if (vuelos != null && !vuelos.isEmpty()) {
+	            this.insertarVuelos(vuelos.toArray(new Vuelo[vuelos.size()]));
+	        }
+	        if (reservas != null && !reservas.isEmpty()) {
+	            this.insertarReservas(reservas.toArray(new Reserva[reservas.size()]));
+	        }
+
+	        logger.info("Inicialización de la BBDD desde CSV completada.");
+	    }
 		
 	}
+
+	
 	
 }
