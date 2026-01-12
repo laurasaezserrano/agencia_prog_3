@@ -267,6 +267,24 @@ public class VentanaGestionDB extends JFrame {
             } else if ("User".equals(tabla)) {
                 String user = modeloTabla.getValueAt(fila, 0).toString();
                 if (gestorBD.eliminarUser(user)) manejarCargarDatos(null);
+            } else if("Vuelo".equals(tabla)) {
+                String origen = modeloTabla.getValueAt(fila, 0).toString();
+                String destino = modeloTabla.getValueAt(fila, 1).toString();
+                java.sql.Date fSalida = java.sql.Date.valueOf(modeloTabla.getValueAt(fila, 2).toString());
+                java.sql.Date fRegreso = java.sql.Date.valueOf(modeloTabla.getValueAt(fila, 3).toString());
+                String aerolinea = modeloTabla.getValueAt(fila, 4).toString();
+
+                if (gestorBD.eliminarVuelo(origen, destino, fSalida, fRegreso, aerolinea)) {
+                    manejarCargarDatos(null);
+                }
+
+            } else if ("Hotel".equals(tabla)) {
+                String nombre = modeloTabla.getValueAt(fila, 0).toString();
+                String ciudad = modeloTabla.getValueAt(fila, 1).toString();
+
+                if (gestorBD.eliminarHotel(nombre, ciudad)) {
+                    manejarCargarDatos(null);
+                }
             }
         }
     }

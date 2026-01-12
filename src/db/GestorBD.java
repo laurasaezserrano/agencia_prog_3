@@ -511,30 +511,31 @@ public class GestorBD {
 	public boolean eliminarVuelo(String origen, String destino,
 			java.sql.Date fechaSalida, java.sql.Date fechaRegreso, String aerolinea) {
 		
-		String sql = "DELETE FROM RESERVA WHERE origen = ? AND destino = ? " +
-				"AND fecha_Salida = ? AND fecha_Regreso = ? AND aerolinea = ? ;";
+		String sql = "DELETE FROM VUELO WHERE ORIGEN = ? AND DESTINO = ? " +
+                "AND FECHA_SALIDA = ? AND FECHA_REGRESO = ? AND AEROLINEA = ?;";
 		
 		try (Connection con = DriverManager.getConnection(connection);
 			 PreparedStatement pStmt = con.prepareStatement(sql)) {
             
             pStmt.setString(1, origen);
             pStmt.setString(2, destino);
-            pStmt.setDate(3, fechaSalida);
-            pStmt.setDate(4, fechaRegreso);
+            pStmt.setString(3, fechaSalida.toString());
+            pStmt.setString(4, fechaRegreso.toString());
             pStmt.setString(5, aerolinea);
 			
 			int filasAfectadas = pStmt.executeUpdate();
 			
 			if (filasAfectadas > 0) {
-				logger.info(String.format("Vuelo eliminado: "+ origen + ":" + destino + "->"+ fechaSalida));
+				logger.info(String.format("Vuelo eliminado: %s -> %s (%s - %s) [%s]",
+	                    origen, destino, fechaSalida, fechaRegreso, aerolinea));				
 				return true;
 			} else {
 				logger.warning("No se encontró el vuelo para eliminar");
 				return false;
 			}
 			
-		} catch (Exception ex) {
-			logger.warning(String.format("Error al eliminar vuelo: %s", ex.getMessage()));
+		} catch (Exception e) {
+			logger.warning(String.format("Error al eliminar vuelo: %s", e.getMessage()));
 			return false;
 		}
 	}
@@ -545,7 +546,7 @@ public class GestorBD {
 	// PRIMARY KEY (usuario)
 	public boolean eliminarUser(String usuario) {
 		
-		String sql = "DELETE FROM RESERVA WHERE usuario = ? ;";
+		String sql = "DELETE FROM USER WHERE usuario = ?;";
 		
 		try (Connection con = DriverManager.getConnection(connection);
 			 PreparedStatement pStmt = con.prepareStatement(sql)) {
@@ -555,15 +556,15 @@ public class GestorBD {
 			int filasAfectadas = pStmt.executeUpdate();
 			
 			if (filasAfectadas > 0) {
-				logger.info(String.format("User eliminado: "+ usuario));
+				logger.info(String.format("User eliminado: %s"+ usuario));
 				return true;
 			} else {
 				logger.warning("No se encontró el user para eliminar");
 				return false;
 			}
 			
-		} catch (Exception ex) {
-			logger.warning(String.format("Error al eliminar vuelo: %s", ex.getMessage()));
+		} catch (Exception e) {
+			logger.warning(String.format("Error al eliminar vuelo: %s", e.getMessage()));
 			return false;
 		}
 	}
@@ -574,7 +575,7 @@ public class GestorBD {
 	//  PRIMARY KEY (nombre, ciudad)
 	public boolean eliminarHotel(String nombre, String ciudad) {
 		
-		String sql = "DELETE FROM RESERVA WHERE nombre = ? AND ciudad = ? ;";
+		String sql = "DELETE FROM HOTEL WHERE nombre = ? AND ciudad = ?;";
 		
 		try (Connection con = DriverManager.getConnection(connection);
 			 PreparedStatement pStmt = con.prepareStatement(sql)) {
@@ -585,8 +586,8 @@ public class GestorBD {
 			int filasAfectadas = pStmt.executeUpdate();
 			
 			if (filasAfectadas > 0) {
-				logger.info(String.format("Hotel eliminado: "+ nombre + ":" + ciudad));
-				return true;
+				logger.info(String.format("Hotel eliminado: %s (%s)", nombre, ciudad));
+	            return true;
 			} else {
 				logger.warning("No se encontró el hotel para eliminar");
 				return false;
@@ -1298,7 +1299,7 @@ public class GestorBD {
 			logger.info(String.format("Se han recuperado %d hoteles.", hoteles.size()));
 		} catch (Exception e) {
 			logger.warning(String.format("Error al recuperar hoteles: %s", e.getMessage()));		}
-		return null;
+		return hoteles;
 	}
 
 	public void insertarAerolinea(Aerolinea[] array) {
