@@ -1202,6 +1202,7 @@ public class GestorBD {
 
 	public List<Aeropuerto> getAeropuertos() {
 		List<Aeropuerto> aeropuertos = new ArrayList<>();
+		
 	    String sql = "SELECT NOMBRE FROM AEROPUERTO;";
 		try (Connection con = DriverManager.getConnection(connection);
 				PreparedStatement pstm = con.prepareStatement(sql);
