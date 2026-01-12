@@ -24,7 +24,6 @@ import javax.swing.border.LineBorder;
 import agencia_prog_3_thread.VentanaBuscandoExcursion;
 import agencia_prog_3_thread.VentanaBuscandoPerfil;
 import agencia_prog_3_thread.VentanaBuscandoReservas;
-import agencia_prog_3_thread.VentanaRuletaDeLaSuerte;
 
 public class VentanaInicio extends JFrame{
 	private static final long serialVersionUID = 1L;
