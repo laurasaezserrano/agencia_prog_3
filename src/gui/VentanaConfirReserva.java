@@ -1,21 +1,34 @@
-package agencia_prog_3_thread;
-import javax.swing.*;
-import java.awt.*;
+package gui;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.Timer;
 
-public class VentanaConfirmacionReserva extends JFrame {
-
+public class VentanaConfirReserva extends JFrame{
+	
 	private static final long serialVersionUID = 1L;
 	private JLabel statusLabel;
     private JTextArea logArea;
-
-    public VentanaConfirmacionReserva() {
-        super("Simulador de Reserva");
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
+	
+	public VentanaConfirReserva() {
+		super("Simulador de Reserva");
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
         setLayout(new BorderLayout(10, 10));
 
         statusLabel = new JLabel("Esperando confirmación...", SwingConstants.CENTER);
@@ -45,17 +58,17 @@ public class VentanaConfirmacionReserva extends JFrame {
                 iniciarReserva();
             }
         });
-    }
-
-    private void iniciarReserva() {
+	}
+	
+	private void iniciarReserva() {
         logArea.setText(""); 
         statusLabel.setText("Iniciando proceso...");
         statusLabel.setBackground(new Color(173, 216, 230));
 
         new ReservaWorker().execute();
     }
-
-    private class ReservaWorker extends SwingWorker<Void, String> {
+	
+	private class ReservaWorker extends SwingWorker<Void, String> {
 
         private Color[] colores = {
             new Color(173, 216, 230),
@@ -127,7 +140,7 @@ public class VentanaConfirmacionReserva extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new VentanaConfirmacionReserva().setVisible(true);
+            new VentanaConfirReserva().setVisible(true);
         });
     }
 }

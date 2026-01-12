@@ -1,7 +1,8 @@
 package agencia_prog_3_thread;  
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.*
+;
 
 public class VentanaBuscandoPerfil extends JDialog {
 
