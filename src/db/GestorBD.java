@@ -105,8 +105,8 @@ public class GestorBD {
 			    "    fecha_salida TEXT,\n" +
 			    "    fecha_regreso TEXT,\n" +
 			    "    aerolinea TEXT,\n" +
-			    "    precio_economy TEXT,\n" +
-			    "    precio_business TEXT,\n" +
+			    "    precio_economy REAL,\n" +
+			    "    precio_business REAL,\n" +
 			    "    plazas_disponibles INTEGER,\n" +
 			    "    PRIMARY KEY (origen, destino, fecha_salida, fecha_regreso, aerolinea)\n" +
 			    ");";
@@ -124,7 +124,7 @@ public class GestorBD {
 			    "    fecha_Salida TEXT,\n" +
 			    "    precio_Noche REAL,\n" +
 			    "    PRIMARY KEY (usuario, nombre_Hotel, ciudad, fecha_Entrada, fecha_Salida),\n" +
-			    "    FOREIGN KEY (usuario) REFERENCES USER(USUARIO)\n" +
+			    "    FOREIGN KEY (usuario) REFERENCES USER(usuario)\n" +
 			    ");";
             
 			
@@ -204,8 +204,7 @@ public class GestorBD {
 		String sql = "INSERT INTO USER (USUARIO, PASSWORD, NOMBRE, DNI, EMAIL, TELEFONO, DIRECCION, IDIOMA, MONEDA) VALUES "+
 						"(?, ?, ?, ?, ?, ?, ?, ?,? );";
 		
-		try (Connection con = DriverManager.getConnection(connection);
-
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
 									
 			for (User u : users) {
@@ -214,7 +213,12 @@ public class GestorBD {
 				pStmt.setString(3, u.getNombre());
 				pStmt.setString(4, u.getDni());
 				pStmt.setString(5, u.getEmail());
-				pStmt.setLong(6, u.getTelefono());
+				Integer tel = u.getTelefono();
+				if (tel == null) {
+				    pStmt.setNull(6, java.sql.Types.INTEGER);
+				} else {
+				    pStmt.setInt(6, tel);
+				}
 				pStmt.setString(7, u.getDireccion());
 				pStmt.setString(8, u.getIdioma());
 				pStmt.setString(9, u.getMoneda());
@@ -239,8 +243,7 @@ public class GestorBD {
 		String sql = "INSERT INTO HOTEL (NOMBRE, CIUDAD, PAIS, ESTRELLAS, CAPACIDAD, PRECIO_NOCHE, MONEDA) VALUES "+
 						"(?, ?, ?, ?, ?, ?, ?);";
 		
-		try (Connection con = DriverManager.getConnection(connection);
-
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
 									
 			for (Hotel h : hoteles) {
@@ -270,8 +273,7 @@ public class GestorBD {
 		String sql = "INSERT INTO VUELO (ORIGEN, DESTINO, FECHA_SALIDA, FECHA_REGRESO, AEROLINEA, PRECIO_ECONOMY, PRECIO_BUSINESS, PLAZAS_DISPONIBLES) "+
 						"VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 		
-		try (Connection con = DriverManager.getConnection(connection);
-
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
 									
 			for (Vuelo v : vuelos) {
@@ -303,8 +305,7 @@ public class GestorBD {
 		String sql = "INSERT INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NIÑOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 	
-		try (Connection con = DriverManager.getConnection(connection);
-
+		try (Connection con = getConnectionWithFK();
 				PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
 								
 			for (Reserva r : reservas) {
@@ -338,7 +339,7 @@ public class GestorBD {
 		String sql = "INSERT INTO VUELO (ORIGEN, DESTINO, FECHA_SALIDA, FECHA_REGRESO, AEROLINEA, PRECIO_ECONOMY, PRECIO_BUSINESS, PLAZAS_DISPONIBLES) "+
 				"VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 		
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             pStmt.setString(1, vuelo.getOrigen());
@@ -372,7 +373,7 @@ public class GestorBD {
 		String sql = "INSERT INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NIÑOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
 				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             pStmt.setString(1, reserva.getUsuario());
@@ -407,7 +408,7 @@ public class GestorBD {
 			String sql = "INSERT INTO HOTEL (NOMBRE, CIUDAD, PAIS, ESTRELLAS, CAPACIDAD, PRECIO_NOCHE, MONEDA) VALUES "+
 					"(?, ?, ?, ?, ?, ?, ?);";
 			
-			try (Connection con = DriverManager.getConnection(connection);
+			try (Connection con = getConnectionWithFK();
 				 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 	            
 	            pStmt.setString(1, hotel.getNombre());
@@ -441,7 +442,7 @@ public class GestorBD {
 			String sql = "INSERT INTO USER (USUARIO, PASSWORD, NOMBRE, DNI, EMAIL, TELEFONO, DIRECCION, IDIOMA, MONEDA) VALUES "+
 					"(?, ?, ?, ?, ?, ?, ?, ?,? );";
 			
-			try (Connection con = DriverManager.getConnection(connection);
+			try (Connection con = getConnectionWithFK();
 				 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 	            
 	            pStmt.setString(1, user.getUsuario());
@@ -449,7 +450,12 @@ public class GestorBD {
 	            pStmt.setString(3, user.getNombre());
 	            pStmt.setString(4, user.getDni());
 	            pStmt.setString(5, user.getEmail());
-	            pStmt.setInt(6, user.getTelefono());
+	            Integer tel = user.getTelefono();
+	            if (tel == null) {
+	                pStmt.setNull(6, java.sql.Types.INTEGER);
+	            } else {
+	                pStmt.setInt(6, tel);
+	            }
 	            pStmt.setString(7, user.getDireccion());
 	            pStmt.setString(8, user.getIdioma());
 	            pStmt.setString(9, user.getMoneda());
@@ -479,7 +485,7 @@ public class GestorBD {
 		String sql = "DELETE FROM RESERVA WHERE usuario = ? AND nombre_Hotel = ? " +
 				"AND ciudad = ? AND fecha_Entrada = ? AND fecha_Salida = ?;";
 		
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql)) {
             
             pStmt.setString(1, usuario);
@@ -511,30 +517,31 @@ public class GestorBD {
 	public boolean eliminarVuelo(String origen, String destino,
 			java.sql.Date fechaSalida, java.sql.Date fechaRegreso, String aerolinea) {
 		
-		String sql = "DELETE FROM RESERVA WHERE origen = ? AND destino = ? " +
-				"AND fecha_Salida = ? AND fecha_Regreso = ? AND aerolinea = ? ;";
+		String sql = "DELETE FROM VUELO WHERE ORIGEN = ? AND DESTINO = ? " +
+                "AND FECHA_SALIDA = ? AND FECHA_REGRESO = ? AND AEROLINEA = ?;";
 		
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql)) {
             
             pStmt.setString(1, origen);
             pStmt.setString(2, destino);
-            pStmt.setDate(3, fechaSalida);
-            pStmt.setDate(4, fechaRegreso);
+            pStmt.setString(3, fechaSalida.toString());
+            pStmt.setString(4, fechaRegreso.toString());
             pStmt.setString(5, aerolinea);
 			
 			int filasAfectadas = pStmt.executeUpdate();
 			
 			if (filasAfectadas > 0) {
-				logger.info(String.format("Vuelo eliminado: "+ origen + ":" + destino + "->"+ fechaSalida));
+				logger.info(String.format("Vuelo eliminado: %s -> %s (%s - %s) [%s]",
+	                    origen, destino, fechaSalida, fechaRegreso, aerolinea));				
 				return true;
 			} else {
 				logger.warning("No se encontró el vuelo para eliminar");
 				return false;
 			}
 			
-		} catch (Exception ex) {
-			logger.warning(String.format("Error al eliminar vuelo: %s", ex.getMessage()));
+		} catch (Exception e) {
+			logger.warning(String.format("Error al eliminar vuelo: %s", e.getMessage()));
 			return false;
 		}
 	}
@@ -545,9 +552,9 @@ public class GestorBD {
 	// PRIMARY KEY (usuario)
 	public boolean eliminarUser(String usuario) {
 		
-		String sql = "DELETE FROM RESERVA WHERE usuario = ? ;";
+		String sql = "DELETE FROM USER WHERE usuario = ?;";
 		
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql)) {
             
             pStmt.setString(1, usuario);
@@ -555,15 +562,15 @@ public class GestorBD {
 			int filasAfectadas = pStmt.executeUpdate();
 			
 			if (filasAfectadas > 0) {
-				logger.info(String.format("User eliminado: "+ usuario));
+				logger.info(String.format("User eliminado: %s"+ usuario));
 				return true;
 			} else {
 				logger.warning("No se encontró el user para eliminar");
 				return false;
 			}
 			
-		} catch (Exception ex) {
-			logger.warning(String.format("Error al eliminar vuelo: %s", ex.getMessage()));
+		} catch (Exception e) {
+			logger.warning(String.format("Error al eliminar vuelo: %s", e.getMessage()));
 			return false;
 		}
 	}
@@ -574,9 +581,9 @@ public class GestorBD {
 	//  PRIMARY KEY (nombre, ciudad)
 	public boolean eliminarHotel(String nombre, String ciudad) {
 		
-		String sql = "DELETE FROM RESERVA WHERE nombre = ? AND ciudad = ? ;";
+		String sql = "DELETE FROM HOTEL WHERE nombre = ? AND ciudad = ?;";
 		
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql)) {
             
             pStmt.setString(1, nombre);
@@ -585,8 +592,8 @@ public class GestorBD {
 			int filasAfectadas = pStmt.executeUpdate();
 			
 			if (filasAfectadas > 0) {
-				logger.info(String.format("Hotel eliminado: "+ nombre + ":" + ciudad));
-				return true;
+				logger.info(String.format("Hotel eliminado: %s (%s)", nombre, ciudad));
+	            return true;
 			} else {
 				logger.warning("No se encontró el hotel para eliminar");
 				return false;
@@ -596,124 +603,6 @@ public class GestorBD {
 			logger.warning(String.format("Error al eliminar hotel: %s", ex.getMessage()));
 			return false;
 		}
-	}
-	
-	/**
-	 * Recupera todas las reservas de un usuario específico.
-	 * @return Lista de Object[] donde cada array contiene los datos de una reserva
-	 */
-	public List<Object[]> getReservasPorUsuario(String usuario) {
-		List<Object[]> reservas = new ArrayList<>();
-		String sql = "SELECT ciudad, reserva_nombre, email, tipo_habitacion, adultos, ninos, " +
-				"fecha_salida, fecha_regreso, precio FROM Reserva WHERE usuario = ?;";
-		
-		try (Connection con = DriverManager.getConnection(connection);
-		     PreparedStatement pStmt = con.prepareStatement(sql)) {
-			
-			pStmt.setString(1, usuario);
-			ResultSet rs = pStmt.executeQuery();
-			
-			while (rs.next()) {
-				Object[] fila = {
-					rs.getString("ciudad"),
-					rs.getString("reserva_nombre"),
-					rs.getString("email"),
-					rs.getString("tipo_habitacion"),
-					rs.getInt("adultos"),
-					rs.getInt("ninos"),
-					rs.getString("fecha_salida"),
-					rs.getString("fecha_regreso"),
-					rs.getDouble("precio"),
-					"Cancelar" // Para el botón
-				};
-				reservas.add(fila);
-			}
-			
-			rs.close();
-			logger.info(String.format("Se han recuperado %d reservas para %s", reservas.size(), usuario));
-			
-		} catch (Exception ex) {
-			logger.warning(String.format("Error al recuperar reservas: %s", ex.getMessage()));
-		}
-		
-		return reservas;
-	}
-	
-	
-	/**
-	 * Recupera todas las reservas (para testing o admin).
-	 */
-	public void getTodasLasReservas() {
-		String sql = "SELECT * FROM Reserva;";
-
-		try (Connection con = DriverManager.getConnection(connection);
-		     PreparedStatement pStmt = con.prepareStatement(sql)) {			
-			
-			ResultSet rs = pStmt.executeQuery();			
-			int count = 0;
-
-			while (rs.next()) {
-                String info = String.format("Reserva ID %d: %s - %s en %s (Salida: %s, Precio: %.2f€)",
-                        rs.getInt("id"),
-                        rs.getString("usuario"),
-                        rs.getString("reserva_nombre"),
-                        rs.getString("ciudad"),
-                        rs.getString("fecha_salida"),
-                        rs.getDouble("precio"));
-                
-                logger.info(info);
-				count++;
-			}
-			
-			rs.close();
-			logger.info(String.format("Se han recuperado %d reservas en total.", count));			
-		} catch (Exception ex) {
-			logger.warning(String.format("Error al recuperar las reservas: %s", ex.getMessage()));						
-		}		
-	}
-	
-	
-    /**
-	 * Recupera todos los vuelos con la información completa de las entidades relacionadas.
-	 */
-	public void getVuelosCompletos() {
-
-		String sql = "SELECT V.codigo, V.fecha, V.duracion, V.precio, "
-                + "AERO_LINEA.nombre AS aerolinea_nombre, "
-                + "AV.codigo AS avion_codigo, "
-                + "AP_ORIGEN.nombre AS origen_nombre, "
-                + "AP_DESTINO.nombre AS destino_nombre "
-                + "FROM Vuelo V "
-                + "JOIN Aerolinea AERO_LINEA ON V.id_aerolinea = AERO_LINEA.id "
-                + "JOIN Avion AV ON V.id_avion = AV.id "
-                + "JOIN Aeropuerto AP_ORIGEN ON V.id_aeropuerto_origen = AP_ORIGEN.id "
-                + "JOIN Aeropuerto AP_DESTINO ON V.id_aeropuerto_destino = AP_DESTINO.id;";
-
-
-		try (Connection con = DriverManager.getConnection(connection);
-		     PreparedStatement pStmt = con.prepareStatement(sql)) {			
-			
-			ResultSet rs = pStmt.executeQuery();			
-			int count = 0;
-
-			while (rs.next()) {
-
-                String info = String.format("Vuelo %s (%s) de %s a %s. Aerolínea: %s. Avión: %s. Precio: %.2f",
-                        rs.getString("codigo"), rs.getString("fecha"),
-                        rs.getString("origen_nombre"), rs.getString("destino_nombre"),
-                        rs.getString("aerolinea_nombre"), rs.getString("avion_codigo"),
-                        rs.getDouble("precio"));
-                
-                logger.info(info);
-				count++;
-			}
-			
-			rs.close();
-			
-			logger.info(String.format("Se han recuperado %d vuelos completos.", count));			
-		} catch (Exception ex) {
-			logger.warning(String.format("Error recuperar los vuelos: %s", ex.getMessage()));						
-		}		
 	}
 
 	private Connection getConnectionWithFK() throws Exception {
@@ -836,7 +725,7 @@ public class GestorBD {
 	public List<User> getUsuarios() {
 		List<User> usuarios = new ArrayList<>();
 		String sql = "SELECT * FROM USER;";
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 		         PreparedStatement pStmt = con.prepareStatement(sql);
 		         ResultSet rs = pStmt.executeQuery()) {
 
@@ -868,7 +757,7 @@ public class GestorBD {
 	    List<Reserva> reservas = new ArrayList<>();
 	    String sql = "SELECT * FROM Reserva"; 
 	    
-	    try (Connection con = DriverManager.getConnection(connection);
+	    try (Connection con = getConnectionWithFK();
 	         Statement stmt = con.createStatement();
 	         ResultSet rs = stmt.executeQuery(sql)) {
 	        
@@ -905,7 +794,7 @@ public class GestorBD {
 				if (linea.isEmpty()) {
 					continue;
 				}
-				String[] campos = linea.split(",", -1);
+				String[] campos = linea.split(";", -1);
 				if (campos.length != 8) {
 					logger.warning(String.format("Línea de vuelos inválida (se esperaban 8 campos): %s", linea));
 					continue;
@@ -967,7 +856,7 @@ public class GestorBD {
 				if (linea.isEmpty()) {
 					continue;
 				}
-				String[] campos = linea.split(",", -1);
+				String[] campos = linea.split(";", -1);
 				if (campos.length != 10) {
 	                logger.warning(String.format("Línea de reservas inválida (se esperaban 10 campos): %s", linea));
 	                continue;
@@ -1047,7 +936,7 @@ public class GestorBD {
 	            if (linea.isEmpty()) {
 	                continue;
 	            }
-	            String[] campos = linea.split(",", -1);
+	            String[] campos = linea.split(";", -1);
 	            if (campos.length != 2) {
 	                logger.warning(String.format("Línea de usuarios inválida (se esperaban 2 campos): %s", linea));
 	                continue;
@@ -1094,7 +983,7 @@ public class GestorBD {
 				if (linea.isEmpty()) {
 					continue;
 				}
-				String[] campos = linea.split(",", -1); //el -1 ayuda de la IAG para no perder campos vacios
+				String[] campos = linea.split(";", -1); //el -1 ayuda de la IAG para no perder campos vacios
 	            if (campos.length != 6) {
 	                logger.warning(String.format("Línea de hoteles inválida (se esperaban 6 campos): %s", linea));
 	                continue;
@@ -1169,7 +1058,7 @@ public class GestorBD {
 	            			h.getCapacidad(),
 	            			h.getPrecioNoche(),
 	            			h.getMoneda());
-	            	out.print(linea);
+	            	out.println(linea);
 	            });
 				logger.info("Se han guardado los hoteles en un CSV.");
 
@@ -1255,7 +1144,7 @@ public class GestorBD {
 	public List<Vuelo> getVuelos() {
 		List<Vuelo> vuelos = new ArrayList<>();
 		String sql = "SELECT * FROM VUELO;";
-		try (Connection conn = DriverManager.getConnection(connection);
+		try (Connection conn = getConnectionWithFK();
 				PreparedStatement pstm = conn.prepareStatement(sql);
 				ResultSet rs = pstm.executeQuery()){
 			while (rs.next()) {
@@ -1280,7 +1169,7 @@ public class GestorBD {
 	public List<Hotel> getHoteles() {
 		List<Hotel> hoteles = new ArrayList<>();
 		String sql = "SELECT * FROM HOTEL;";
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 		         PreparedStatement pStmt = con.prepareStatement(sql);
 		         ResultSet rs = pStmt.executeQuery()){
 			while (rs.next()) {
@@ -1298,7 +1187,7 @@ public class GestorBD {
 			logger.info(String.format("Se han recuperado %d hoteles.", hoteles.size()));
 		} catch (Exception e) {
 			logger.warning(String.format("Error al recuperar hoteles: %s", e.getMessage()));		}
-		return null;
+		return hoteles;
 	}
 
 	public void insertarAerolinea(Aerolinea[] array) {
