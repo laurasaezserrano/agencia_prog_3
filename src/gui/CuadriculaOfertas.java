@@ -16,10 +16,7 @@ import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,6 +40,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import java.util.List;
 import agencia_prog_3_thread.VentanaConfirmacionReserva;
+import db.GestorBD;
+import domain.Reserva;
 
 //FALTA
 //Añadir boton de reserva para que acabe de confirmar la reserva con los datos necesarios y añadirla a su perfil
@@ -52,6 +51,8 @@ public class CuadriculaOfertas extends JFrame{
 	private JTextField oferta;
 	private JTextField descripcionoferta;
 	private HashMap<String, List<Hotel>> hotelesPorCiudad;
+	
+	private GestorBD gestorBD;
 	
 	String[] ciudadesOferta = {
 		    "Ciudad de México",      
@@ -224,7 +225,7 @@ public class CuadriculaOfertas extends JFrame{
 	            double precio = this.precioFinalCalculado; 
 
 	            // 2. Llamar al método de guardado
-	            guardarReservaEnCSV(nombreUsuario, ciudad, hotel, email, hab, adultos, ninos, salida, regreso, precio);
+	            guardarReservaEnBD(nombreUsuario, ciudad, hotel, email, hab, adultos, ninos, salida, regreso, precio);
 	            
 	            // 3. Confirmar y cerrar
 	            JOptionPane.showMessageDialog(this, 
@@ -328,6 +329,8 @@ public class CuadriculaOfertas extends JFrame{
 }
 	    
 	public CuadriculaOfertas() {
+		this.gestorBD = new GestorBD();
+		
 		this.hotelesPorCiudad = cargarHotelesDesdeCSV();
 		setLayout(new BorderLayout());
 		setTitle("OFERTAS RECIENTES");
@@ -771,39 +774,34 @@ public class CuadriculaOfertas extends JFrame{
 
 	}
 	
-	private void guardarReservaEnCSV(String usuario, String ciudad, String hotel, String email, 
-            String hab, int adultos, int ninos, Date salida, Date regreso, 
-            double precioFinal) {
-                
-		final String FILE_NAME = "resources/data/reservas.csv";
-		final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
-		File file = new File(FILE_NAME);
-		boolean needsHeader = !file.exists() || file.length() == 0;
-
-		try (FileWriter fw = new FileWriter(file, true); // true = modo append
-				PrintWriter pw = new PrintWriter(fw)) {
-			if (needsHeader) {
-				pw.println("Usuario,Ciudad,Hotel,Email,Habitacion,Adultos,Ninos,Salida,Regreso,Precio");
-			}
-
-			String csvLine = String.format("%s,%s,%s,%s,%s,%d,%d,%s,%s,%.2f",
-					usuario,
-					ciudad,
-					hotel.replace(",", ";"), // Evita problemas si el nombre tiene comas
-					email,
-					hab,
-					adultos,
-					ninos,
-					SDF.format(salida),
-					SDF.format(regreso),
-					precioFinal
-					);
-
-			pw.println(csvLine);
-
-		} catch (IOException e) {
-			System.err.println("Error al guardar la reserva en CSV: " + e.getMessage());
-			e.printStackTrace();
+	private void guardarReservaEnBD(String usuario, String ciudad, String hotel, 
+            String email, String hab, int adultos, int ninos, 
+            Date salida, Date regreso, double precioFinal) {
+		try {
+			Reserva reserva = new Reserva();
+			reserva.setUsuario(usuario);
+			reserva.setCiudad(ciudad);
+			reserva.setNombreHotel(hotel);
+			reserva.setEmail(email);
+			reserva.setTipoHabitacion(hab);
+			reserva.setNumAdultos(adultos);
+			reserva.setNumNiños(ninos);
+			reserva.setFechaEntrada(new java.sql.Date(salida.getTime()));
+			reserva.setFechaSalida(new java.sql.Date(regreso.getTime()));
+			reserva.setPrecioNoche(precioFinal);
+			
+			gestorBD.insertarReserva(reserva);
+			
+			JOptionPane.showMessageDialog(this, 
+			"¡Reserva guardada exitosamente!", 
+			"Éxito", 
+			JOptionPane.INFORMATION_MESSAGE);
+			
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, 
+			"Error al guardar: " + ex.getMessage(), 
+			"Error", 
+			JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	

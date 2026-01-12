@@ -12,11 +12,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,11 +45,16 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import db.GestorBD;
 import domain.Excursion;
 import domain.ExcursionPrecio;
+import domain.Reserva;
 
 public class VentanaExcursiones extends JFrame{
 	private static final long serialVersionUID = 1L;
+	
+	private GestorBD gestorBD;
+	
 	String[] tituloexcursion = {
 		    "Cataratas del Niagara",      
 		    "Ruta del cafe",       
@@ -190,6 +190,8 @@ public class VentanaExcursiones extends JFrame{
     
 	
 	public VentanaExcursiones() {
+		this.gestorBD = new GestorBD();
+		
 		setTitle("Busqueda de excursiones");
 		setSize(900, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -304,7 +306,6 @@ public class VentanaExcursiones extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				dispose();
 				VentanaInicio ventanainicio = new VentanaInicio();
 				ventanainicio.setVisible(true);
@@ -441,27 +442,27 @@ public class VentanaExcursiones extends JFrame{
                      System.err.println("No se pudo leer el usuario de Ventana1Login");
                 }
                 
-                String ciudad_csv = ciudadExcursion;
-                String hotel_csv = ex.getNombre();          
-                String email_csv = "N/A";
-                String habitacion_csv = "Excursión";       
-                int adultos_csv = numPersonas;
-                int ninos_csv = 0;
-                java.util.Date salida_csv = fechaExcursion;
-                java.util.Date regreso_csv = fechaExcursion; // Mismo día
-                double precioFinal_csv = totalPrecioCalculado;
+                String ciudad_bd = ciudadExcursion;
+                String hotel_bd = ex.getNombre();          
+                String email_bd = "N/A";
+                String habitacion_bd = "Excursión";       
+                int adultos_bd = numPersonas;
+                int ninos_bd = 0;
+                java.util.Date salida_bd = fechaExcursion;
+                java.util.Date regreso_bd = fechaExcursion; // Mismo día
+                double precioFinal_bd = totalPrecioCalculado;
 
-                guardarReservaEnCSV(
+                guardarReservaEnBD(
                     usuario, 
-                    ciudad_csv, 
-                    hotel_csv, 
-                    email_csv, 
-                    habitacion_csv, 
-                    adultos_csv, 
-                    ninos_csv, 
-                    salida_csv, 
-                    regreso_csv, 
-                    precioFinal_csv
+                    ciudad_bd, 
+                    hotel_bd, 
+                    email_bd, 
+                    habitacion_bd, 
+                    adultos_bd, 
+                    ninos_bd, 
+                    salida_bd, 
+                    regreso_bd, 
+                    precioFinal_bd
                 );
                 
                 JOptionPane.showMessageDialog(
@@ -592,42 +593,29 @@ public class VentanaExcursiones extends JFrame{
     	   };
        };
      
-       private void guardarReservaEnCSV(String usuario, String ciudad, String hotel, String email, 
-               String hab, int adultos, int ninos, Date salida, Date regreso, 
-               double precioFinal) {
-                   
-   		final String FILE_NAME = "resources/data/reservas.csv";
-   		final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
-   		File file = new File(FILE_NAME);
-   		boolean needsHeader = !file.exists() || file.length() == 0;
-   		// Usamos try-with-resources para asegurar que se cierre el writer
-   		try (FileWriter fw = new FileWriter(file, true); // true = modo append
-   				PrintWriter pw = new PrintWriter(fw)) {
-
-   			if (needsHeader) {
-   				pw.println("Usuario,Ciudad,Hotel,Email,Habitacion,Adultos,Ninos,Salida,Regreso,Precio");
-   			}
-   			String csvLine = String.format("%s,%s,%s,%s,%s,%d,%d,%s,%s,%.2f",
-   					usuario,
-   					ciudad,
-   					hotel.replace(",", ";"), // Evita problemas si el nombre tiene comas
-   					email,
-   					hab,
-   					adultos,
-   					ninos,
-   					SDF.format(salida),
-   					SDF.format(regreso),
-   					precioFinal
-   					);
-
-   			// Escribe la nueva reserva
-   			pw.println(csvLine);
-
-   		} catch (IOException e) {
-   			System.err.println("Error al guardar la reserva en CSV: " + e.getMessage());
-   			e.printStackTrace();
-   		}
-   	}
+       private void guardarReservaEnBD(String usuario, String ciudad, String hotel, 
+               String email, String hab, int adultos, int ninos, 
+               Date salida, Date regreso, double precioFinal) {
+			try {
+				Reserva reserva = new Reserva();
+				reserva.setUsuario(usuario);
+				reserva.setCiudad(ciudad);
+				reserva.setNombreHotel(hotel);
+				reserva.setEmail(email);
+				reserva.setTipoHabitacion(hab);
+				reserva.setNumAdultos(adultos);
+				reserva.setNumNiños(ninos);
+				reserva.setFechaEntrada(new java.sql.Date(salida.getTime()));
+				reserva.setFechaSalida(new java.sql.Date(regreso.getTime()));
+				reserva.setPrecioNoche(precioFinal);
+				
+				gestorBD.insertarReserva(reserva);
+				
+			} catch (Exception ex) {
+				System.err.println("Error al guardar reserva: " + ex.getMessage());
+			}
+		}
+			   	
        
     
        private void cerrarventana() {

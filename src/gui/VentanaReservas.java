@@ -9,13 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Locale;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractCellEditor;
@@ -36,6 +30,9 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
+import db.GestorBD;
+import domain.Reserva;
+
 
 public class VentanaReservas extends JFrame {
 
@@ -53,9 +50,13 @@ public class VentanaReservas extends JFrame {
     
     private JTable tablaHoteles;
     private JTable tablaExcursiones;
+    
+    private GestorBD gestorBD;
 
 	
 	public VentanaReservas() {
+		this.gestorBD = new GestorBD();
+		
 		setTitle("Gestión de Reservas");
 		setSize(900, 600);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -194,7 +195,7 @@ public class VentanaReservas extends JFrame {
             }
         });
         
-		cargarReservasDesdeCSV(usuarioLogueado);
+		cargarReservasDesdeBD(usuarioLogueado);
 		cerrarventana(txtFiltroCiudad, tablaHoteles, tablaExcursiones, tabbedPane, btnFiltrar, btnLimpiarFiltro);
 	}
 	
@@ -253,43 +254,29 @@ public class VentanaReservas extends JFrame {
     };
 	
 	
-	private void cargarReservasDesdeCSV(String usuarioFiltrar) {
-		
-        File archivo = new File("resources/data/reservas.csv");
-        if (!archivo.exists()) {
-            System.err.println("No se encontró el archivo reservas.csv");
-            return;
-        }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
-            String linea;
-            reader.readLine(); // Saltamos la cabecera
+    private void cargarReservasDesdeBD(String usuarioFiltrar) {
+        try {
+            List<Reserva> reservas = gestorBD.getListaTodasLasReservas();
+            
             int contadorHoteles = 0;
             int contadorExcursiones = 0;
-
-            while ((linea = reader.readLine()) != null) {
-                if (linea.trim().isEmpty()) continue;
-                String[] datos = linea.split(",");
-                if (datos.length < 10) continue;
-
-                String usuarioCSV = datos[0];
-                if (usuarioCSV.compareToIgnoreCase(usuarioFiltrar) == 0) {
-                    String ciudad = datos[1];
-                    String HotelOExcursion = datos[2].replace(";", ",");
-                    String email = datos[3];
-                    String HabOTipo = datos[4]; // Esta es la clave
-                    int adultos = Integer.parseInt(datos[5]);
-                    int ninos = Integer.parseInt(datos[6]);
-                    String salida = datos[7];
-                    String regreso = datos[8];
-                    double precio = Double.parseDouble(datos[9]);
-                    
+            
+            for (Reserva r : reservas) {
+                if (r.getUsuario().equalsIgnoreCase(usuarioFiltrar)) {
                     Object[] fila = {
-                        ciudad, HotelOExcursion, email, HabOTipo, adultos, ninos, 
-                        salida, regreso, precio, "Cancelar"
+                        r.getCiudad(),
+                        r.getNombreHotel(),
+                        r.getEmail(),
+                        r.getTipoHabitacion(),
+                        r.getNumAdultos(),
+                        r.getNumNiños(),
+                        r.getFechaEntrada(),
+                        r.getFechaSalida(),
+                        r.getPrecioNoche(),
+                        "Cancelar"
                     };
-                
-                    if (HabOTipo.equalsIgnoreCase("Excursión")) {
+                    
+                    if (r.getTipoHabitacion().equalsIgnoreCase("Excursión")) {
                         modeloTablaExcursiones.addRow(fila);
                         contadorExcursiones++;
                     } else {
@@ -298,11 +285,16 @@ public class VentanaReservas extends JFrame {
                     }
                 }
             }
-            System.out.println("Cargadas " + contadorHoteles + " reservas de hotel y " + contadorExcursiones + " excursiones para " + usuarioFiltrar);
             
-        } catch (IOException | NumberFormatException ex) {
+            System.out.println("Cargadas " + contadorHoteles + " reservas de hotel y " + 
+                             contadorExcursiones + " excursiones");
+                             
+        } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al leer el archivo de reservas: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, 
+                "Error al cargar reservas: " + ex.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 	
@@ -323,7 +315,7 @@ public class VentanaReservas extends JFrame {
 
         if (confirm == JOptionPane.YES_OPTION) {
             // 2. Eliminar la reserva del archivo CSV
-            if (eliminarReservaDelCSV(model, filaModel)) {
+            if (eliminarReservaDeBD(model, filaModel)) {
                 // 3. Si se borra del CSV, eliminarla de la tabla (JTable)
                 model.removeRow(filaModel);
                 JOptionPane.showMessageDialog(this, "Reserva cancelada con éxito.", "Cancelado", JOptionPane.INFORMATION_MESSAGE);
@@ -333,62 +325,32 @@ public class VentanaReservas extends JFrame {
         }
     }
 	
-	private boolean eliminarReservaDelCSV(DefaultTableModel model, int row) {
-        File inputFile = new File("resources/data/reservas.csv");
-        File tempFile = new File("reservas.temp.csv"); // Archivo temporal
-
-        String ciudad = model.getValueAt(row, 0).toString();
-        String hotelOExcursion = model.getValueAt(row, 1).toString();
-        String salida = model.getValueAt(row, 6).toString();
-        Double precio = (Double) model.getValueAt(row, 8);
-        String precioStr = String.format(Locale.US, "%.2f", precio); // Formato "59.00"
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-             PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
-
-            String cabecera = reader.readLine();
-            writer.println(cabecera); // Escribimos la cabecera en el temp
-
-            String linea;
-            while ((linea = reader.readLine()) != null) {
-                if (linea.trim().isEmpty()) continue;
-                String[] datos = linea.split(",");
-                if (datos.length < 10) continue; 
-                
-                String usuarioCSV = datos[0];
-                String ciudadCSV = datos[1];
-                String hotelCSV = datos[2].replace(";", ",");
-                String salidaCSV = datos[7];
-                String precioCSV = datos[9];
-
-                boolean esLaReservaABorrar = 
-                        usuarioCSV.equalsIgnoreCase(usuarioLogueado) &&
-                        ciudadCSV.equalsIgnoreCase(ciudad) &&
-                        hotelCSV.equalsIgnoreCase(hotelOExcursion) &&
-                        salidaCSV.equals(salida) &&
-                        (Double.parseDouble(precioCSV) == Double.parseDouble( precioStr));
-                
-                if (!esLaReservaABorrar) {
-                    writer.println(linea); // Si NO es la línea, la escribimos en el temp
-                }
+	private boolean eliminarReservaDeBD(DefaultTableModel model, int row) {
+        try {
+            String usuario = usuarioLogueado;
+            String nombreHotel = model.getValueAt(row, 1).toString();
+            String ciudad = model.getValueAt(row, 0).toString();
+            java.sql.Date fechaEntrada = (java.sql.Date) model.getValueAt(row, 6);
+            java.sql.Date fechaSalida = (java.sql.Date) model.getValueAt(row, 7);
+            
+            boolean eliminado = gestorBD.eliminarReserva(usuario, nombreHotel, ciudad, 
+                                                          fechaEntrada, fechaSalida);
+            
+            if (eliminado) {
+                model.removeRow(row);
+                JOptionPane.showMessageDialog(this, "Reserva cancelada", "Éxito", 
+                                            JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo eliminar", "Error", 
+                                            JOptionPane.ERROR_MESSAGE);
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false; // Falló la re-escritura
-        }
-
-        // 4. Reemplazar el archivo original con el temporal
-        if (!inputFile.delete()) {
-            System.err.println("Error: No se pudo borrar el archivo original.");
+            return eliminado;
+            
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), 
+                                        "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        if (!tempFile.renameTo(inputFile)) {
-            System.err.println("Error: No se pudo renombrar el archivo temporal.");
-            return false;
-        }
-        
-        return true; 
     }
 	
 	private void aplicarbusqueda() {

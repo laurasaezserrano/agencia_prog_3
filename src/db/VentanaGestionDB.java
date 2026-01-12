@@ -5,8 +5,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+import domain.Hotel;
 import domain.Reserva;
 import domain.User;
+import domain.Vuelo;
 import gui.Ventana1Login;
 
 import java.awt.*;
@@ -101,13 +103,69 @@ public class VentanaGestionDB extends JFrame {
         String tabla = (String) cmbTablas.getSelectedItem();
         modeloTabla.setRowCount(0);
         modeloTabla.setColumnCount(0);
-
-        if ("Reserva".equals(tabla)) {
-            cargarDatosReservas();
-        } else {
-            lblEstadoDB.setText("Carga genérica no implementada para " + tabla);
+        
+        switch(tabla) {
+            case "Reserva":
+                cargarDatosReservas();
+                break;
+            case "Vuelo":
+                cargarDatosVuelos();
+                break;
+            case "Hotel":
+                cargarDatosHoteles();
+                break;
+            case "User":
+                cargarDatosUsuarios();
+                break;
         }
         centrarColumnas();
+    }
+    
+    private void cargarDatosVuelos() {
+        String[] columnas = {"ORIGEN", "DESTINO", "F_SALIDA", "F_REGRESO", "AEROLINEA", 
+                            "P_ECONOMY", "P_BUSINESS", "PLAZAS"};
+        modeloTabla.setColumnIdentifiers(columnas);
+        
+        List<Vuelo> lista = gestorBD.getVuelos();
+        for (Vuelo v : lista) {
+            modeloTabla.addRow(new Object[]{
+                v.getOrigen(), v.getDestino(), v.getFechaSalida(), v.getFechaRegreso(),
+                v.getAerolinea(), v.getPrecioEconomy(), v.getPrecioBusiness(), 
+                v.getPlazasDisponibles()
+            });
+        }
+        lblEstadoDB.setText("✓ " + lista.size() + " vuelos cargados");
+    }
+    
+    private void cargarDatosHoteles() {
+        String[] columnas = {"NOMBRE", "CIUDAD", "PAÍS", "ESTRELLAS", "CAPACIDAD", 
+                            "PRECIO/NOCHE", "MONEDA"};
+        modeloTabla.setColumnIdentifiers(columnas);
+        
+        List<Hotel> lista = gestorBD.getHoteles();
+        for (Hotel h : lista) {
+            modeloTabla.addRow(new Object[]{
+                h.getNombre(), h.getCiudad(), h.getPais(), h.getEstrellas(),
+                h.getCapacidad(), h.getPrecioNoche(), h.getMoneda()
+            });
+        }
+        lblEstadoDB.setText("✓ " + lista.size() + " hoteles cargados");
+    }
+    
+    private void cargarDatosUsuarios() {
+        String[] columnas = {"USUARIO", "PASSWORD", "NOMBRE", "DNI", "EMAIL", 
+                            "TELÉFONO", "DIRECCIÓN", "IDIOMA", "MONEDA"};
+        modeloTabla.setColumnIdentifiers(columnas);
+        
+        List<User> lista = gestorBD.getUsuarios();
+        for (User u : lista) {
+            modeloTabla.addRow(new Object[]{
+                u.getUsuario(), u.getPassword(), u.getNombre(), u.getDni(),
+                u.getEmail(), u.getTelefono(), u.getDireccion(), 
+                u.getIdioma(), u.getMoneda()
+            });
+        }
+        lblEstadoDB.setText("✓ " + lista.size() + " usuarios cargados");
     }
 
     private void cargarDatosReservas() {
