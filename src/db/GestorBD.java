@@ -1195,7 +1195,9 @@ public class GestorBD {
 		
 	}
 
-	public void insertarAeropuerto(Aeropuerto[] array) {
+
+
+	public void initilizeFromCSV() {
 		// TODO Auto-generated method stub
 		
 	}
