@@ -31,6 +31,9 @@ public class VentanaGestionDB extends JFrame {
         super("Gestión de Base de Datos - Agencia de Viajes");
         
         gestorBD = new GestorBD();
+        gestorBD.crearBBDD();
+        gestorBD.initilizeFromCSV(); 
+
         inicializarComponentes();
         configurarLayout();
 
@@ -263,8 +266,21 @@ public class VentanaGestionDB extends JFrame {
                 String user = modeloTabla.getValueAt(fila, 0).toString();
                 String hotel = modeloTabla.getValueAt(fila, 2).toString();
                 String ciudad = modeloTabla.getValueAt(fila, 1).toString();
-                java.sql.Date fEntrada = java.sql.Date.valueOf(modeloTabla.getValueAt(fila, 7).toString());
-                java.sql.Date fSalida = java.sql.Date.valueOf(modeloTabla.getValueAt(fila, 8).toString());
+                Object oEntrada = modeloTabla.getValueAt(fila, 7);
+                Object oSalida  = modeloTabla.getValueAt(fila, 8);
+                /**
+                 * AYUDA IAG 
+                 */
+                java.sql.Date fEntrada = (oEntrada instanceof java.sql.Date)
+                        ? (java.sql.Date) oEntrada
+                        : java.sql.Date.valueOf(oEntrada.toString().substring(0, 10));
+                java.sql.Date fSalida = (oSalida instanceof java.sql.Date)
+                        ? (java.sql.Date) oSalida
+                        : java.sql.Date.valueOf(oSalida.toString().substring(0, 10));
+                /**
+                 * FIN DE AYUDA IAG
+                 */
+
                 
                 if (gestorBD.eliminarReserva(user, hotel, ciudad, fEntrada, fSalida)) {
                     manejarCargarDatos(null);
@@ -275,8 +291,17 @@ public class VentanaGestionDB extends JFrame {
             } else if("Vuelo".equals(tabla)) {
                 String origen = modeloTabla.getValueAt(fila, 0).toString();
                 String destino = modeloTabla.getValueAt(fila, 1).toString();
-                java.sql.Date fSalida = java.sql.Date.valueOf(modeloTabla.getValueAt(fila, 2).toString());
-                java.sql.Date fRegreso = java.sql.Date.valueOf(modeloTabla.getValueAt(fila, 3).toString());
+                Object oFSalida = modeloTabla.getValueAt(fila, 2);
+                Object oFRegreso = modeloTabla.getValueAt(fila, 3);
+
+                java.sql.Date fSalida = (oFSalida instanceof java.sql.Date)
+                        ? (java.sql.Date) oFSalida
+                        : java.sql.Date.valueOf(oFSalida.toString().substring(0, 10));
+
+                java.sql.Date fRegreso = (oFRegreso instanceof java.sql.Date)
+                        ? (java.sql.Date) oFRegreso
+                        : java.sql.Date.valueOf(oFRegreso.toString().substring(0, 10));
+
                 String aerolinea = modeloTabla.getValueAt(fila, 4).toString();
 
                 if (gestorBD.eliminarVuelo(origen, destino, fSalida, fRegreso, aerolinea)) {

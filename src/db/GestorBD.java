@@ -128,7 +128,7 @@ public class GestorBD {
 			    ");";
             
 			
-			try (Connection con = DriverManager.getConnection(connection);
+			try (Connection con = getConnectionWithFK();
 			     PreparedStatement pStmt1 = con.prepareStatement(sqlUser);
 				 PreparedStatement pStmt2 = con.prepareStatement(sqlHotel);
 				 PreparedStatement pStmt3 = con.prepareStatement(sqlVuelo);
@@ -149,7 +149,7 @@ public class GestorBD {
 			String sql3 = "DROP TABLE IF EXISTS HOTEL;";
 			String sql4 = "DROP TABLE IF EXISTS RESERVA;";
 
-	        try (Connection con = DriverManager.getConnection(connection);
+	        try (Connection con = getConnectionWithFK();
 			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
 				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
 				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
@@ -181,7 +181,7 @@ public class GestorBD {
 			String sql3 = "DELETE FROM RESERVA;";
 			String sql4 = "DELETE FROM HOTEL;";
 
-			try (Connection con = DriverManager.getConnection(connection);
+			try (Connection con = getConnectionWithFK();
 			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
 				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
 				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
@@ -525,8 +525,8 @@ public class GestorBD {
             
             pStmt.setString(1, origen);
             pStmt.setString(2, destino);
-            pStmt.setString(3, fechaSalida.toString());
-            pStmt.setString(4, fechaRegreso.toString());
+            pStmt.setDate(3, fechaSalida); 
+            pStmt.setDate(4, fechaRegreso);
             pStmt.setString(5, aerolinea);
 			
 			int filasAfectadas = pStmt.executeUpdate();
@@ -736,7 +736,12 @@ public class GestorBD {
 		        u.setNombre(rs.getString("NOMBRE"));
 		        u.setDni(rs.getString("DNI"));
 		        u.setEmail(rs.getString("EMAIL"));
-		        u.setTelefono(rs.getInt("TELEFONO"));
+		        int tel = rs.getInt("TELEFONO");
+		        if (rs.wasNull()) {
+		            u.setTelefono(null);
+		        } else {
+		            u.setTelefono(tel);
+		        }
 		        u.setDireccion(rs.getString("DIRECCION"));
 		        u.setIdioma(rs.getString("IDIOMA"));
 		        u.setMoneda(rs.getString("MONEDA"));
@@ -763,16 +768,16 @@ public class GestorBD {
 	        
 	        while (rs.next()) {
 	            Reserva reserva = new Reserva() ;
-                reserva.setUsuario(rs.getString("USUARIO"));
-	            reserva.setCiudad(rs.getString("CIUDAD"));
-                reserva.setNombreHotel(rs.getString("NOMBRE_HOTEL"));
-	            reserva.setEmail(rs.getString("EMAIL"));
-	            reserva.setTipoHabitacion(rs.getString("TIPO_HABITACION"));
-	            reserva.setNumAdultos(rs.getInt("NUM_ADULTOS"));
-	            reserva.setNumNiños(rs.getInt("NUM_NIÑOS"));
-	            reserva.setFechaEntrada(rs.getDate("FECHA_ENTRADA"));
-	            reserva.setFechaSalida(rs.getDate("FECHA_SALIDA"));
-	            reserva.setPrecioNoche(rs.getDouble("PRECIO_NOCHE"));
+                reserva.setUsuario(rs.getString("usuario"));
+	            reserva.setCiudad(rs.getString("ciudad"));
+                reserva.setNombreHotel(rs.getString("nombre_Hotel"));
+	            reserva.setEmail(rs.getString("email"));
+	            reserva.setTipoHabitacion(rs.getString("tipo_Habitacion"));
+	            reserva.setNumAdultos(rs.getInt("num_adultos"));
+	            reserva.setNumNiños(rs.getInt("num_niños"));
+	            reserva.setFechaEntrada(rs.getDate("fecha_Entrada"));
+	            reserva.setFechaSalida(rs.getDate("fecha_Salida"));
+	            reserva.setPrecioNoche(rs.getDouble("precio_Noche"));
 	            reservas.add(reserva);
 	        }
 	    } catch (Exception ex) {
@@ -1098,49 +1103,6 @@ public class GestorBD {
 		}
 	}
 	
-	
-	public List<Excursion> getExcursiones() {
-		List<Excursion> excursiones = new ArrayList<>();
-		String sql = "SELECT id, nombre, descripcion, precio FROM EXCURSION;";
-		try (Connection conn = DriverManager.getConnection(connection);
-				PreparedStatement pstm = conn.prepareStatement(sql);
-				ResultSet rs = pstm.executeQuery()){
-			while(rs.next()) {
-				Excursion e = new Excursion(
-						rs.getInt("id"),
-						rs.getString("nombre"),
-						rs.getString("descripcion"),
-						rs.getDouble("precio"));
-				excursiones.add(e);
-			}
-			logger.info(String.format("Se han recuperado %d excursiones.", excursiones.size()));
-		} catch (Exception e) {
-			logger.warning(String.format("Error al recuperar excursiones: %s", e.getMessage()));		}
-		return excursiones;
-	}
-
-	
-	public List<Aeropuerto> getAeropuertos() {
-	    List<Aeropuerto> aeropuertos = new ArrayList<>();
-	    String sql = "SELECT NOMBRE FROM AEROPUERTO;";
-		try (Connection con = DriverManager.getConnection(connection);
-				PreparedStatement pstm = con.prepareStatement(sql);
-				ResultSet rs = pstm.executeQuery()){
-			while(rs.next()) {
-				Aeropuerto a = new Aeropuerto(
-						rs.getString("NOMBRE"));
-				aeropuertos.add(a);
-			}
-			logger.info(String.format("Se han recuperado %d aeropuertos.", aeropuertos.size()));
-			
-		} catch (Exception e) {
-			logger.warning(String.format("Error al recuperar aeropuertos: %s", e.getMessage()));
-		}
-
-		return aeropuertos;
-	}
-
-	
 	public List<Vuelo> getVuelos() {
 		List<Vuelo> vuelos = new ArrayList<>();
 		String sql = "SELECT * FROM VUELO;";
@@ -1190,34 +1152,6 @@ public class GestorBD {
 		return hoteles;
 	}
 
-	public void insertarAerolinea(Aerolinea[] array) {
-		if (array == null || array.length == 0) {
-			return;
-		}
-		String sql ="INSERT INTO AEROLINEA (NOMBRE) VALUES (?);";
-		
-		try (Connection con = DriverManager.getConnection(connection);
-				PreparedStatement pstm = con.prepareStatement(sql)){
-			for (Aerolinea a : array) {
-				if (a == null || a.getNombre() == null) {
-					continue;
-				}
-				pstm.setString(1,  a.getNombre().trim());
-				if (pstm.executeUpdate() != 1) {
-	                logger.warning(String.format("No se ha insertado la aerolínea: %s", a.getNombre()));
-	            } else {
-	                logger.info(String.format("Se ha insertado la aerolínea: %s", a.getNombre()));
-	            }
-			}
-			logger.info(String.format("%d aerolíneas procesadas para inserción.", array.length));
-		} catch (Exception e) {
-			logger.warning(String.format("Error al insertar aerolíneas: %s", e.getMessage()));		
-		}
-		
-	}
-
-
-
 	public void initilizeFromCSV() {
 		if (properties.get("loadCSV") != null && properties.get("loadCSV").equals("true")) {
 
@@ -1244,6 +1178,46 @@ public class GestorBD {
 	        logger.info("Inicialización de la BBDD desde CSV completada.");
 	    }
 		
+	}
+
+	public List<Excursion> getExcursiones() {
+		List<Excursion> excursiones = new ArrayList<>();
+		String sql = "SELECT id, nombre, descripcion, precio FROM EXCURSION;";
+		try (Connection conn = DriverManager.getConnection(connection);
+				PreparedStatement pstm = conn.prepareStatement(sql);
+				ResultSet rs = pstm.executeQuery()){
+			while(rs.next()) {
+				Excursion e = new Excursion(
+						rs.getInt("id"),
+						rs.getString("nombre"),
+						rs.getString("descripcion"),
+						rs.getDouble("precio"));
+				excursiones.add(e);
+			}
+			logger.info(String.format("Se han recuperado %d excursiones.", excursiones.size()));
+		} catch (Exception e) {
+			logger.warning(String.format("Error al recuperar excursiones: %s", e.getMessage()));		}
+		return excursiones;
+	}
+
+	public List<Aeropuerto> getAeropuertos() {
+		List<Aeropuerto> aeropuertos = new ArrayList<>();
+	    String sql = "SELECT NOMBRE FROM AEROPUERTO;";
+		try (Connection con = DriverManager.getConnection(connection);
+				PreparedStatement pstm = con.prepareStatement(sql);
+				ResultSet rs = pstm.executeQuery()){
+			while(rs.next()) {
+				Aeropuerto a = new Aeropuerto(
+						rs.getString("NOMBRE"));
+				aeropuertos.add(a);
+			}
+			logger.info(String.format("Se han recuperado %d aeropuertos.", aeropuertos.size()));
+			
+		} catch (Exception e) {
+			logger.warning(String.format("Error al recuperar aeropuertos: %s", e.getMessage()));
+		}
+
+		return aeropuertos;
 	}
 
 	
