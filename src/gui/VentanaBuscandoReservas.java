@@ -5,7 +5,6 @@ import java.awt.*;
 
 public class VentanaBuscandoReservas extends JDialog {
 	private static final long serialVersionUID = 1L;
-	private JLabel lblTexto;
     private static final int ANIMACION_INTERVALO_MS = 300;
     private JLabel titulolabel;
     private JLabel mensajecentral;

@@ -11,7 +11,7 @@ public class ExcursionPrecio extends DefaultTableCellRenderer{
 	
 	@Override //
     protected void setValue(Object value) {
-        if (value instanceof Number n) { //
+        if (value instanceof Number) { //
         	setText(String.format("%.2f €", value)); 
         }else {
         	setText("");; 

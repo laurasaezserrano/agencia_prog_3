@@ -279,7 +279,6 @@ public class CuadriculaOfertas extends JFrame{
 	        // Número de personas
 	        int adultos = (int) spinAdultos.getValue();
 	        double ninos = (int) spinNinos.getValue()/0.5;
-	        double totalPersonas = adultos + ninos;
 	
 	        // Tipo de habitación
 	        double factorHabitacion = 1.0;
@@ -298,10 +297,7 @@ public class CuadriculaOfertas extends JFrame{
 	        
 	        this.precioFinalCalculado = precioFinal;
 	        
-	        // Si hay más de 2 adultos/niños, cobramos un extra por persona adicional
-	        double extraPersonas = Math.max(0, totalPersonas - 2) * 0.3; // 30% extra por persona adicional (simplificado)
 	        
-	
 	        lblPrecioTotal.setText(String.format("%.2f € (%d días)", precioFinal, duracionViaje));
 	    }
 		
