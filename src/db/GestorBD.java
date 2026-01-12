@@ -864,6 +864,352 @@ public class GestorBD {
 	}
 
 	
+	public List<Reserva> getListaTodasLasReservas() {
+	    List<Reserva> reservas = new ArrayList<>();
+	    String sql = "SELECT * FROM Reserva"; 
+	    
+	    try (Connection con = DriverManager.getConnection(connection);
+	         Statement stmt = con.createStatement();
+	         ResultSet rs = stmt.executeQuery(sql)) {
+	        
+	        while (rs.next()) {
+	            Reserva reserva = new Reserva() ;
+                reserva.setUsuario(rs.getString("USUARIO"));
+	            reserva.setCiudad(rs.getString("CIUDAD"));
+                reserva.setNombreHotel(rs.getString("NOMBRE_HOTEL"));
+	            reserva.setEmail(rs.getString("EMAIL"));
+	            reserva.setTipoHabitacion(rs.getString("TIPO_HABITACION"));
+	            reserva.setNumAdultos(rs.getInt("NUM_ADULTOS"));
+	            reserva.setNumNiños(rs.getInt("NUM_NIÑOS"));
+	            reserva.setFechaEntrada(rs.getDate("FECHA_ENTRADA"));
+	            reserva.setFechaSalida(rs.getDate("FECHA_SALIDA"));
+	            reserva.setPrecioNoche(rs.getDouble("PRECIO_NOCHE"));
+	            reservas.add(reserva);
+	        }
+	    } catch (Exception ex) {
+	        logger.warning("Error al obtener todas las reservas: " + ex.getMessage());
+	    }
+	    return reservas;
+	}
+	
+
+	//metodo para cargar los vuelos del csv
+	private List<Vuelo> loadVuelos() {
+		List<Vuelo> vuelos = new ArrayList<>();
+		
+		try(BufferedReader in = new BufferedReader(new FileReader(CSV_VUELOS))){
+			String linea;
+			in.readLine(); //se omite la cabecera
+			while ((linea = in.readLine()) != null) {
+				linea = linea.trim();
+				if (linea.isEmpty()) {
+					continue;
+				}
+				String[] campos = linea.split(",", -1);
+				if (campos.length != 8) {
+					logger.warning(String.format("Línea de vuelos inválida (se esperaban 8 campos): %s", linea));
+					continue;
+				}
+				String origen = campos[0].trim();
+	            String destino = campos[1].trim();
+	            String fechaSalidaStr = campos[2].trim();
+	            String fechaRegresoStr = campos[3].trim();
+	            String aerolinea = campos[4].trim();
+	            double precioEconomy = parsePrecio(campos[5]);
+	            double precioBusiness = parsePrecio(campos[6]);
+	            int plazasDisponibles = Integer.parseInt(campos[7].trim());
+	            
+	            Vuelo v = new Vuelo();
+	            v.setOrigen(origen);
+	            v.setDestino(destino);
+	            v.setFechaSalida(java.sql.Date.valueOf(fechaSalidaStr)); // YYYY-MM-DD
+	            v.setFechaRegreso(java.sql.Date.valueOf(fechaRegresoStr));
+	            v.setAerolinea(aerolinea);
+	            v.setPrecioEconomy(precioEconomy);
+	            v.setPrecioBusiness(precioBusiness);
+	            v.setPlazasDisponibles(plazasDisponibles);
+	            
+	            vuelos.add(v);
+			}
+	        logger.info(String.format("Se han cargado %d vuelos desde el CSV.", vuelos.size()));
+		}catch (Exception e) {
+	        logger.warning(String.format("Error leyendo vuelos del CSV: %s", e.getMessage()));
+		}
+		return vuelos;
+			
+		}
+	
+
+	private double parsePrecio(String precio) {
+		if (precio == null) {
+	        return 0.0;
+	    }
+	    String limpio = precio.trim();
+	    //nos quedamos con la parte numérica
+	    int idx = limpio.indexOf(' ');
+	    if (idx > 0) {
+	        limpio = limpio.substring(0, idx).trim();
+	    }
+	    limpio = limpio.replace(',', '.');
+	    return Double.parseDouble(limpio);
+	}
+	
+	
+	private List<Reserva> loadReservas() {
+		List<Reserva> reservas = new ArrayList<>();
+		try (BufferedReader in = new BufferedReader(new FileReader(CSV_RESERVAS))){
+			String linea;
+			while ((linea = in.readLine()) != null) {
+				if (linea == null) {
+					continue;
+				}
+				linea = linea.trim();
+				if (linea.isEmpty()) {
+					continue;
+				}
+				String[] campos = linea.split(",", -1);
+				if (campos.length != 10) {
+	                logger.warning(String.format("Línea de reservas inválida (se esperaban 10 campos): %s", linea));
+	                continue;
+	            }
+				
+				Reserva r = new Reserva();
+				//usuario
+				if (!campos[0].trim().isEmpty()) {
+					r.setUsuario(campos[0].trim());
+				}
+				//ciudad
+				if (!campos[1].trim().isEmpty()) {
+	                r.setCiudad(campos[1].trim());
+				}
+				//nombre hotel
+				if (!campos[2].trim().isEmpty()) {
+	                r.setNombreHotel(campos[2].trim());
+	            }
+				//email
+				if (!campos[3].trim().isEmpty()) {
+	                r.setEmail(campos[3].trim());
+	            }
+				//tipo habitacion
+				if (!campos[4].trim().isEmpty()) {
+	                r.setTipoHabitacion(campos[4].trim());
+	            }
+				//num adultos
+				if (!campos[5].trim().isEmpty()) {
+	                r.setNumAdultos(Integer.parseInt(campos[5].trim()));
+	            }
+				//mun de niños
+	            if (!campos[6].trim().isEmpty()) {
+	                r.setNumNiños(Integer.parseInt(campos[6].trim()));
+	            }
+	            //fecha entrada
+	            try {
+	                if (!campos[7].trim().isEmpty()) {
+	                    r.setFechaEntrada(java.sql.Date.valueOf(campos[7].trim()));
+	                }
+	            } catch (Exception e) {
+	                r.setFechaEntrada(null);
+	            }
+	            //fecha salida
+	            try {
+	                if (!campos[8].trim().isEmpty()) {
+	                    r.setFechaSalida(java.sql.Date.valueOf(campos[8].trim()));
+	                }
+	            } catch (Exception e) {
+	                r.setFechaSalida(null);
+	            }
+	            //precio noche
+	            try {
+	                if (!campos[9].trim().isEmpty()) {
+	                    String precio = campos[9].trim().replace(',', '.');
+	                    r.setPrecioNoche(Double.parseDouble(precio));
+	                }
+	            } catch (Exception e) {
+	                r.setPrecioNoche(null);
+	            }
+	            reservas.add(r);
+			}
+			logger.info(String.format("Se han cargado %d reservas desde el CSV.", reservas.size()));
+		} catch (Exception e) {
+			logger.warning(String.format("Error leyendo reservas del CSV: %s", e.getMessage()));		
+			}
+		return reservas;
+	}
+
+	private List<User> loadUsers() {
+		List<User> usuarios = new ArrayList<>();
+
+	    try (BufferedReader in = new BufferedReader(new FileReader(CSV_USER))) {
+	        String linea;
+
+	        while ((linea = in.readLine()) != null) {
+	            linea = linea.trim();
+	            if (linea.isEmpty()) {
+	                continue;
+	            }
+	            String[] campos = linea.split(",", -1);
+	            if (campos.length != 2) {
+	                logger.warning(String.format("Línea de usuarios inválida (se esperaban 2 campos): %s", linea));
+	                continue;
+	            }
+	            User u = new User();
+	            u.setUsuario(valornull(campos[0]));
+	            u.setPassword(valornull(campos[1]));
+	            u.setNombre(null);
+	            u.setDni(null);
+	            u.setEmail(null);
+	            u.setTelefono(null);
+	            u.setDireccion(null);
+	            u.setIdioma(null);
+	            u.setMoneda(null);
+
+	            usuarios.add(u);
+	        }
+	        logger.info(String.format("Se han cargado %d usuarios desde el CSV.", usuarios.size()));
+	    } catch (Exception e) {
+	    	logger.warning(String.format("Error leyendo usuarios del CSV: %s", e.getMessage()));
+		}
+	    return usuarios;
+	}
+	
+	
+	private String valornull(String string) {
+		if (string == null) {
+			return null;
+		}
+		String t = string.trim();
+		if (t.isEmpty()) {
+			return null;
+		}
+		return t;
+	}
+
+	//metodo para cargar hoteles del csv
+	private List<Hotel> loadHoteles() {
+		List<Hotel> hoteles = new ArrayList<>();
+		try (BufferedReader in = new BufferedReader(new FileReader(CSV_HOTELES))){
+			String linea;
+			while ((linea = in.readLine()) != null) {
+				linea = linea.trim();
+				if (linea.isEmpty()) {
+					continue;
+				}
+				String[] campos = linea.split(",", -1); //el -1 ayuda de la IAG para no perder campos vacios
+	            if (campos.length != 6) {
+	                logger.warning(String.format("Línea de hoteles inválida (se esperaban 6 campos): %s", linea));
+	                continue;
+	            }
+	            String nombre = campos[0].trim();
+	            String ciudad = campos[1].trim();
+	            String pais = campos[2].trim();
+	            int estrellas = Integer.parseInt(campos[3].trim());
+	            int capacidad = Integer.parseInt(campos[4].trim());
+	            String precioMoneda = campos[5].trim();
+	            String[] preciocampo = precioMoneda.split(" ");
+	            double precioNoche = Double.parseDouble(preciocampo[0].replace(',', '.'));
+	                String moneda = (preciocampo.length > 1) ? preciocampo[1] : "";
+			
+	            Hotel h = new Hotel();
+	            h.setNombre(nombre);
+	            h.setCiudad(ciudad);
+	            h.setPais(pais);
+	            h.setEstrellas(estrellas);
+	            h.setCapacidad(capacidad);
+	            h.setPrecioNoche(precioNoche);
+	            h.setMoneda(moneda);
+
+	            hoteles.add(h);
+			}
+			logger.info(String.format("Se han cargado %d hoteles desde el CSV.", hoteles.size()));
+		} catch (Exception e) {
+			logger.warning(String.format("Error leyendo hoteles del CSV: %s", e.getMessage()));
+		}
+		return hoteles;
+		
+	}
+	
+	
+	//metodo que guarda los vuelos
+	public void storeVuelos(List<Vuelo> vuelos){
+		if (vuelos != null) {
+			try (PrintWriter out = new PrintWriter(new File(CSV_VUELOS))){
+				out.println("ORIGEN;DESTINO;FECHA_SALIDA;FECHA_REGRESO;AEROLINEA;PRECIO_ECONOMY;PRECIO_BUSINESS;PLAZAS_DISPONIBLES");
+				vuelos.forEach(v -> {
+	                String linea = String.format(
+	                    "%s;%s;%s;%s;%s;%.2f EUR;%.2f EUR;%d",
+	                    v.getOrigen(),
+	                    v.getDestino(),
+	                    v.getFechaSalida().toString(),   // YYYY-MM-DD
+	                    v.getFechaRegreso().toString(),  // YYYY-MM-DD
+	                    v.getAerolinea(),
+	                    v.getPrecioEconomy(),
+	                    v.getPrecioBusiness(),
+	                    v.getPlazasDisponibles()
+	                );
+	                out.println(linea);
+	            });
+	            logger.info("Se han guardado los vuelos en un CSV.");
+			} catch (Exception e) {
+				logger.warning(String.format("Error guardando vuelos en el CSV: %s", e.getMessage()));			}
+		}
+		
+	}
+	
+	//metodo que guarda los hoteles
+	public void storeHoteles (List<Hotel> hoteles) {
+		if (hoteles != null) {
+			try (PrintWriter out = new PrintWriter(new File(CSV_HOTELES))){
+	            hoteles.forEach(h -> {
+	            	String linea = String.format(
+	            			"%s;%s;%s;%d;%d;%.2f %s",
+	            			h.getNombre(), 
+	            			h.getCiudad(),
+	            			h.getPais(), 
+	            			h.getEstrellas(),
+	            			h.getCapacidad(),
+	            			h.getPrecioNoche(),
+	            			h.getMoneda());
+	            	out.print(linea);
+	            });
+				logger.info("Se han guardado los hoteles en un CSV.");
+
+			} catch (Exception e) {
+	            logger.warning(String.format("Error guardando hoteles en el CSV: %s", e.getMessage()));
+			}
+		}
+	}
+
+	
+	public void updateVuelos(List<Vuelo> listaVuelos, List<Aeropuerto> listaAeropuertos) {
+	    if (listaVuelos == null || listaAeropuertos == null) {
+	    	return;
+	    }
+		for (Vuelo v : listaVuelos) {
+			if (v == null) {
+				continue;
+			}
+			String origen = v.getOrigen();
+			if (origen != null) {
+				for (Aeropuerto a : listaAeropuertos) {
+					if (a != null && a.getNombre() != null && a.getNombre().equalsIgnoreCase(origen.trim())) {
+						v.setOrigen(a.getNombre());
+						break;
+					}
+				}
+			}
+			String destino = v.getDestino();
+			if (destino != null) {
+				for (Aeropuerto a : listaAeropuertos) {
+					if (a != null && a.getNombre() != null && a.getNombre().equalsIgnoreCase(destino.trim())) {
+						v.setDestino(a.getNombre());
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	
 	public List<Excursion> getExcursiones() {
 		List<Excursion> excursiones = new ArrayList<>();
 		String sql = "SELECT id, nombre, descripcion, precio FROM EXCURSION;";
