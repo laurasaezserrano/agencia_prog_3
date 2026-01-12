@@ -35,7 +35,7 @@ public class VentanaBuscandoReservas extends JDialog {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(50, 150, 200));
         panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-        lblTexto.setForeground(Color.WHITE);
+        panel.setForeground(Color.WHITE);
         
         mensajecentral = new JLabel("Buscando reservas disponibles", SwingConstants.CENTER);
         mensajecentral.setFont(new Font("Arial", Font.BOLD, 18));
