@@ -26,7 +26,6 @@ public class VentanaGestionDB extends JFrame {
     private JLabel lblEstadoDB;
 
     private GestorBD gestorBD;
-    private static final String CONNECTION_STRING = "jdbc:sqlite:agencia.db"; 
 
     public VentanaGestionDB() {
         super("Gestión de Base de Datos - Agencia de Viajes");
@@ -71,6 +70,7 @@ public class VentanaGestionDB extends JFrame {
         
         btnInsertar.addActionListener(this::manejarInsertar);
         btnEliminar.addActionListener(this::manejarEliminar);
+        btnActualizar.addActionListener(this::manejarActualizar);
     }
 
     private void configurarLayout() {
@@ -244,6 +244,11 @@ public class VentanaGestionDB extends JFrame {
             gestorBD.insertarUsuario(u);
             manejarCargarDatos(null);
         }
+    }
+
+    private void manejarActualizar(ActionEvent e) {
+        manejarCargarDatos(null);
+        lblEstadoDB.setText("Datos actualizados");
     }
 
     private void manejarEliminar(ActionEvent event) {

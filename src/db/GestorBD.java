@@ -105,8 +105,8 @@ public class GestorBD {
 			    "    fecha_salida TEXT,\n" +
 			    "    fecha_regreso TEXT,\n" +
 			    "    aerolinea TEXT,\n" +
-			    "    precio_economy TEXT,\n" +
-			    "    precio_business TEXT,\n" +
+			    "    precio_economy REAL,\n" +
+			    "    precio_business REAL,\n" +
 			    "    plazas_disponibles INTEGER,\n" +
 			    "    PRIMARY KEY (origen, destino, fecha_salida, fecha_regreso, aerolinea)\n" +
 			    ");";
@@ -204,8 +204,7 @@ public class GestorBD {
 		String sql = "INSERT INTO USER (USUARIO, PASSWORD, NOMBRE, DNI, EMAIL, TELEFONO, DIRECCION, IDIOMA, MONEDA) VALUES "+
 						"(?, ?, ?, ?, ?, ?, ?, ?,? );";
 		
-		try (Connection con = DriverManager.getConnection(connection);
-
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
 									
 			for (User u : users) {
@@ -239,8 +238,7 @@ public class GestorBD {
 		String sql = "INSERT INTO HOTEL (NOMBRE, CIUDAD, PAIS, ESTRELLAS, CAPACIDAD, PRECIO_NOCHE, MONEDA) VALUES "+
 						"(?, ?, ?, ?, ?, ?, ?);";
 		
-		try (Connection con = DriverManager.getConnection(connection);
-
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
 									
 			for (Hotel h : hoteles) {
@@ -303,8 +301,7 @@ public class GestorBD {
 		String sql = "INSERT INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NIÑOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 	
-		try (Connection con = DriverManager.getConnection(connection);
-
+		try (Connection con = getConnectionWithFK();
 				PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
 								
 			for (Reserva r : reservas) {
@@ -338,7 +335,7 @@ public class GestorBD {
 		String sql = "INSERT INTO VUELO (ORIGEN, DESTINO, FECHA_SALIDA, FECHA_REGRESO, AEROLINEA, PRECIO_ECONOMY, PRECIO_BUSINESS, PLAZAS_DISPONIBLES) "+
 				"VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 		
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             pStmt.setString(1, vuelo.getOrigen());
@@ -372,7 +369,7 @@ public class GestorBD {
 		String sql = "INSERT INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NIÑOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
 				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             pStmt.setString(1, reserva.getUsuario());
@@ -441,7 +438,7 @@ public class GestorBD {
 			String sql = "INSERT INTO USER (USUARIO, PASSWORD, NOMBRE, DNI, EMAIL, TELEFONO, DIRECCION, IDIOMA, MONEDA) VALUES "+
 					"(?, ?, ?, ?, ?, ?, ?, ?,? );";
 			
-			try (Connection con = DriverManager.getConnection(connection);
+			try (Connection con = getConnectionWithFK();
 				 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 	            
 	            pStmt.setString(1, user.getUsuario());
@@ -449,7 +446,12 @@ public class GestorBD {
 	            pStmt.setString(3, user.getNombre());
 	            pStmt.setString(4, user.getDni());
 	            pStmt.setString(5, user.getEmail());
-	            pStmt.setInt(6, user.getTelefono());
+	            Integer tel = user.getTelefono();
+	            if (tel == null) {
+	                pStmt.setNull(6, java.sql.Types.INTEGER);
+	            } else {
+	                pStmt.setInt(6, tel);
+	            }
 	            pStmt.setString(7, user.getDireccion());
 	            pStmt.setString(8, user.getIdioma());
 	            pStmt.setString(9, user.getMoneda());
@@ -479,7 +481,7 @@ public class GestorBD {
 		String sql = "DELETE FROM RESERVA WHERE usuario = ? AND nombre_Hotel = ? " +
 				"AND ciudad = ? AND fecha_Entrada = ? AND fecha_Salida = ?;";
 		
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql)) {
             
             pStmt.setString(1, usuario);
@@ -514,7 +516,7 @@ public class GestorBD {
 		String sql = "DELETE FROM VUELO WHERE ORIGEN = ? AND DESTINO = ? " +
                 "AND FECHA_SALIDA = ? AND FECHA_REGRESO = ? AND AEROLINEA = ?;";
 		
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql)) {
             
             pStmt.setString(1, origen);
@@ -548,7 +550,7 @@ public class GestorBD {
 		
 		String sql = "DELETE FROM USER WHERE usuario = ?;";
 		
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql)) {
             
             pStmt.setString(1, usuario);
@@ -577,7 +579,7 @@ public class GestorBD {
 		
 		String sql = "DELETE FROM HOTEL WHERE nombre = ? AND ciudad = ?;";
 		
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql)) {
             
             pStmt.setString(1, nombre);
@@ -837,7 +839,7 @@ public class GestorBD {
 	public List<User> getUsuarios() {
 		List<User> usuarios = new ArrayList<>();
 		String sql = "SELECT * FROM USER;";
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 		         PreparedStatement pStmt = con.prepareStatement(sql);
 		         ResultSet rs = pStmt.executeQuery()) {
 
@@ -869,7 +871,7 @@ public class GestorBD {
 	    List<Reserva> reservas = new ArrayList<>();
 	    String sql = "SELECT * FROM Reserva"; 
 	    
-	    try (Connection con = DriverManager.getConnection(connection);
+	    try (Connection con = getConnectionWithFK();
 	         Statement stmt = con.createStatement();
 	         ResultSet rs = stmt.executeQuery(sql)) {
 	        
@@ -1170,7 +1172,7 @@ public class GestorBD {
 	            			h.getCapacidad(),
 	            			h.getPrecioNoche(),
 	            			h.getMoneda());
-	            	out.print(linea);
+	            	out.println(linea);
 	            });
 				logger.info("Se han guardado los hoteles en un CSV.");
 
@@ -1256,7 +1258,7 @@ public class GestorBD {
 	public List<Vuelo> getVuelos() {
 		List<Vuelo> vuelos = new ArrayList<>();
 		String sql = "SELECT * FROM VUELO;";
-		try (Connection conn = DriverManager.getConnection(connection);
+		try (Connection conn = getConnectionWithFK();
 				PreparedStatement pstm = conn.prepareStatement(sql);
 				ResultSet rs = pstm.executeQuery()){
 			while (rs.next()) {
@@ -1281,7 +1283,7 @@ public class GestorBD {
 	public List<Hotel> getHoteles() {
 		List<Hotel> hoteles = new ArrayList<>();
 		String sql = "SELECT * FROM HOTEL;";
-		try (Connection con = DriverManager.getConnection(connection);
+		try (Connection con = getConnectionWithFK();
 		         PreparedStatement pStmt = con.prepareStatement(sql);
 		         ResultSet rs = pStmt.executeQuery()){
 			while (rs.next()) {
