@@ -8,10 +8,12 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -794,7 +796,7 @@ public class GestorBD {
 				if (linea.isEmpty()) {
 					continue;
 				}
-				String[] campos = linea.split(";", -1);
+				String[] campos = linea.split(",", -1);
 				if (campos.length != 8) {
 					logger.warning(String.format("Línea de vuelos inválida (se esperaban 8 campos): %s", linea));
 					continue;
@@ -846,23 +848,25 @@ public class GestorBD {
 	
 	private List<Reserva> loadReservas() {
 		List<Reserva> reservas = new ArrayList<>();
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
 		try (BufferedReader in = new BufferedReader(new FileReader(CSV_RESERVAS))){
 			String linea;
 			boolean primeraLinea = true;
+			
 			while ((linea = in.readLine()) != null) {
 				if (primeraLinea) {
 					primeraLinea = false;
 					continue;
 				}
+				linea = linea.trim();	
 				if (linea == null || linea.trim().isEmpty()) {
 	                continue;
 	            }
-				linea = linea.trim();
-				
 				String[] campos = linea.split(",", -1);
 				
-				if (campos.length != 10) {
-	                logger.warning(String.format("Línea de reservas inválida (se esperaban 10 campos): %s", linea));
+				if (campos.length < 10) {
+	                logger.warning(String.format("Línea de reservas con menos de 11 campos: %s", linea));
 	                continue;
 	            }
 				
@@ -871,46 +875,49 @@ public class GestorBD {
 				if (!campos[0].trim().isEmpty()) {
 					r.setUsuario(campos[0].trim());
 				}
+				
 				//ciudad
-				if (!campos[1].trim().isEmpty()) {
-	                r.setCiudad(campos[1].trim());
+				if (!campos[1].trim().isEmpty() && !campos[1].trim().equalsIgnoreCase("N/A")) { 
+					r.setCiudad(campos[1].trim());
+				} else {
+					r.setCiudad("N/A");
 				}
+				
 				//nombre hotel
 				if (!campos[2].trim().isEmpty()) {
 	                r.setNombreHotel(campos[2].trim());
 	            }
+				
 				//email
-				if (!campos[3].trim().isEmpty()) {
-	                r.setEmail(campos[3].trim());
-	            }
+				if (!campos[3].trim().isEmpty() && !campos[3].trim().equalsIgnoreCase("N/A")) {
+					 r.setEmail(campos[3].trim());
+				}
+				
 				//tipo habitacion
 				if (!campos[4].trim().isEmpty()) {
 	                r.setTipoHabitacion(campos[4].trim());
 	            }
+				
 				//num adultos
 				if (!campos[5].trim().isEmpty()) {
 	                r.setNumAdultos(Integer.parseInt(campos[5].trim()));
 	            }
+				
 				//mun de niños
 	            if (!campos[6].trim().isEmpty()) {
 	                r.setNumNiños(Integer.parseInt(campos[6].trim()));
 	            }
+	            
 	            //fecha entrada
-	            try {
-	                if (!campos[7].trim().isEmpty()) {
-	                    r.setFechaEntrada(java.sql.Date.valueOf(campos[7].trim()));
-	                }
-	            } catch (Exception e) {
-	                r.setFechaEntrada(null);
+	            if (!campos[7].trim().isEmpty()) {
+	            	 r.setFechaEntrada(convertirFecha(campos[7].trim()));
 	            }
+	            
 	            //fecha salida
-	            try {
-	                if (!campos[8].trim().isEmpty()) {
-	                    r.setFechaSalida(java.sql.Date.valueOf(campos[8].trim()));
-	                }
-	            } catch (Exception e) {
-	                r.setFechaSalida(null);
+	            if (!campos[8].trim().isEmpty()) {
+	            	 r.setFechaSalida(convertirFecha(campos[8].trim())); 
 	            }
+	            
 	            //precio noche
 	            try {
 	                if (!campos[9].trim().isEmpty()) {
@@ -920,6 +927,7 @@ public class GestorBD {
 	            } catch (Exception e) {
 	                r.setPrecioNoche(null);
 	            }
+	            
 	            reservas.add(r);
 			}
 			logger.info(String.format("Se han cargado %d reservas desde el CSV.", reservas.size()));
@@ -927,6 +935,25 @@ public class GestorBD {
 			logger.warning(String.format("Error leyendo reservas del CSV: %s", e.getMessage()));		
 			}
 		return reservas;
+	}
+
+	private Date convertirFecha(String fechaStr) {
+		try {
+			 // Formato: dd/MM/yyyy
+			 String[] partes = fechaStr.split("/");
+			 if (partes.length == 3) {
+			 int dia = Integer.parseInt(partes[0]);
+			 int mes = Integer.parseInt(partes[1]);
+			 int anio = Integer.parseInt(partes[2]);
+
+			 // Crear fecha en formato yyyy-MM-dd
+			 String fechaSQL = String.format("%04d-%02d-%02d", anio, mes, dia);
+			 return java.sql.Date.valueOf(fechaSQL);
+			 } 
+		} catch (Exception e) {
+			 logger.warning("Error convirtiendo fecha: " + fechaStr); 
+		}
+		return null;
 	}
 
 	private List<User> loadUsers() {
@@ -940,7 +967,7 @@ public class GestorBD {
 	            if (linea.isEmpty()) {
 	                continue;
 	            }
-	            String[] campos = linea.split(";", -1);
+	            String[] campos = linea.split(",", -1);
 	            if (campos.length != 2) {
 	                logger.warning(String.format("Línea de usuarios inválida (se esperaban 2 campos): %s", linea));
 	                continue;
@@ -987,7 +1014,7 @@ public class GestorBD {
 				if (linea.isEmpty()) {
 					continue;
 				}
-				String[] campos = linea.split(";", -1); //el -1 ayuda de la IAG para no perder campos vacios
+				String[] campos = linea.split(",", -1); //el -1 ayuda de la IAG para no perder campos vacios
 	            if (campos.length != 6) {
 	                logger.warning(String.format("Línea de hoteles inválida (se esperaban 6 campos): %s", linea));
 	                continue;
