@@ -120,7 +120,7 @@ public class GestorBD {
 			    "    email TEXT,\n" +
 			    "    tipo_Habitacion TEXT,\n" +
 			    "    num_adultos INTEGER,\n" +
-			    "    num_niños INTEGER,\n" +
+			    "    num_ninos INTEGER,\n" +
 			    "    fecha_Entrada TEXT,\n" +
 			    "    fecha_Salida TEXT,\n" +
 			    "    precio_Noche REAL,\n" +
@@ -271,8 +271,9 @@ public class GestorBD {
 		 * Inserta Vuelos en la BBDD.
 		 */
 	public void insertarVuelos (Vuelo... vuelos) {
-		String sql = "INSERT INTO VUELO (ORIGEN, DESTINO, FECHA_SALIDA, FECHA_REGRESO, AEROLINEA, PRECIO_ECONOMY, PRECIO_BUSINESS, PLAZAS_DISPONIBLES) "+
-						"VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+		String sql = "INSERT OR IGNORE INTO VUELO (ORIGEN, DESTINO, FECHA_SALIDA, FECHA_REGRESO, AEROLINEA, PRECIO_ECONOMY, PRECIO_BUSINESS, PLAZAS_DISPONIBLES) " +
+	             "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+
 		
 		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
@@ -303,7 +304,7 @@ public class GestorBD {
 	 * Inserta Reservas en la BBDD.
 	 */
 	public void insertarReservas (Reserva... reservas) {
-		String sql = "INSERT INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NIÑOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
+		String sql = "INSERT INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NINOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 	
 		try (Connection con = getConnectionWithFK();
@@ -337,8 +338,9 @@ public class GestorBD {
 	 * Inserta Vuelo en la BBDD
 	 */
 	public void insertarVuelo(Vuelo vuelo) {
-		String sql = "INSERT INTO VUELO (ORIGEN, DESTINO, FECHA_SALIDA, FECHA_REGRESO, AEROLINEA, PRECIO_ECONOMY, PRECIO_BUSINESS, PLAZAS_DISPONIBLES) "+
-				"VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+		String sql = "INSERT OR IGNORE INTO VUELO (ORIGEN, DESTINO, FECHA_SALIDA, FECHA_REGRESO, AEROLINEA, PRECIO_ECONOMY, PRECIO_BUSINESS, PLAZAS_DISPONIBLES) " +
+	             "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+
 		
 		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -371,7 +373,7 @@ public class GestorBD {
 	 */
 	public void insertarReserva(Reserva reserva) {
 		
-		String sql = "INSERT INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NIÑOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
+		String sql = "INSERT INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NINOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
 				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		
 		try (Connection con = getConnectionWithFK();
@@ -771,7 +773,7 @@ public class GestorBD {
 	            reserva.setEmail(rs.getString("email"));
 	            reserva.setTipoHabitacion(rs.getString("tipo_Habitacion"));
 	            reserva.setNumAdultos(rs.getInt("num_adultos"));
-	            reserva.setNumNiños(rs.getInt("num_niños"));
+	            reserva.setNumNiños(rs.getInt("num_ninos"));
 	            reserva.setFechaEntrada(rs.getDate("fecha_Entrada"));
 	            reserva.setFechaSalida(rs.getDate("fecha_Salida"));
 	            reserva.setPrecioNoche(rs.getDouble("precio_Noche"));
