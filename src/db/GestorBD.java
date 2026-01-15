@@ -18,7 +18,6 @@ import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import domain.Aerolinea;
 import domain.Aeropuerto;
 import domain.Excursion;
 import domain.Hotel;
@@ -613,11 +612,118 @@ public class GestorBD {
 	    return con;
 	}
 
-	/**
-	 * Obtiene todas las reservas de la BBDD
-	 */
-	
+	public boolean actualizaUser (String usuario,
+	        String password, String nombre, String dni, String email,
+	        Integer telefono, String direccion, String idioma, String moneda) {
+		
+		String sql = "UPDATE USER SET PASSWORD = ?, NOMBRE = ?, DNI = ?, EMAIL = ?, " +
+                "TELEFONO = ?, DIRECCION = ?, IDIOMA = ?, MONEDA = ? " +
+                "WHERE USUARIO = ?;";
 
+		try (Connection con = getConnectionWithFK();
+			PreparedStatement pstm = con.prepareStatement(sql)){
+			pstm.setString(1, password);
+			pstm.setString(2, nombre);
+	        pstm.setString(3, dni);
+	        pstm.setString(4, email);
+	        if (telefono == null) {
+	            pstm.setNull(5, java.sql.Types.INTEGER);
+	        } else {
+	            pstm.setInt(5, telefono);
+	        }
+	        pstm.setString(6, direccion);
+	        pstm.setString(7, idioma);
+	        pstm.setString(8, moneda);
+	        pstm.setString(9, usuario);
+	        return pstm.executeUpdate() > 0;
+			
+		} catch (Exception e) {
+			logger.warning("Error al actualizar user: " + e.getMessage());
+	        return false;
+		}
+
+	}
+	
+	public boolean actualizaHotel (String nombre, String ciudad, String pais, int estrellas,
+			int capacidad, double precioNoche, String moneda) {
+	
+		String sql = "UPDATE HOTEL SET PAIS = ?, ESTRELLAS = ?, CAPACIDAD = ?, " +
+                "PRECIO_NOCHE = ?, MONEDA = ? WHERE NOMBRE = ? AND CIUDAD = ?;";
+		
+		try (Connection con = getConnectionWithFK();
+				PreparedStatement pstm = con.prepareStatement(sql)){
+			pstm.setString(1, pais);
+			pstm.setInt(2, estrellas);
+			pstm.setInt(3, capacidad);
+			pstm.setDouble(4, precioNoche);
+			pstm.setString(5, moneda);
+			pstm.setString(6, nombre);
+			pstm.setString(7, ciudad);
+			return pstm.executeUpdate() > 0;
+		} catch (Exception e) {
+			logger.warning("Error al actualizar hotel: " + e.getMessage());
+	        return false;
+		}
+	}
+	
+	public boolean actualizarVuelo(String origen, String destino,
+	        java.sql.Date fechaSalida, java.sql.Date fechaRegreso, String aerolinea,
+	        double precioEconomy, double precioBusiness, int plazasDisponibles) {
+		
+		String sql = "UPDATE VUELO SET PRECIO_ECONOMY = ?, PRECIO_BUSINESS = ?, " +
+                "PLAZAS_DISPONIBLES = ? " +
+                "WHERE ORIGEN = ? AND DESTINO = ? AND FECHA_SALIDA = ? AND FECHA_REGRESO = ? AND AEROLINEA = ?;";
+		
+		try (Connection con = getConnectionWithFK();
+		         PreparedStatement pstm = con.prepareStatement(sql)) {
+
+			pstm.setDouble(1, precioEconomy);
+			pstm.setDouble(2, precioBusiness);
+			pstm.setInt(3, plazasDisponibles);
+			pstm.setString(4, origen);
+			pstm.setString(5, destino);
+	        pstm.setDate(6, fechaSalida);
+	        pstm.setDate(7, fechaRegreso);
+	        pstm.setString(8, aerolinea);
+			
+			return pstm.executeUpdate() > 0;
+			
+		} catch (Exception e) {
+			logger.warning("Error al actualizar vuelo: " + e.getMessage());
+	        return false;
+		}
+		
+	}
+	
+	public boolean actualizarReserva(String usuario, String hotel, String ciudad,
+	        java.sql.Date fechaEntrada, java.sql.Date fechaSalida,
+	        String email, String tipoHabitacion, int numAdultos, int numNinos, double precioNoche) {
+
+	    String sql = "UPDATE RESERVA SET EMAIL = ?, TIPO_HABITACION = ?, NUM_ADULTOS = ?, NUM_NIÑOS = ?, PRECIO_NOCHE = ? " +
+	                 "WHERE USUARIO = ? AND NOMBRE_HOTEL = ? AND CIUDAD = ? AND FECHA_ENTRADA = ? AND FECHA_SALIDA = ?;";
+
+	    try (Connection con = getConnectionWithFK();
+	         PreparedStatement p = con.prepareStatement(sql)) {
+	    	p.setString(1, email);
+	        p.setString(2, tipoHabitacion);
+	        p.setInt(3, numAdultos);
+	        p.setInt(4, numNinos);
+	        p.setDouble(5, precioNoche);
+	        p.setString(6, usuario);
+	        p.setString(7, hotel);
+	        p.setString(8, ciudad);
+	        p.setDate(9, fechaEntrada);
+	        p.setDate(10, fechaSalida);
+
+	        return p.executeUpdate() > 0;
+	        
+	    } catch (Exception e) {
+	    	logger.warning("Error al actualizar reserva: " + e.getMessage());
+	        return false;
+		}
+	}
+	
+	
 	public void updateReservas(List<Reserva> reservas, List<User> usuarios, List<Vuelo> listaVuelos,
 			List<Hotel> listaHoteles) {
 		if (reservas == null) {
