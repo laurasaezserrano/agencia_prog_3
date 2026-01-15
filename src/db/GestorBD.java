@@ -32,7 +32,6 @@ public class GestorBD {
 	private final String PROPERTIES_FILE = "resources/conf/app.properties";
 	private final String LOG_FOLDER = "resources/log";
 
-
 	private static Logger logger = Logger.getLogger(GestorBD.class.getName());
 	
 	private final String CSV_HOTELES = "resources/data/hoteles.csv";
@@ -177,25 +176,29 @@ public class GestorBD {
 	 */
 	
 	public void borrarDatos() {
-			String sql1 = "DELETE FROM USER;";
-			String sql2 = "DELETE FROM VUELO;"; 
-			String sql3 = "DELETE FROM RESERVA;";
-			String sql4 = "DELETE FROM HOTEL;";
+	    String sql1 = "DELETE FROM RESERVA;";
+	    String sql2 = "DELETE FROM VUELO;";
+	    String sql3 = "DELETE FROM HOTEL;";
+	    String sql4 = "DELETE FROM USER;";
 
-			try (Connection con = getConnectionWithFK();
-			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
-				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
-				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
-                 PreparedStatement pStmt4 = con.prepareStatement(sql4))
-			{
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute()) {
-		        	logger.info("Se han borrado los datos de la Agencia de Viajes");
-		        }
-			} catch (Exception ex) {
-				logger.warning(String.format("Error al borrar los datos: %s", ex.getMessage()));
-			}
-		
+	    try (Connection con = getConnectionWithFK();
+	         PreparedStatement pStmt1 = con.prepareStatement(sql1);
+	         PreparedStatement pStmt2 = con.prepareStatement(sql2);
+	         PreparedStatement pStmt3 = con.prepareStatement(sql3);
+	         PreparedStatement pStmt4 = con.prepareStatement(sql4)) {
+
+	        pStmt1.executeUpdate();
+	        pStmt2.executeUpdate();
+	        pStmt3.executeUpdate();
+	        pStmt4.executeUpdate();
+
+	        logger.info("Datos borrados correctamente.");
+	    } catch (Exception ex) {
+	        logger.warning("Error al borrar datos: " + ex.getMessage());
+	        ex.printStackTrace();
+	    }
 	}
+
 	
     /**
 	 * Inserta Users en la BBDD.
