@@ -307,12 +307,13 @@ public class GestorBD {
 	 * Inserta Reservas en la BBDD.
 	 */
 	public void insertarReservas (Reserva... reservas) {
-		String sql = "INSERT INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NINOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
+		String sql = "INSERT OR IGNORE INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NINOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 	
 		try (Connection con = getConnectionWithFK();
-				PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
-								
+				PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 	
+			int insertadas = 0;
+	        int ignoradas = 0;
 			for (Reserva r : reservas) {
 				pStmt.setString(1, r.getUsuario());
 				pStmt.setString(2, r.getCiudad());
@@ -325,15 +326,20 @@ public class GestorBD {
 				pStmt.setDate(9, r.getFechaSalida());
 				pStmt.setDouble(10, r.getPrecioNoche());
 				
-				if (pStmt.executeUpdate() != 1) {					
-				logger.warning(String.format("No se ha insertado la Reserva:"+ r.getUsuario()+r.getCiudad()+ r.getNombreHotel()));
-				} else {
-                        logger.info(String.format("Se ha insertado la  Reserva: %s"+ r.getUsuario() + r.getCiudad()+ r.getNombreHotel()));
-				}
+				int rows = pStmt.executeUpdate();
+				if (rows == 1) {
+	                insertadas++;
+	            } else {
+	                ignoradas++;
+	                logger.warning("Reserva IGNORADA (duplicada): " +
+	                    r.getUsuario() + " | " + r.getCiudad() + " | " + r.getNombreHotel() + " | " +
+	                    r.getFechaEntrada() + " - " + r.getFechaSalida());
+	            }
 			}
-			logger.info(String.format("%d Reservas insertados en la BBDD", reservas.length));
+			logger.info("Reservas insertadas: " + insertadas + ", ignoradas por duplicado: " + ignoradas);
 		} catch (Exception ex) {
 			logger.warning(String.format("Error al insertar Reservas: %s", ex.getMessage()));
+			ex.printStackTrace();
 		}			
 	}
 	
