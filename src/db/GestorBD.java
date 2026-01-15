@@ -867,6 +867,10 @@ public class GestorBD {
 	            }
 				String[] campos = linea.split(",", -1);
 				
+				if (campos.length >= 11) {
+				    campos[9] = campos[9].trim() + "." + campos[10].trim();
+				}
+				
 				if (campos.length < 10) {
 	                logger.warning(String.format("Línea de reservas con menos de 11 campos: %s", linea));
 	                continue;
