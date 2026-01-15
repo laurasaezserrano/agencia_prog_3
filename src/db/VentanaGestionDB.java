@@ -250,41 +250,11 @@ public class VentanaGestionDB extends JFrame {
     }
 
     private void manejarActualizar(ActionEvent e) {
-    	int fila = tablaDatos.getSelectedRow();
-    	if (fila < 0) {
-    		JOptionPane.showMessageDialog(this, "Selecciona una fila para actualizar.");
-    		return;
-    	}
-    	String tabla = (String) cmbTablas.getSelectedItem();
-    	switch (tabla) {
-		case "Reserva": mostrarDialogoActualizarReserva(fila); break;
-		case "Vuelo": mostrarDialogoActualizarVuelo(fila); break;
-        case "Hotel": mostrarDialogoActualizarHotel(fila); break;
-        case "User": mostrarDialogoActualizarUser(fila); break;
-		}
+        manejarCargarDatos(null);
+        lblEstadoDB.setText("Datos actualizados");
     }
 
-    private void mostrarDialogoActualizarHotel(int fila) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void mostrarDialogoActualizarUser(int fila) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void mostrarDialogoActualizarVuelo(int fila) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void mostrarDialogoActualizarReserva(int fila) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void manejarEliminar(ActionEvent event) {
+    private void manejarEliminar(ActionEvent event) {
         int fila = tablaDatos.getSelectedRow();
         if (fila < 0) return;
 
