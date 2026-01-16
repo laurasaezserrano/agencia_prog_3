@@ -824,8 +824,12 @@ public class GestorBD {
 	            Vuelo v = new Vuelo();
 	            v.setOrigen(origen);
 	            v.setDestino(destino);
-	            v.setFechaSalida(java.sql.Date.valueOf(fechaSalidaStr)); // YYYY-MM-DD
-	            v.setFechaRegreso(java.sql.Date.valueOf(fechaRegresoStr));
+	            if (!campos[2].trim().isEmpty()) {
+	            	 v.setFechaSalida(convertirFecha(fechaSalidaStr.trim()));
+	            }
+	            if (!campos[3].trim().isEmpty()) {
+	            	 v.setFechaRegreso(convertirFecha(fechaRegresoStr.trim())); 
+	            }
 	            v.setAerolinea(aerolinea);
 	            v.setPrecioEconomy(precioEconomy);
 	            v.setPrecioBusiness(precioBusiness);
