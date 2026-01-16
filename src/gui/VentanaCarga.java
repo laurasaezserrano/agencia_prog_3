@@ -35,7 +35,7 @@ public class VentanaCarga extends JWindow{
     	
     	label = new JLabel("Inicializando servicios...", SwingConstants.CENTER);
     	label.setFont(new Font("Arial", Font.PLAIN, 14));
-    	label.setForeground(new Color(51, 102, 153).darker());
+    	label.setForeground(Color.WHITE);
         label.setBorder(BorderFactory.createEmptyBorder(10,0,20,0));
         
         contenido.add(titulo, BorderLayout.NORTH);
