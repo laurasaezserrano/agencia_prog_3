@@ -8,17 +8,18 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import domain.Aerolinea;
 import domain.Aeropuerto;
 import domain.Excursion;
 import domain.Hotel;
@@ -30,7 +31,6 @@ public class GestorBD {
 
 	private final String PROPERTIES_FILE = "resources/conf/app.properties";
 	private final String LOG_FOLDER = "resources/log";
-
 
 	private static Logger logger = Logger.getLogger(GestorBD.class.getName());
 	
@@ -119,7 +119,7 @@ public class GestorBD {
 			    "    email TEXT,\n" +
 			    "    tipo_Habitacion TEXT,\n" +
 			    "    num_adultos INTEGER,\n" +
-			    "    num_niños INTEGER,\n" +
+			    "    num_ninos INTEGER,\n" +
 			    "    fecha_Entrada TEXT,\n" +
 			    "    fecha_Salida TEXT,\n" +
 			    "    precio_Noche REAL,\n" +
@@ -176,25 +176,29 @@ public class GestorBD {
 	 */
 	
 	public void borrarDatos() {
-			String sql1 = "DELETE FROM USER;";
-			String sql2 = "DELETE FROM VUELO;"; 
-			String sql3 = "DELETE FROM RESERVA;";
-			String sql4 = "DELETE FROM HOTEL;";
+	    String sql1 = "DELETE FROM RESERVA;";
+	    String sql2 = "DELETE FROM VUELO;";
+	    String sql3 = "DELETE FROM HOTEL;";
+	    String sql4 = "DELETE FROM USER;";
 
-			try (Connection con = getConnectionWithFK();
-			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
-				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
-				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
-                 PreparedStatement pStmt4 = con.prepareStatement(sql4))
-			{
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute()) {
-		        	logger.info("Se han borrado los datos de la Agencia de Viajes");
-		        }
-			} catch (Exception ex) {
-				logger.warning(String.format("Error al borrar los datos: %s", ex.getMessage()));
-			}
-		
+	    try (Connection con = getConnectionWithFK();
+	         PreparedStatement pStmt1 = con.prepareStatement(sql1);
+	         PreparedStatement pStmt2 = con.prepareStatement(sql2);
+	         PreparedStatement pStmt3 = con.prepareStatement(sql3);
+	         PreparedStatement pStmt4 = con.prepareStatement(sql4)) {
+
+	        pStmt1.executeUpdate();
+	        pStmt2.executeUpdate();
+	        pStmt3.executeUpdate();
+	        pStmt4.executeUpdate();
+
+	        logger.info("Datos borrados correctamente.");
+	    } catch (Exception ex) {
+	        logger.warning("Error al borrar datos: " + ex.getMessage());
+	        ex.printStackTrace();
+	    }
 	}
+
 	
     /**
 	 * Inserta Users en la BBDD.
@@ -270,8 +274,9 @@ public class GestorBD {
 		 * Inserta Vuelos en la BBDD.
 		 */
 	public void insertarVuelos (Vuelo... vuelos) {
-		String sql = "INSERT INTO VUELO (ORIGEN, DESTINO, FECHA_SALIDA, FECHA_REGRESO, AEROLINEA, PRECIO_ECONOMY, PRECIO_BUSINESS, PLAZAS_DISPONIBLES) "+
-						"VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+		String sql = "INSERT OR IGNORE INTO VUELO (ORIGEN, DESTINO, FECHA_SALIDA, FECHA_REGRESO, AEROLINEA, PRECIO_ECONOMY, PRECIO_BUSINESS, PLAZAS_DISPONIBLES) " +
+	             "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+
 		
 		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
@@ -302,12 +307,13 @@ public class GestorBD {
 	 * Inserta Reservas en la BBDD.
 	 */
 	public void insertarReservas (Reserva... reservas) {
-		String sql = "INSERT INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NIÑOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
+		String sql = "INSERT OR IGNORE INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NINOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 	
 		try (Connection con = getConnectionWithFK();
-				PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
-								
+				PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 	
+			int insertadas = 0;
+	        int ignoradas = 0;
 			for (Reserva r : reservas) {
 				pStmt.setString(1, r.getUsuario());
 				pStmt.setString(2, r.getCiudad());
@@ -320,15 +326,20 @@ public class GestorBD {
 				pStmt.setDate(9, r.getFechaSalida());
 				pStmt.setDouble(10, r.getPrecioNoche());
 				
-				if (pStmt.executeUpdate() != 1) {					
-				logger.warning(String.format("No se ha insertado la Reserva:"+ r.getUsuario()+r.getCiudad()+ r.getNombreHotel()));
-				} else {
-                        logger.info(String.format("Se ha insertado la  Reserva: %s"+ r.getUsuario() + r.getCiudad()+ r.getNombreHotel()));
-				}
+				int rows = pStmt.executeUpdate();
+				if (rows == 1) {
+	                insertadas++;
+	            } else {
+	                ignoradas++;
+	                logger.warning("Reserva IGNORADA (duplicada): " +
+	                    r.getUsuario() + " | " + r.getCiudad() + " | " + r.getNombreHotel() + " | " +
+	                    r.getFechaEntrada() + " - " + r.getFechaSalida());
+	            }
 			}
-			logger.info(String.format("%d Reservas insertados en la BBDD", reservas.length));
+			logger.info("Reservas insertadas: " + insertadas + ", ignoradas por duplicado: " + ignoradas);
 		} catch (Exception ex) {
 			logger.warning(String.format("Error al insertar Reservas: %s", ex.getMessage()));
+			ex.printStackTrace();
 		}			
 	}
 	
@@ -336,8 +347,9 @@ public class GestorBD {
 	 * Inserta Vuelo en la BBDD
 	 */
 	public void insertarVuelo(Vuelo vuelo) {
-		String sql = "INSERT INTO VUELO (ORIGEN, DESTINO, FECHA_SALIDA, FECHA_REGRESO, AEROLINEA, PRECIO_ECONOMY, PRECIO_BUSINESS, PLAZAS_DISPONIBLES) "+
-				"VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+		String sql = "INSERT OR IGNORE INTO VUELO (ORIGEN, DESTINO, FECHA_SALIDA, FECHA_REGRESO, AEROLINEA, PRECIO_ECONOMY, PRECIO_BUSINESS, PLAZAS_DISPONIBLES) " +
+	             "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+
 		
 		try (Connection con = getConnectionWithFK();
 			 PreparedStatement pStmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -370,7 +382,7 @@ public class GestorBD {
 	 */
 	public void insertarReserva(Reserva reserva) {
 		
-		String sql = "INSERT INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NIÑOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
+		String sql = "INSERT INTO RESERVA (USUARIO, CIUDAD, NOMBRE_HOTEL, EMAIL, TIPO_HABITACION, NUM_ADULTOS, NUM_NINOS, FECHA_ENTRADA, FECHA_SALIDA, PRECIO_NOCHE) "+
 				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		
 		try (Connection con = getConnectionWithFK();
@@ -612,12 +624,8 @@ public class GestorBD {
 	    }
 	    return con;
 	}
-
-	/**
-	 * Obtiene todas las reservas de la BBDD
-	 */
 	
-
+	
 	public void updateReservas(List<Reserva> reservas, List<User> usuarios, List<Vuelo> listaVuelos,
 			List<Hotel> listaHoteles) {
 		if (reservas == null) {
@@ -774,7 +782,7 @@ public class GestorBD {
 	            reserva.setEmail(rs.getString("email"));
 	            reserva.setTipoHabitacion(rs.getString("tipo_Habitacion"));
 	            reserva.setNumAdultos(rs.getInt("num_adultos"));
-	            reserva.setNumNiños(rs.getInt("num_niños"));
+	            reserva.setNumNiños(rs.getInt("num_ninos"));
 	            reserva.setFechaEntrada(rs.getDate("fecha_Entrada"));
 	            reserva.setFechaSalida(rs.getDate("fecha_Salida"));
 	            reserva.setPrecioNoche(rs.getDouble("precio_Noche"));
@@ -799,7 +807,7 @@ public class GestorBD {
 				if (linea.isEmpty()) {
 					continue;
 				}
-				String[] campos = linea.split(";", -1);
+				String[] campos = linea.split(",", -1);
 				if (campos.length != 8) {
 					logger.warning(String.format("Línea de vuelos inválida (se esperaban 8 campos): %s", linea));
 					continue;
@@ -851,19 +859,29 @@ public class GestorBD {
 	
 	private List<Reserva> loadReservas() {
 		List<Reserva> reservas = new ArrayList<>();
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
 		try (BufferedReader in = new BufferedReader(new FileReader(CSV_RESERVAS))){
 			String linea;
+			boolean primeraLinea = true;
+			
 			while ((linea = in.readLine()) != null) {
-				if (linea == null) {
+				if (primeraLinea) {
+					primeraLinea = false;
 					continue;
 				}
-				linea = linea.trim();
-				if (linea.isEmpty()) {
-					continue;
+				linea = linea.trim();	
+				if (linea == null || linea.trim().isEmpty()) {
+	                continue;
+	            }
+				String[] campos = linea.split(",", -1);
+				
+				if (campos.length >= 11) {
+				    campos[9] = campos[9].trim() + "." + campos[10].trim();
 				}
-				String[] campos = linea.split(";", -1);
-				if (campos.length != 10) {
-	                logger.warning(String.format("Línea de reservas inválida (se esperaban 10 campos): %s", linea));
+				
+				if (campos.length < 10) {
+	                logger.warning(String.format("Línea de reservas con menos de 11 campos: %s", linea));
 	                continue;
 	            }
 				
@@ -872,46 +890,49 @@ public class GestorBD {
 				if (!campos[0].trim().isEmpty()) {
 					r.setUsuario(campos[0].trim());
 				}
+				
 				//ciudad
-				if (!campos[1].trim().isEmpty()) {
-	                r.setCiudad(campos[1].trim());
+				if (!campos[1].trim().isEmpty() && !campos[1].trim().equalsIgnoreCase("N/A")) { 
+					r.setCiudad(campos[1].trim());
+				} else {
+					r.setCiudad("N/A");
 				}
+				
 				//nombre hotel
 				if (!campos[2].trim().isEmpty()) {
 	                r.setNombreHotel(campos[2].trim());
 	            }
+				
 				//email
-				if (!campos[3].trim().isEmpty()) {
-	                r.setEmail(campos[3].trim());
-	            }
+				if (!campos[3].trim().isEmpty() && !campos[3].trim().equalsIgnoreCase("N/A")) {
+					 r.setEmail(campos[3].trim());
+				}
+				
 				//tipo habitacion
 				if (!campos[4].trim().isEmpty()) {
 	                r.setTipoHabitacion(campos[4].trim());
 	            }
+				
 				//num adultos
 				if (!campos[5].trim().isEmpty()) {
 	                r.setNumAdultos(Integer.parseInt(campos[5].trim()));
 	            }
+				
 				//mun de niños
 	            if (!campos[6].trim().isEmpty()) {
 	                r.setNumNiños(Integer.parseInt(campos[6].trim()));
 	            }
+	            
 	            //fecha entrada
-	            try {
-	                if (!campos[7].trim().isEmpty()) {
-	                    r.setFechaEntrada(java.sql.Date.valueOf(campos[7].trim()));
-	                }
-	            } catch (Exception e) {
-	                r.setFechaEntrada(null);
+	            if (!campos[7].trim().isEmpty()) {
+	            	 r.setFechaEntrada(convertirFecha(campos[7].trim()));
 	            }
+	            
 	            //fecha salida
-	            try {
-	                if (!campos[8].trim().isEmpty()) {
-	                    r.setFechaSalida(java.sql.Date.valueOf(campos[8].trim()));
-	                }
-	            } catch (Exception e) {
-	                r.setFechaSalida(null);
+	            if (!campos[8].trim().isEmpty()) {
+	            	 r.setFechaSalida(convertirFecha(campos[8].trim())); 
 	            }
+	            
 	            //precio noche
 	            try {
 	                if (!campos[9].trim().isEmpty()) {
@@ -921,6 +942,7 @@ public class GestorBD {
 	            } catch (Exception e) {
 	                r.setPrecioNoche(null);
 	            }
+	            
 	            reservas.add(r);
 			}
 			logger.info(String.format("Se han cargado %d reservas desde el CSV.", reservas.size()));
@@ -928,6 +950,25 @@ public class GestorBD {
 			logger.warning(String.format("Error leyendo reservas del CSV: %s", e.getMessage()));		
 			}
 		return reservas;
+	}
+
+	private Date convertirFecha(String fechaStr) {
+		try {
+			 // Formato: dd/MM/yyyy
+			 String[] partes = fechaStr.split("/");
+			 if (partes.length == 3) {
+			 int dia = Integer.parseInt(partes[0]);
+			 int mes = Integer.parseInt(partes[1]);
+			 int anio = Integer.parseInt(partes[2]);
+
+			 // Crear fecha en formato yyyy-MM-dd
+			 String fechaSQL = String.format("%04d-%02d-%02d", anio, mes, dia);
+			 return java.sql.Date.valueOf(fechaSQL);
+			 } 
+		} catch (Exception e) {
+			 logger.warning("Error convirtiendo fecha: " + fechaStr); 
+		}
+		return null;
 	}
 
 	private List<User> loadUsers() {
@@ -941,7 +982,7 @@ public class GestorBD {
 	            if (linea.isEmpty()) {
 	                continue;
 	            }
-	            String[] campos = linea.split(";", -1);
+	            String[] campos = linea.split(",", -1);
 	            if (campos.length != 2) {
 	                logger.warning(String.format("Línea de usuarios inválida (se esperaban 2 campos): %s", linea));
 	                continue;
@@ -988,11 +1029,12 @@ public class GestorBD {
 				if (linea.isEmpty()) {
 					continue;
 				}
-				String[] campos = linea.split(";", -1); //el -1 ayuda de la IAG para no perder campos vacios
+				String[] campos = linea.split(",", -1); //el -1 ayuda de la IAG para no perder campos vacios
 	            if (campos.length != 6) {
 	                logger.warning(String.format("Línea de hoteles inválida (se esperaban 6 campos): %s", linea));
 	                continue;
 	            }
+	            
 	            String nombre = campos[0].trim();
 	            String ciudad = campos[1].trim();
 	            String pais = campos[2].trim();
