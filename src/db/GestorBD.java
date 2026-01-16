@@ -102,8 +102,8 @@ public class GestorBD {
 			    "CREATE TABLE IF NOT EXISTS VUELO (\n" +
 			    "    origen TEXT,\n" +
 			    "    destino TEXT,\n" +
-			    "    fecha_salida TEXT,\n" +
-			    "    fecha_regreso TEXT,\n" +
+			    "    fecha_salida DATE,\n" +
+			    "    fecha_regreso DATE,\n" +
 			    "    aerolinea TEXT,\n" +
 			    "    precio_economy REAL,\n" +
 			    "    precio_business REAL,\n" +
@@ -1155,8 +1155,8 @@ public class GestorBD {
 				Vuelo v = new Vuelo(
 						rs.getString("ORIGEN"),
 						rs.getString("DESTINO"),
-						java.sql.Date.valueOf(rs.getString("FECHA_SALIDA")),
-						java.sql.Date.valueOf(rs.getString("FECHA_REGRESO")),
+						rs.getDate("FECHA_SALIDA"),
+						rs.getDate("FECHA_REGRESO"),
 						rs.getString("AEROLINEA"),
 						rs.getDouble("PRECIO_ECONOMY"),
 						rs.getDouble("PRECIO_BUSINESS"),
