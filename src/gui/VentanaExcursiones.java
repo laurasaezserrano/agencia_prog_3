@@ -328,7 +328,7 @@ public class VentanaExcursiones extends JFrame{
         
         //panel de eleccion de numero de personas + filtro de busqueda
         public JPanel configurarBusquedaExcursion() {
-            JPanel panel1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+            JPanel panel1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
             panel1.setBackground(new Color(230, 240, 255));
             panel1.add(new JLabel("Busqueda de excursion:"));
             campoFiltro = new JTextField(24);
