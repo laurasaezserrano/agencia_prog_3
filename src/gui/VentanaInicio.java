@@ -253,10 +253,14 @@ public class VentanaInicio extends JFrame{
 	        } catch (InterruptedException e) {}
 
 	        SwingUtilities.invokeLater(() -> {
-	            dialog.cerrar();
-	            new VentanaReservas().setVisible(true);
-	            VentanaInicio.this.dispose();
+	            try {
+	                dialog.cerrar();
+	                new VentanaReservas().setVisible(true);
+	            } catch (Exception ex) {
+	                ex.printStackTrace();
+	            }
 	        });
+
 	    });
 
 	    hilo.start();
