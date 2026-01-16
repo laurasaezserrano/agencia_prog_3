@@ -33,11 +33,11 @@ public class VentanaInicio extends JFrame{
 		JPanel mainpanel = new JPanel();
 		JPanel panel1 = new JPanel(new GridLayout(2, 6, 40, 40));
 		String [] nombresboton = {
-			"Perfil",
+			"Excursiones",
 			"Reservas",
 			"Ofertas",
 			"Vuelos",
-			"Excursiones",
+			"Perfil",
 			"Contacto"
 		};
 		for (int i = 0; i < 6; i++) {
@@ -72,8 +72,9 @@ public class VentanaInicio extends JFrame{
 					String pass = AlmacenajeSesion.getPassword();
 					
 					VentanaInicio.this.setVisible(false);
-					if (nombresboton[numero-1].equals("Perfil")) {
-						abrirPerfilHilo();
+					if (nombresboton[numero-1].equals("Contacto")) {
+						VentanaContacto ventanaContacto = new VentanaContacto(VentanaInicio.this);
+						ventanaContacto.setVisible(true);
 						
 					} else if (nombresboton[numero-1].equals("Reservas")) {
 						abrirReservasHilo();
@@ -82,9 +83,8 @@ public class VentanaInicio extends JFrame{
 						CuadriculaOfertas vOfertas = new CuadriculaOfertas();
 						vOfertas.setVisible(true);
 						
-					} else if (nombresboton[numero-1].equals("Contacto")) {
-						VentanaContacto ventanaContacto = new VentanaContacto(VentanaInicio.this);
-						ventanaContacto.setVisible(true);
+					} else if (nombresboton[numero-1].equals("Perfil")) {
+						abrirPerfilHilo();
 					
 					} else if (nombresboton[numero-1].equals("Vuelos")) {
 					 	abrirVueloHotelhilo();
