@@ -26,7 +26,7 @@ public class VentanaCarga extends JWindow{
     	this.onFinishCallback = callback;
     	
     	JPanel contenido = new JPanel(new BorderLayout(10, 10));
-    	contenido.setBackground(new Color(51, 102, 153));
+    	contenido.setBackground(new Color(50, 150, 200));
     	
     	JLabel titulo = new JLabel("Sunny Agencia", SwingConstants.CENTER);
     	titulo.setFont(new Font("Arial", Font.BOLD, 30));
@@ -108,7 +108,7 @@ public class VentanaCarga extends JWindow{
         }
         
         contenido.add(panelcentro, BorderLayout.CENTER);
-        contenido.setBorder(BorderFactory.createLineBorder(new Color(51, 102, 153), 5));
+        contenido.setBorder(BorderFactory.createLineBorder(new Color(50, 150, 200), 5));
         
         this.setContentPane(contenido);
         this.setSize(500, 380);
