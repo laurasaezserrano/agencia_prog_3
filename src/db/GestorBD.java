@@ -13,7 +13,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -863,7 +862,6 @@ public class GestorBD {
 	
 	private List<Reserva> loadReservas() {
 		List<Reserva> reservas = new ArrayList<>();
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 		try (BufferedReader in = new BufferedReader(new FileReader(CSV_RESERVAS))){
 			String linea;
