@@ -107,10 +107,9 @@ public class VentanaBuscandoReservas extends JDialog {
     }
 
     public void cerrar() {
-    	stopAnimacion();
-    	SwingUtilities.invokeLater(this::dispose);
+        setVisible(false);
+        dispose();  
     }
-
 
 	private void stopAnimacion() {
 		animar = false;
