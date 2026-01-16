@@ -120,8 +120,8 @@ public class GestorBD {
 			    "    tipo_Habitacion TEXT,\n" +
 			    "    num_adultos INTEGER,\n" +
 			    "    num_ninos INTEGER,\n" +
-			    "    fecha_Entrada TEXT,\n" +
-			    "    fecha_Salida TEXT,\n" +
+			    "    fecha_Entrada DATE,\n" +
+			    "    fecha_Salida DATE,\n" +
 			    "    precio_Noche REAL,\n" +
 			    "    PRIMARY KEY (usuario, nombre_Hotel, ciudad, fecha_Entrada, fecha_Salida),\n" +
 			    "    FOREIGN KEY (usuario) REFERENCES USER(usuario)\n" +
