@@ -31,6 +31,7 @@ public class VentanaGestionDB extends JFrame {
         super("Gestión de Base de Datos - Agencia de Viajes");
         
         gestorBD = new GestorBD();
+        gestorBD.borrarBBDD();
         gestorBD.crearBBDD();
         gestorBD.initilizeFromCSV(); 
 
