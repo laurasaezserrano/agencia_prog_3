@@ -987,20 +987,20 @@ public class GestorBD {
 	                continue;
 	            }
 	            String[] campos = linea.split(",", -1);
-	            if (campos.length != 2) {
-	                logger.warning(String.format("Línea de usuarios inválida (se esperaban 2 campos): %s", linea));
+	            if (campos.length != 9) {
+	                logger.warning(String.format("Línea de usuarios inválida (se esperaban 9 campos): %s", linea));
 	                continue;
 	            }
 	            User u = new User();
 	            u.setUsuario(valornull(campos[0]));
 	            u.setPassword(valornull(campos[1]));
-	            u.setNombre(null);
-	            u.setDni(null);
-	            u.setEmail(null);
-	            u.setTelefono(null);
-	            u.setDireccion(null);
-	            u.setIdioma(null);
-	            u.setMoneda(null);
+	            u.setNombre(valornull(campos[2]));
+	            u.setDni(valornull(campos[3]));
+	            u.setEmail(valornull(campos[4]));
+	            u.setTelefono(Integer.parseInt(campos[5]));
+	            u.setDireccion(valornull(campos[6]));
+	            u.setIdioma(valornull(campos[7]));
+	            u.setMoneda(valornull(campos[8]));
 
 	            usuarios.add(u);
 	        }
